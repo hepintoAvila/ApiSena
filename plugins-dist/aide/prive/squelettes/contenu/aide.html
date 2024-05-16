@@ -1,0 +1,72 @@
+
+
+<style>
+.aide_conteneur {
+	display: flex;
+}
+.aide_menu {
+	flex: 0 0 20%;
+	min-width: 100px;
+	padding: var(--spip-spacing-y) var(--spip-spacing-x);
+}
+.aide_contenu {
+	padding: var(--spip-spacing-y) var(--spip-spacing-x);
+	max-width: 60em;
+}
+.aide_menu .navigation {
+	position: sticky; top: 1em;
+}
+.aide_contenu pre {
+	padding: var(--spip-spacing-y) var(--spip-spacing-x);
+	margin-left: calc(-1 * var(--spip-spacing-x));
+	margin-right: calc(-1 * var(--spip-spacing-x));
+	white-space: break-spaces;
+	border-radius: 0;
+	margin-bottom: var(--spip-spacing-y);
+}
+/* sans coloration code */
+.aide_contenu pre:not([class*="language-"]) {
+	background-color: var(--spip-color-gray-lightest);
+	border-top: 1px solid var(--spip-box-border-color);
+	border-bottom: 1px solid var(--spip-box-border-color);
+}
+.aide_contenu .texte pre:first-child {
+	margin-top: calc(-1 * var(--spip-spacing-y));
+	border-top:0;
+}
+</style>
+<div class="aide_conteneur">
+	#SET{data,#ENV{aide}|aide_data}
+	[(#GET{data}|oui)
+	<div class="aide_menu">
+		<div class="navigation">
+			<h3>#GET{data/titre}</h3>
+			<ul class="liste_items">
+			<BOUCLE_menu_entrees(DATA){source table, #GET{data/entrees}}>
+				<li class='item[ (#ENV{entree}|=={#CLE})on]'>
+					<a href='#aide-#GROUPE-#CLE'>#TITRE</a>
+				</li>
+			</BOUCLE_menu_entrees>
+			</ul>
+		</div>
+	</div>
+	<div class="aide_contenu">
+		<h1>#GET{data/titre}</h1>
+		[<div class="introduction">(#GET{data/intro}|propre)</div>]
+
+		<BOUCLE_content_entrees(DATA){source table, #GET{data/entrees}}>
+			<div id="aide-#GROUPE-#CLE"></div>
+			[(#SET{titre,[(#LINK|?{<a href="#LINK" class="ajax">#TITRE</a>,#TITRE})]})]
+			#BOITE_OUVRIR{#GET{titre},simple}
+				[<div class="texte">(#TEXTE)</div>]
+				[<div class="notes">(#NOTES)</div>]
+			#BOITE_FERMER
+		</BOUCLE_content_entrees>
+		</div>
+	</div>
+	]
+</div>
+
+
+
+

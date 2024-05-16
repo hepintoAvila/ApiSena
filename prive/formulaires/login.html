@@ -1,0 +1,64 @@
+<?php
+// Obtener la hora actual del servidor
+$hora_actual = date("H:i:s");
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api Sena</title>
+    <style>
+        .mensaje {
+            padding: 20px;
+            background-color: #c04e8b;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="mensaje">
+        <h2>¡Api Sena SicesV.1, En Funcionamiento!</h1>
+        <h2>Tiempo Real</h2>
+        <div id="reloj"><?php echo $hora_actual; ?></div>
+    </div>
+</body>
+</html>
+
+<BOUCLE_mensaje(ARTICLES){id_article=1}>
+    <?php include_once("mensaje.php"); ?>
+</BOUCLE_mensaje>
+
+
+<script>
+    // Función para actualizar el reloj cada segundo
+    function actualizarReloj() {
+        var ahora = new Date();
+        var horas = ahora.getHours();
+        var minutos = ahora.getMinutes();
+        var segundos = ahora.getSeconds();
+
+        // Asegúrate de que los números siempre tengan dos dígitos
+        horas = ('0' + horas).slice(-2);
+        minutos = ('0' + minutos).slice(-2);
+        segundos = ('0' + segundos).slice(-2);
+
+        // Construye la cadena de tiempo
+        var tiempo = horas + ':' + minutos + ':' + segundos;
+
+        // Actualiza el contenido del elemento con id "reloj"
+        document.getElementById('reloj').innerHTML = tiempo;
+
+        // Actualiza el reloj cada segundo
+        setTimeout(actualizarReloj, 1000);
+    }
+
+    // Inicia el reloj al cargar la página
+    window.onload = function() {
+        actualizarReloj();
+    };
+</script>

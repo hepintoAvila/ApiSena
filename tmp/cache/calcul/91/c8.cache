@@ -1,0 +1,74 @@
+a:2:{s:9:"nom_cache";s:38:"91c85dac91850560a86a2e3e0a258e4d.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_e4d141f80ff6f4dc8aec29346af587b9";s:6:"source";s:29:"squelettes-dist/sommaire.html";s:11:"process_ins";s:3:"php";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"91c85dac91850560a86a2e3e0a258e4d.cache";}s:7:"entetes";a:1:{s:12:"X-Spip-Cache";i:86400;}s:5:"duree";i:0;s:5:"texte";s:2852:"<!DOCTYPE html>
+<html dir="ltr" lang="es" class="ltr es no-js">
+<head>
+	<script type='text/javascript'>/*<![CDATA[*/(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement);/*]]>*/</script>
+	<title>ApiSpip</title>
+	
+	<?php echo recuperer_fond( 'inclure/head', array('lang' => 'es'), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',7,$GLOBALS['spip_lang'])), _request("connect"));
+?>
+</head>
+
+<body class="pas_surlignable page_sommaire">
+<div class="page">
+
+	<?php echo recuperer_fond( 'inclure/header', array('home' => 'oui',
+	'lang' => 'es'), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',13,$GLOBALS['spip_lang'])), _request("connect"));
+?>
+	<?php echo recuperer_fond( 'inclure/nav', array_merge(array (
+  'date' => '2024-05-10 17:20:25',
+  'date_default' => true,
+  'date_redac' => '2024-05-10 17:20:25',
+  'date_redac_default' => true,
+),array('lang' => 'es')), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',14,$GLOBALS['spip_lang'])), _request("connect"));
+?>
+	
+	<main class="main" role="main">
+		<div class="wrapper hfeed">
+		<div class="content" id="content">
+			
+			<?php echo recuperer_fond( 'inclure/recents', array_merge(array (
+  'date' => '2024-05-10 17:20:25',
+  'date_default' => true,
+  'date_redac' => '2024-05-10 17:20:25',
+  'date_redac_default' => true,
+),array('lang' => 'es')), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',20,$GLOBALS['spip_lang']),'ajax' => ($v=( ''))?$v:true), _request("connect"));
+?>
+		</div><!--.content-->
+		</div><!--.wrapper-->
+		
+		<aside class="aside" role="complementary">
+			<?php echo recuperer_fond( 'inclure/navsub', array('lang' => 'es'), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',25,$GLOBALS['spip_lang'])), _request("connect"));
+?>
+			<?php 
+include_once("./" . _DIR_RACINE . "ecrire/balise/formulaire_.php");
+if ($lang_select = "es") $lang_select = lang_select($lang_select);
+inserer_balise_dynamique(balise_FORMULAIRE__dyn('FORMULAIRE_RECHERCHE'), array('squelettes-dist/sommaire.html', 'html_e4d141f80ff6f4dc8aec29346af587b9', '', 26, 'es'));
+if ($lang_select) lang_select();
+?>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</aside><!--.aside-->
+	</main><!--.main-->
+	
+	<?php echo recuperer_fond( 'inclure/footer', array_merge(array (
+  'date' => '2024-05-10 17:20:25',
+  'date_default' => true,
+  'date_redac' => '2024-05-10 17:20:25',
+  'date_redac_default' => true,
+),array('self' => './',
+	'lang' => 'es')), array("compil"=>array('squelettes-dist/sommaire.html','html_e4d141f80ff6f4dc8aec29346af587b9','',41,$GLOBALS['spip_lang'])), _request("connect"));
+?>
+	
+</div><!--.page-->
+</body>
+</html>
+";s:5:"notes";s:0:"";s:8:"contexte";a:4:{s:4:"date";s:19:"2024-05-10 17:20:25";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-10 17:20:25";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715354424;s:2:"gz";b:0;s:3:"sig";i:2637267189;}}

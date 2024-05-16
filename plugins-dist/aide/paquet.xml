@@ -1,0 +1,19 @@
+<paquet
+	prefix="aide"
+	categorie="divers"
+	version="2.0.2"
+	etat="stable"
+	compatibilite="[4.0.0;4.0.*]"
+	logo="aide-logo.svg"
+>
+
+	<nom>Aide SPIP</nom>
+	<!-- Aide en ligne de SPIP ! -->
+
+	<auteur>Collectif SPIP</auteur>
+
+	<licence lien="http://www.gnu.org/licenses/gpl-3.0.html">GPL</licence>
+
+	<pipeline nom="aide_index" inclure="aide_fonctions.php" action="" />
+
+</paquet>

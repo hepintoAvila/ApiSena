@@ -1,0 +1,60 @@
+<?php
+
+/***************************************************************************\
+ *  SPIP, Système de publication pour l'internet                           *
+ *                                                                         *
+ *  Copyright © avec tendresse depuis 2001                                 *
+ *  Arnaud Martin, Antoine Pitrou, Philippe Rivière, Emmanuel Saint-James  *
+ *                                                                         *
+ *  Ce programme est un logiciel libre distribué sous licence GNU/GPL.     *
+ *  Pour plus de détails voir le fichier COPYING.txt ou l'aide en ligne.   *
+\***************************************************************************/
+
+/**
+ * Gestion du formulaire de configuration des documents
+ *
+ * @package SPIP\Medias\Formulaires
+ **/
+
+if (!defined('_ECRIRE_INC_VERSION')) {
+	return;
+}
+
+/**
+ * Chargement du formulaire de configuration des documents
+ *
+ * @return array
+ *     Environnement du formulaire
+ **/
+function formulaires_configurer_documents_charger_dist() {
+	$valeurs = array();
+	foreach (array(
+		'documents_objets',
+		'documents_date',
+	) as $m) {
+		$valeurs[$m] = isset($GLOBALS['meta'][$m]) ? $GLOBALS['meta'][$m] : '';
+	}
+	$valeurs['documents_objets'] = explode(',', $valeurs['documents_objets']);
+
+	return $valeurs;
+}
+
+/**
+ * Traitement du formulaire de configuration des documents
+ *
+ * @return array
+ *     Retours du traitement
+ **/
+function formulaires_configurer_documents_traiter_dist() {
+	$res = array('editable' => true);
+	if (!is_null($v = _request($m = 'documents_date'))) {
+		ecrire_meta($m, $v == 'oui' ? 'oui' : 'non');
+	}
+	if (!is_null($v = _request($m = 'documents_objets'))) {
+		ecrire_meta($m, is_array($v) ? implode(',', $v) : '');
+	}
+
+	$res['message_ok'] = _T('config_info_enregistree');
+
+	return $res;
+}
