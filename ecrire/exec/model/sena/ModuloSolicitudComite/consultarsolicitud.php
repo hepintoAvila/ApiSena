@@ -70,7 +70,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								case '4':
 									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idAprendiz="'.base64_decode($_POST["idAprendiz"]).'" ORDER BY idSolicitud ASC',$select);
 								break;
-								
 								//CONSULTE LAS NOVEDADES DE  LAS SOLICITUDES
 								//ConsultarSolicitudSinEnviar
 								case '5':
@@ -89,7 +88,20 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								case '7':
 								
 									$row=$apps->consultadatos('entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
-								break;									
+								break;
+								case '8':
+									$idActa = base64_decode($_POST["idActa"]);
+									$sqlact = sql_select("casosComite",
+											'sena_actas','idActa="'.$idActa.'"');
+										while ($rowact = sql_fetch($sqlact)) {
+											$idSolicituds= $rowact['casosComite']==='0' ? '0':$rowact['casosComite'];	
+										}
+										if($idSolicituds=='0'){
+											$row=$apps->consultadatos('estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+										}else{
+											$row=$apps->consultadatos('idSolicitud NOT IN ('.$idSolicituds.') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+										}
+								break;																	
 							}
 							
 							foreach($row as $a => $value){
