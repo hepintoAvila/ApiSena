@@ -1,5 +1,5 @@
 /* #PRODUIRE{fond=css/barre_outils_icones.css,hash=d37d5e69de021850698117563bc0b353}
-   md5:87a3bf1f73bf036f8212c4256c13d18c */
+   md5:9235cfa715419d3fee1422f24d6e57d8 */
 
 .markItUp .outil_header1>a>em {background-image:url(//localhost/sicesv.1/apis.sena/plugins-dist/porte_plume/icones_barre/spt-v1.svg);background-position:-2px -2px}
 .markItUp .outil_bold>a>em {background-image:url(//localhost/sicesv.1/apis.sena/plugins-dist/porte_plume/icones_barre/spt-v1.svg);background-position:-2px -22px}

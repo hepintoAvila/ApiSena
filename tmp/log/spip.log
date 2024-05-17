@@ -1,6 +1,1 @@
-2024-05-10 17:19:48 ::1 (pid 1204) :Pub:ERREUR: Fonction genie_revisions_optimiser_revisions introuvable
-2024-05-10 17:19:51 ::1 (pid 1204) :Pub:ERREUR: Erreur mysql 1146
-2024-05-10 17:19:51 ::1 (pid 1204) :Pub:ERREUR: Erreur mysql 1146
-2024-05-10 17:19:51 ::1 (pid 1204) :Pub:!INFO: trouver_table: table inconnue '' 'BREVES'
-2024-05-10 17:19:51 ::1 (pid 1204) :Pub:!INFO: spip_connect: fichier de connexion 'config/breves.php' non trouve
-2024-05-10 17:19:51 ::1 (pid 1204) :Pub:HS: spip_connect: echec connexion ou serveur breves mal defini dans 'config/breves.php'.
+2024-05-17 00:19:14 127.0.0.1 (pid 16716) :Pri:ERREUR: Fonction genie_revisions_optimiser_revisions introuvable

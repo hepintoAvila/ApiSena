@@ -2,8 +2,8 @@
 
 /*
  * Squelette : prive/formulaires/inc-options-langues.html
- * Date :      Thu, 08 Jul 2021 23:10:08 GMT
- * Compile :   Fri, 10 May 2024 15:30:21 GMT
+ * Date :      Thu, 16 May 2024 20:21:50 GMT
+ * Compile :   Thu, 16 May 2024 22:19:15 GMT
  * Boucles :   _langues
  */ 
 
@@ -95,7 +95,7 @@ function BOUCLE_langueshtml_c2cf747020eefc22dd3bd5294518be1f(&$Cache, &$Pile, &$
 
 //
 // Fonction principale du squelette prive/formulaires/inc-options-langues.html
-// Temps de compilation total: 28.956 ms
+// Temps de compilation total: 12.099 ms
 //
 
 function html_c2cf747020eefc22dd3bd5294518be1f($Cache, $Pile, $doublons = array(), $Numrows = array(), $SP = 0) {

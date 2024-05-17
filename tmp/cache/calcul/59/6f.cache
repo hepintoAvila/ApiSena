@@ -1,4 +1,4 @@
-a:2:{s:9:"nom_cache";s:38:"596f9868e68d1edfb9d18e432421789c.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_86043228961a2f315ad08db7d39d09ee";s:6:"source";s:57:"plugins-dist/porte_plume/css/barre_outils_icones.css.html";s:11:"process_ins";s:4:"html";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"596f9868e68d1edfb9d18e432421789c.cache";}s:7:"entetes";a:1:{s:12:"X-Spip-Cache";i:86400;}s:5:"duree";i:0;s:5:"texte";s:5801:"
+a:2:{s:9:"nom_cache";s:38:"596f9868e68d1edfb9d18e432421789c.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_86043228961a2f315ad08db7d39d09ee";s:6:"source";s:57:"plugins-dist/porte_plume/css/barre_outils_icones.css.html";s:11:"process_ins";s:4:"html";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"596f9868e68d1edfb9d18e432421789c.cache";}s:7:"entetes";a:1:{s:12:"X-Spip-Cache";i:86400;}s:5:"duree";i:0;s:5:"texte";s:5826:"
 .markItUp .outil_header1>a>em {background-image:url(//localhost/sicesv.1/apis.sena/plugins-dist/porte_plume/icones_barre/spt-v1.svg);background-position:-2px -2px}
 .markItUp .outil_bold>a>em {background-image:url(//localhost/sicesv.1/apis.sena/plugins-dist/porte_plume/icones_barre/spt-v1.svg);background-position:-2px -22px}
 .markItUp .outil_italic>a>em {background-image:url(//localhost/sicesv.1/apis.sena/plugins-dist/porte_plume/icones_barre/spt-v1.svg);background-position:-2px -42px}
@@ -55,4 +55,4 @@ a:2:{s:9:"nom_cache";s:38:"596f9868e68d1edfb9d18e432421789c.cache";s:6:"valeur";
 		position:fixed;
 		left:75%;
 }
-";s:5:"notes";s:0:"";s:8:"contexte";a:6:{s:4:"hash";s:32:"d37d5e69de021850698117563bc0b353";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-16 14:32:16";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-16 14:32:16";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715862736;s:2:"gz";b:0;s:3:"sig";i:355922483;}}
+";s:5:"notes";s:0:"";s:8:"contexte";a:6:{s:4:"hash";s:32:"d37d5e69de021850698117563bc0b353";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-17 02:42:03";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-17 02:42:03";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715906523;s:2:"gz";b:0;s:3:"sig";i:1769559008;}}

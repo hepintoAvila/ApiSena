@@ -2,13 +2,13 @@
 
 /*
  * Squelette : plugins-dist/porte_plume/javascript/porte_plume_start.js.html
- * Date :      Thu, 08 Jul 2021 23:10:14 GMT
- * Compile :   Fri, 10 May 2024 15:19:53 GMT
+ * Date :      Thu, 16 May 2024 20:21:49 GMT
+ * Compile :   Thu, 16 May 2024 22:19:15 GMT
  * Boucles :   
  */ 
 //
 // Fonction principale du squelette plugins-dist/porte_plume/javascript/porte_plume_start.js.html
-// Temps de compilation total: 0.356 ms
+// Temps de compilation total: 0.335 ms
 //
 
 function html_4e92f781fe25e3cd92f5e6a771f97a90($Cache, $Pile, $doublons = array(), $Numrows = array(), $SP = 0) {

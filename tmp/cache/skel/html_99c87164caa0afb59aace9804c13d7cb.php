@@ -2,8 +2,8 @@
 
 /*
  * Squelette : prive/formulaires/login.html
- * Date :      Wed, 24 Apr 2024 05:17:37 GMT
- * Compile :   Fri, 10 May 2024 15:20:29 GMT
+ * Date :      Thu, 16 May 2024 20:21:50 GMT
+ * Compile :   Thu, 16 May 2024 22:19:16 GMT
  * Boucles :   _mensaje
  */ 
 
@@ -57,7 +57,7 @@ quete_condition_postdates('articles.date',''),
 
 //
 // Fonction principale du squelette prive/formulaires/login.html
-// Temps de compilation total: 0.555 ms
+// Temps de compilation total: 0.477 ms
 //
 
 function html_99c87164caa0afb59aace9804c13d7cb($Cache, $Pile, $doublons = array(), $Numrows = array(), $SP = 0) {

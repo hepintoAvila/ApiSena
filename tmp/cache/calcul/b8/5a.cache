@@ -1,4 +1,4 @@
-a:2:{s:9:"nom_cache";s:38:"b85ae786c6b4e8d0111d36fbb8701ab4.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_c2cf747020eefc22dd3bd5294518be1f";s:6:"source";s:42:"prive/formulaires/inc-options-langues.html";s:11:"process_ins";s:4:"html";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"b85ae786c6b4e8d0111d36fbb8701ab4.cache";}s:7:"entetes";a:1:{s:12:"X-Spip-Cache";i:3600;}s:5:"duree";i:0;s:5:"texte";s:4381:"
+a:2:{s:9:"nom_cache";s:38:"b85ae786c6b4e8d0111d36fbb8701ab4.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_c2cf747020eefc22dd3bd5294518be1f";s:6:"source";s:42:"prive/formulaires/inc-options-langues.html";s:11:"process_ins";s:4:"html";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"b85ae786c6b4e8d0111d36fbb8701ab4.cache";}s:7:"entetes";a:1:{s:12:"X-Spip-Cache";i:3600;}s:5:"duree";i:0;s:5:"texte";s:4598:"
 	 
 		<option value='ar' dir="rtl">&#91;ar&#93; &#1593;&#1585;&#1576;&#1610;</option>
 	
@@ -215,4 +215,4 @@ a:2:{s:9:"nom_cache";s:38:"b85ae786c6b4e8d0111d36fbb8701ab4.cache";s:6:"valeur";
 		<option value='zh' dir="ltr">&#91;zh&#93; &#20013;&#25991;</option>
 	
 
-";s:5:"notes";s:0:"";s:8:"contexte";a:7:{s:4:"name";s:15:"var_lang_ecrire";s:7:"default";s:2:"es";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-16 14:32:16";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-16 14:32:16";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715862736;s:2:"gz";b:0;s:3:"sig";i:2764593819;}}
+";s:5:"notes";s:0:"";s:8:"contexte";a:7:{s:4:"name";s:15:"var_lang_ecrire";s:7:"default";s:2:"es";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-17 02:42:03";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-17 02:42:03";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715906523;s:2:"gz";b:0;s:3:"sig";i:1869316938;}}

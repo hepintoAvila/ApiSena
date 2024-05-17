@@ -1,4 +1,4 @@
-a:2:{s:9:"nom_cache";s:38:"d49ab4bbb220b3b31cdea7486dc83b1a.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_8bf575b44ede8bfc88f234bd8e600097";s:6:"source";s:16:"prive/login.html";s:11:"process_ins";s:3:"php";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"d49ab4bbb220b3b31cdea7486dc83b1a.cache";}s:7:"entetes";a:2:{s:12:"Content-Type";s:24:"text/html; charset=utf-8";s:12:"X-Spip-Cache";i:86400;}s:5:"duree";i:0;s:5:"texte";s:6431:"
+a:2:{s:9:"nom_cache";s:38:"d49ab4bbb220b3b31cdea7486dc83b1a.cache";s:6:"valeur";a:12:{s:9:"squelette";s:37:"html_8bf575b44ede8bfc88f234bd8e600097";s:6:"source";s:16:"prive/login.html";s:11:"process_ins";s:3:"php";s:11:"invalideurs";a:1:{s:5:"cache";s:38:"d49ab4bbb220b3b31cdea7486dc83b1a.cache";}s:7:"entetes";a:2:{s:12:"Content-Type";s:24:"text/html; charset=utf-8";s:12:"X-Spip-Cache";i:86400;}s:5:"duree";i:0;s:5:"texte";s:6516:"
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es" dir="ltr">
 <head>
@@ -10,40 +10,40 @@ a:2:{s:9:"nom_cache";s:38:"d49ab4bbb220b3b31cdea7486dc83b1a.cache";s:6:"valeur";
 var mediabox_settings={"auto_detect":true,"ns":"box","tt_img":true,"sel_g":"#documents_portfolio a[type='image\/jpeg'],#documents_portfolio a[type='image\/png'],#documents_portfolio a[type='image\/gif']","sel_c":".mediabox","str_ssStart":"Presentaci\u00f3n","str_ssStop":"Detener","str_cur":"{current}\/{total}","str_prev":"Anterior","str_next":"Siguiente","str_close":"Cerrar","str_loading":"Chargement\u2026","str_petc":"Taper \u2019Echap\u2019 pour fermer","str_dialTitDef":"Boite de dialogue","str_dialTitMed":"Affichage d\u2019un media","splash_url":"","lity":{"skin":"_simple-dark","maxWidth":"90%","maxHeight":"90%","minWidth":"400px","minHeight":"","slideshow_speed":"2500","opacite":"0.9"}};
 /* ]]> */</script>
 <!-- insert_head_css -->
-<link rel="stylesheet" href="plugins-dist/mediabox/lib/lity/lity.css?1625785812" type="text/css" media="all" />
-<link rel="stylesheet" href="plugins-dist/mediabox/lity/css/lity.mediabox.css?1625785812" type="text/css" media="all" />
-<link rel="stylesheet" href="plugins-dist/mediabox/lity/skins/_simple-dark/lity.css?1625785812" type="text/css" media="all" /><link rel='stylesheet' type='text/css' media='all' href='plugins-dist/porte_plume/css/barre_outils.css?1625785814' />
-<link rel='stylesheet' type='text/css' media='all' href='local/cache-css/cssdyn-css_barre_outils_icones_css-962546f0.css?1715137964' />
+<link rel="stylesheet" href="plugins-dist/mediabox/lib/lity/lity.css?1715890909" type="text/css" media="all" />
+<link rel="stylesheet" href="plugins-dist/mediabox/lity/css/lity.mediabox.css?1715890909" type="text/css" media="all" />
+<link rel="stylesheet" href="plugins-dist/mediabox/lity/skins/_simple-dark/lity.css?1715890909" type="text/css" media="all" /><link rel='stylesheet' type='text/css' media='all' href='plugins-dist/porte_plume/css/barre_outils.css?1715890909' />
+<link rel='stylesheet' type='text/css' media='all' href='local/cache-css/cssdyn-css_barre_outils_icones_css-962546f0.css?1715897955' />
 
 <link rel="stylesheet" href="prive/themes/spip/reset.css" type="text/css" />
 <link rel="stylesheet" href="prive/themes/spip/clear.css" type="text/css" />
 <link rel="stylesheet" href="prive/themes/spip/minipres.css" type="text/css" />
 <link rel="stylesheet" href="prive/themes/spip/login_prive.css" type="text/css" />
 
-<script src="prive/javascript/jquery.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/jquery.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/jquery.form.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/jquery.form.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/jquery.autosave.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/jquery.autosave.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/jquery.placeholder-label.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/jquery.placeholder-label.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/ajaxCallback.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/ajaxCallback.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/js.cookie.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/js.cookie.js?1715890910" type="text/javascript"></script>
 
-<script src="prive/javascript/jquery.cookie.js?1625785808" type="text/javascript"></script>
+<script src="prive/javascript/jquery.cookie.js?1715890910" type="text/javascript"></script>
 <!-- insert_head -->
-<script src="plugins-dist/mediabox/lib/lity/lity.js?1625785812" type="text/javascript"></script>
-<script src="plugins-dist/mediabox/lity/js/lity.mediabox.js?1625785812" type="text/javascript"></script>
-<script src="plugins-dist/mediabox/javascript/spip.mediabox.js?1625785812" type="text/javascript"></script><script type='text/javascript' src='plugins-dist/porte_plume/javascript/jquery.markitup_pour_spip.js?1625785814'></script>
-<script type='text/javascript' src='plugins-dist/porte_plume/javascript/jquery.previsu_spip.js?1625785814'></script>
-<script type='text/javascript' src='local/cache-js/jsdyn-javascript_porte_plume_start_js-5ed1fc5e.js?1712706671'></script>
+<script src="plugins-dist/mediabox/lib/lity/lity.js?1715890909" type="text/javascript"></script>
+<script src="plugins-dist/mediabox/lity/js/lity.mediabox.js?1715890909" type="text/javascript"></script>
+<script src="plugins-dist/mediabox/javascript/spip.mediabox.js?1715890909" type="text/javascript"></script><script type='text/javascript' src='plugins-dist/porte_plume/javascript/jquery.markitup_pour_spip.js?1715890909'></script>
+<script type='text/javascript' src='plugins-dist/porte_plume/javascript/jquery.previsu_spip.js?1715890909'></script>
+<script type='text/javascript' src='local/cache-js/jsdyn-javascript_porte_plume_start_js-6429259d.js?1715897955'></script>
 
 <script type='text/javascript'>
 jQuery(function(){jQuery('a#spip_pass').click(function(){window.open(this.href, 'spip_pass', 'scrollbars=yes, resizable=yes, width=480, height=380'); return false;});});
 </script>
-<meta name="generator" content="SPIP 4.0.0" />
+<meta name="generator" content="SPIP 4.0.0 GIT [main: b08bc33d]" />
 
 <style type="text/css">
 .page_login {
@@ -89,4 +89,4 @@ if ($lang_select) lang_select();
 	
 
 </body>
-</html>";s:5:"notes";s:0:"";s:8:"contexte";a:7:{s:4:"page";s:5:"login";s:3:"url";s:49:"/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-16 14:32:16";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-16 14:32:16";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715862736;s:2:"gz";b:0;s:3:"sig";i:2576566798;}}
+</html>";s:5:"notes";s:0:"";s:8:"contexte";a:7:{s:4:"page";s:5:"login";s:3:"url";s:49:"/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui";s:4:"lang";s:2:"es";s:4:"date";s:19:"2024-05-17 02:42:03";s:12:"date_default";b:1;s:10:"date_redac";s:19:"2024-05-17 02:42:03";s:18:"date_redac_default";b:1;}s:12:"lastmodified";i:1715906523;s:2:"gz";b:0;s:3:"sig";i:417319031;}}
