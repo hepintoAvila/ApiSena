@@ -9,6 +9,7 @@
  *  Ce programme est un logiciel libre distribue sous licence GNU/GPL.     *
  *  Pour plus de details voir le fichier COPYING.txt ou l'aide en ligne.   *
 \***************************************************************************/
+header('Content-Type: text/html; charset=utf-8');
 
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
@@ -20,7 +21,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
-		
+
+		function corregir_conceptos($str) {
+			if (isset($str)) {
+				$hechos = base64_decode(urldecode($str), true);
+				if ($hechos === false) {
+					return "Error: Invalid base64 encoding.";
+				}
+				
+				// Assuming input data is in UTF-8 before base64 encoding
+				$hechos_utf8 = mb_convert_encoding(urldecode($hechos), "UTF-8", "UTF-8");
+				$hechos_html = htmlentities($hechos_utf8, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				return $hechos_html;
+			}
+			return null;
+		}
 		$opcion = base64_decode($_POST['opcion']);
 		
 		switch ($opcion) {
@@ -287,9 +302,310 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$var = var2js($arrayMensage);
 					echo $var;	
 
-				}				
-				
+				}
+				break;
+		case 'addAsistente':						
+			$app=new Apis('sena_asistencias');
+			$variablesAVerificar=array();
+			$chartic=array();
+			$id_ou_options=0;
+			 $nombresApellidos = base64_decode($_POST['nombresApellidos']);
+			 $documento = base64_decode($_POST['documento']);
+			 $contratista = base64_decode($_POST['contratista']);
+			 $otroContratista = base64_decode($_POST['otroContratista']);
+			 $dependencia = base64_decode($_POST['dependencia']);
+			 $email = base64_decode($_POST['email']);
+			 $telefono = base64_decode($_POST['telefono']);
+			 $autorizacion = base64_decode($_POST['autorizacion']);
+			 $firmaDigital = base64_decode($_POST['firmaDigital']);
+			 $nombresDigital = base64_decode($_POST['nombresDigital']);
+			 $idActa = base64_decode($_POST['idActa']);
+			$entidad = base64_decode($_POST['entidad']);
+			$ApiToken     = base64_decode($_POST["ApiToken"]);
+			$Apikey     = base64_decode($_POST["Apikey"]);	
+			$idUsuario = base64_decode($_POST["idUsuario"]);
+				 // Crea un array con las variables que deseas verificar
+				$variablesAVerificar = [
+					'nombresApellidos' => $nombresApellidos,
+					'documento' => $documento,
+					'contratista' => $contratista,
+					'idActa' => $idActa,
+					'dependencia' => $dependencia,
+					'email' => $email,
+					'telefono' => $telefono,
+					'autorizacion' => $autorizacion,
+					'firmaDigital' => $firmaDigital,
+					'nombresDigital' => $nombresDigital,
+					'ApiToken' => $ApiToken,
+					'Apikey' => $Apikey,
+					'idUsuario' => $idUsuario,
+				];	
+				$mensajeError = $app->verificarVariables($variablesAVerificar);
+				$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
+				if (($mensajeError !== null) OR (!$validarTokes)){
+					
+				 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
+				 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
+					
+				}else{
+					$chartic['idActa'] ="".$idActa."";
+					$chartic['nombresApellidos'] ="".$nombresApellidos."";
+					$chartic['documento'] ="".$documento."";
+					$chartic['dependencia'] ="".$dependencia."";
+					$chartic['email'] ="".$email."";
+					$chartic['telefono'] ="".$telefono."";                                   
+					$chartic['contratista'] ="".$contratista."";                                   
+					$chartic['contratistaOtros'] ="".$otroContratista."";                                   
+					$chartic['autorizacion'] ="".$autorizacion."";                                   
+					$chartic['firmaDigital'] ="".$firmaDigital."";                                   
+					$chartic['entidad'] ="".$entidad."";                                   
+					$chartic = pipeline('pre_insertion',
+					array(
+						'args' => array(
+						'table' => 'sena_asistencias',
+					),
+					'data' => $chartic
+					)
+				);							
+				$idAsistencia=@sql_insertq('sena_asistencias',$chartic);
 
+				pipeline('post_insertion',
+				array(
+					'args' => array(
+					'table' =>'sena_asistencias',
+					'id_objet' => $idAsistencia
+					),
+					'data' => $chartic
+					)
+				);
+				$arrayMensage[]=array(
+					'id'=>1,
+					'message'=>'::OK:: Asistente registrado!',
+					'status'=>'202');
+					$var = var2js($arrayMensage);
+					echo $var;	
+				}
 		break;
+		case 'ConsultarAsistentes':	
+			$entidad = base64_decode($_POST['entidad']);
+			$DatosAuteurs=array();
+			$select='*';
+			$set = array();	
+			$sql = sql_select("COUNT(*) AS total",'sena_asistencias','entidad="'.$entidad.'"');
+				while ($row = sql_fetch($sql)) {	
+					$total = $row['total'];
+				}
+				if($total >= 1){
+					$app=new Apis('sena_asistencias');
+					$Asistentes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
+					$data = array("data"=>$Asistentes);
+					$var = var2js($data);
+					echo $var;
+				}else{
+					$records[] = array('idActa'=>1,
+					'nombresApellidos'=>'No existen registros',
+					'documento'=>'',
+					'dependencia'=>'');
+					$data = array("data"=>$records);
+					$var = var2js($data);	
+					echo $var;							
+				}						
+		break;
+		case 'deleteAsistente':	
+			$id_asistencia  = base64_decode($_POST["id"]);
+			sql_delete("sena_asistencias","id_asistencia =" . intval($id_asistencia));
+			
+			$res = sql_select("*", "sena_asistencias", "id_asistencia =" . intval($id_asistencia));
+			if ($res){
+			$msg[] = array('menssage'=>'OK. El Registro '.$id_asistencia.' fue eliminado correctamente!','status' => '200');
+			}	
+			$var = var2js($msg);	
+			echo $var;	
+		break;
+		case 'addConceptos':
+			$app=new Apis('sena_actas_conceptos');
+			$variablesAVerificar=array();
+			$chartic=array();
+
+
+			
+			// Validate and decode all necessary variables
+			$postKeys = ['entidad', 'ApiToken', 'Apikey', 'idUsuario', 'idActa', 'idSolicitud', 'idConcepto',0, 1, 2, 3, 4];
+			$decodedPost = [];
+			foreach ($postKeys as $key) {
+				if (isset($_POST[$key])) {
+					$decodedPost[$key] = base64_decode($_POST[$key], true);
+					if ($decodedPost[$key] === false) {
+						$decodedPost[$key] = "Error: Invalid base64 encoding for key $key.";
+					}
+				} else {
+					// Handle missing keys
+					$decodedPost[$key] = null;
+				}
+			}
+			$variablesAVerificar = [
+				'idConcepto' => $decodedPost['idConcepto'],
+				'idActa' => $decodedPost['idActa'],
+				'idSolicitud' => $decodedPost['idSolicitud'],
+				'entidad' => $decodedPost['entidad'],
+				'ApiToken' => $decodedPost['ApiToken'],
+				'Apikey' => $decodedPost['Apikey'],
+				'idUsuario' => $decodedPost['idUsuario'],
+			];
+
+			 
+
+			$mensajeError = $app->verificarVariables($variablesAVerificar);
+			$validarTokes = $app->verificarApikeyApiToken($decodedPost['ApiToken'],$decodedPost['ApiToken'],$decodedPost['idUsuario']);
+			if (($mensajeError !== null) OR (!$validarTokes)){
+				
+			 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
+			 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
+				
+			}else{
+				$sql = sql_select("COUNT(*) AS total",'sena_actas_conceptos','idActa="'.$decodedPost['idActa'].'" AND idSolicitud="'.$decodedPost['idSolicitud'].'"');
+				while ($row = sql_fetch($sql)) {	
+					$total = $row['total'];
+				}
+				if($total >= 1){
+					$sql2 = sql_select("idConcepto",'sena_actas_conceptos','idActa="'.$decodedPost['idActa'].'" AND idSolicitud="'.$decodedPost['idSolicitud'].'"');
+					while ($row2 = sql_fetch($sql2)) {	
+						$idConcepto = $row2['idConcepto'];
+					}	 
+					switch (base64_decode($_POST['idConcepto'])) {
+						case '1':
+							$chartic = [
+								'hechos' => corregir_conceptos($_POST[0]),
+							];
+						break;
+						case '2':
+							$chartic = [
+								'contemplacion' => corregir_conceptos($_POST[1])
+							];							
+						break;
+						case '3':
+							$chartic = [
+								'frenteHechos' => corregir_conceptos($_POST[2]),
+							];
+						break;
+						case '4':
+							$chartic = [
+								'recomendacion' => corregir_conceptos($_POST[3]),
+							];
+						break;
+						case '5':
+							$chartic = [
+								'compromisos' => corregir_conceptos($_POST[4]),
+							];
+						break;
+						}
+
+							$chartic = pipeline('pre_insertion',
+							array(
+								'args' => array(
+								'table' => 'sena_actas_conceptos',
+							),
+							'data' => $chartic
+							)
+						);							
+						sql_updateq('sena_actas_conceptos',$chartic,"idConcepto=" . intval($idConcepto) . "");
+						pipeline('post_insertion',
+						array(
+							'args' => array(
+							'table' =>'sena_actas_conceptos',
+							'id_objet' => $idConcepto
+							),
+							'data' => $chartic
+							)
+						);
+
+					$arrayMensage[]=array(
+						'id'=>1,
+						'message'=>'::OK:: Conceptos Actualizados!',
+						'status'=>'202');
+						$var = var2js($arrayMensage);
+						echo $var;	
+				}else{
+
+				$chartic = [
+					'idActa' => $decodedPost['idActa'],
+					'idSolicitud' => $decodedPost['idSolicitud'],
+					'hechos' => corregir_conceptos($_POST[0]),
+					'contemplacion' => corregir_conceptos($_POST[1]),
+					'frenteHechos' => corregir_conceptos($_POST[2]),
+					'recomendacion' => corregir_conceptos($_POST[3]),
+					'compromisos' => corregir_conceptos($_POST[4]),
+					'entidad' =>  $decodedPost['entidad'],
+				];
+						$chartic = pipeline('pre_insertion',
+						array(
+							'args' => array(
+							'table' => 'sena_actas_conceptos',
+						),
+						'data' => $chartic
+						)
+					);							
+					$idConcepto =@sql_insertq('sena_actas_conceptos',$chartic);
+
+					pipeline('post_insertion',
+					array(
+						'args' => array(
+						'table' =>'sena_actas_conceptos',
+						'id_objet' => $idConcepto 
+						),
+						'data' => $chartic
+						)
+					);
+					$arrayMensage[]=array(
+						'id'=>1,
+						'message'=>'::OK:: Conceptos registrado!',
+						'status'=>'202');
+						$var = var2js($arrayMensage);
+						echo $var;	
+				}		
+			}			
+		break;
+		case 'listarConceptos':
+			$idActa = base64_decode($_POST['idActa']);
+			$idSolicitud = base64_decode($_POST['idSolicitud']);
+			$entidad = base64_decode($_POST['entidad']);
+
+			$DatosAuteurs=array();
+			$select='*';
+			$set = array();	
+			$sql = sql_select("COUNT(*) AS total",'sena_actas_conceptos','idActa="'.$idActa.'" AND idSolicitud="'.$idSolicitud.'" AND entidad="'.$entidad.'"');
+				while ($row = sql_fetch($sql)) {	
+					$total = $row['total'];
+				}
+				if($total >= 1){
+					$app=new Apis('sena_actas_conceptos');
+					$row2=$app->consultadatos('idActa="'.$idActa.'" AND idSolicitud="'.$idSolicitud.'" AND entidad="'.$entidad.'"',$select);				
+					foreach($row2 as $a => $val){
+							$chartic[] =array(
+								'hechos' => !empty($val['hechos']) ? $val['hechos']:'',
+								'contemplacion' => !empty($val['contemplacion']) ? $val['contemplacion']:'',
+								'frenteHechos' => !empty($val['frenteHechos']) ? $val['frenteHechos']:'',
+								'recomendacion' => !empty($val['recomendacion']) ? $val['recomendacion']:'',
+								'compromisos' => !empty($val['compromisos']) ? $val['compromisos']:'',
+							);
+						}
+					$data = array("data"=>$chartic);
+					$var = var2js($data);
+					echo $var;
+				}else{
+					$records[] = array('idActa'=>1,
+					'hechos'=>'',
+					'contemplacion'=>'',
+					'frenteHechos'=>'',
+					'recomendacion'=>'',
+					'compromisos'=>'');
+					$data = array("data"=>$records);
+					$var = var2js($data);	
+					echo $var;							
+				}			
+		break;
+		
+		
+		
 }				
 ?>

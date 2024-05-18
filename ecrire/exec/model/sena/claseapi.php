@@ -439,6 +439,7 @@ include_spip('base/connect_sql');
 				)
 			);
 		}
+	 
 		/**
 		 * Retorno los parametros para actualizar en una tabla
 		 * Autor: HOSMMER EDUARDO PINTO ROJAS
