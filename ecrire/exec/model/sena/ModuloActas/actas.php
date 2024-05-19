@@ -13,14 +13,19 @@
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
+		include_spip('inc/autoriser');	
 		include_spip('base/connect_sql');
 		include_spip('inc/filtres_ecrire');
 		include_spip('inc/filtres');
+		include_spip('inc/texte_mini');
 		include_spip('inc/utils');
 		include_spip('inc/json');
-		include_spip('inc/autoriser');
-		include_spip('exec/model/sena/claseapi');
+		include_spip('exec/model/sena/claseapi');	
+		//include_spip('fpdf.php');	
 		include_spip('inc/charsets');
+		include_spip('inc/actions');
+		include_spip('inc/editer');
+		include_spip('inc/notifications');
 
 		function corregir_conceptos($str) {
 			if (isset($str)) {
@@ -313,6 +318,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			 $dependencia = base64_decode($_POST['dependencia']);
 			 $email = base64_decode($_POST['email']);
 			 $telefono = base64_decode($_POST['telefono']);
+			 $planta = base64_decode($_POST['planta']);
 			 $autorizacion = base64_decode($_POST['autorizacion']);
 			 $firmaDigital = base64_decode($_POST['firmaDigital']);
 			 $nombresDigital = base64_decode($_POST['nombresDigital']);
@@ -330,6 +336,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					'dependencia' => $dependencia,
 					'email' => $email,
 					'telefono' => $telefono,
+					'planta' => $planta,
 					'autorizacion' => $autorizacion,
 					'firmaDigital' => $firmaDigital,
 					'nombresDigital' => $nombresDigital,
@@ -345,12 +352,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
 					
 				}else{
+			/*
 					$chartic['idActa'] ="".$idActa."";
 					$chartic['nombresApellidos'] ="".$nombresApellidos."";
 					$chartic['documento'] ="".$documento."";
 					$chartic['dependencia'] ="".$dependencia."";
 					$chartic['email'] ="".$email."";
 					$chartic['telefono'] ="".$telefono."";                                   
+					$chartic['planta'] ="".$planta."";                                   
 					$chartic['contratista'] ="".$contratista."";                                   
 					$chartic['contratistaOtros'] ="".$otroContratista."";                                   
 					$chartic['autorizacion'] ="".$autorizacion."";                                   
@@ -381,7 +390,67 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					'status'=>'202');
 					$var = var2js($arrayMensage);
 					echo $var;	
+				*/
 				}
+				
+				//ARMAR PDF PARA LA LISTA
+						//CREAMOS LA SOLICITUD EN PDF
+						$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/'.$idActa.'.pdf';
+						if (@file_exists($path)){
+							spip_log("Supprimer ancien logo '.$idActa.'", 'listaAsistentes');
+							spip_unlink($path);
+						}
+						require('../ecrire/exec/model/sena/ModuloActas/fpdf_listAsistencias.php');
+						$pdf = new PDF();
+						$pdf->AliasNbPages();
+						$pdf->AddPage('P','Legal');
+						$pdf = new PDF();
+						// Títulos de las columnas
+						$select='*';
+						$set = array();	
+						$w1 = array(8, 83, 40, 20,39);
+						$w2 = array(190);
+						$w3 = array(95, 95);
+							
+						$i=1;				
+						$sql = sql_select($select,'sena_asistencias','entidad="senaV1"');
+							while ($row = sql_fetch($sql)) {	
+								$data[$i][]= array(''.$i.'',''.$row['nombresApellidos'].'',''.$row['documento'].''.$row['planta'].'',''.$row['contratista'].'');	
+								$data2[$i][]= array(''.$row['contratistaOtros'].'');	
+								$data3[$i][]= array(''.$row['dependencia'].'',''.$row['email'].'');	
+								$data4[$i][]= array(''.$row['autorizacion'].'','');	
+								$i++;
+							}
+						$header1= array('#', 'NOMBRES Y APELLIDOS', 'DOCUMENTO', 'PLANTA','CONTRATISTA');						
+						$header2 = array('OTRO ¿CUAL?');
+						$header3 = array('DEPENDENCIA/ EMPRESA', 'CORREO ELECTRÓNICO');
+						$header4 = array('AUTORIZA GRABACIÓN', 'FIRMA O PARTICIPACIÓN VIRTUAL');
+						$header5 = array('');
+						
+						// Carga de datos
+						$pdf->SetFont('Arial','',14);
+						$pdf->AddPage();
+						for($i = 1; $i < count($data); ++$i) {
+						$pdf->SimpleTable($header1,$data[$i],$w1);
+						$pdf->SimpleTable($header2,$data2[$i],$w2);
+						$pdf->SimpleTable($header3,$data3[$i],$w3);
+						$pdf->SimpleTable($header4,$data4[$i],$w3);
+						//$pdf->SingleColumnTable($header5);
+						$pdf->ln(6);
+						}
+
+						$pdf->Output('F',''.$idActa.'.pdf',true);
+						$pdf='../ecrire/'.$idActa.'.pdf';
+						if (@file_exists($pdf)){
+							$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/'.$idActa.'.pdf';
+							$moved = rename($pdf, $newLocation);
+							if($moved)
+							  {
+								spip_unlink($pdf);
+							  }						
+						}						 
+					   //FIN GENERA LA FICHA
+
 		break;
 		case 'ConsultarAsistentes':	
 			$entidad = base64_decode($_POST['entidad']);
@@ -525,11 +594,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$chartic = [
 					'idActa' => $decodedPost['idActa'],
 					'idSolicitud' => $decodedPost['idSolicitud'],
-					'hechos' => $_POST[0],
-					'contemplacion' => $_POST[1],
-					'frenteHechos' => $_POST[2],
-					'recomendacion' => $_POST[3],
-					'compromisos' => $_POST[4],
+					'hechos' => corregir_conceptos($_POST[0]),
+					'contemplacion' => corregir_conceptos($_POST[1]),
+					'frenteHechos' => corregir_conceptos($_POST[2]),
+					'recomendacion' => corregir_conceptos($_POST[3]),
+					'compromisos' => corregir_conceptos($_POST[4],),
 					'entidad' =>  $decodedPost['entidad'],
 				];
 						$chartic = pipeline('pre_insertion',
