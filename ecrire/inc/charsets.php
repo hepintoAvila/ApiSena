@@ -1257,3 +1257,24 @@ function utf8_noplanes($x) {
 
 	return $x;
 }
+
+/**
+ * Transforme une chaîne utf-8 en utf-8 sans "planes"
+ * ce qui permet de la donner à MySQL "utf8", qui n'est pas un utf-8 complet
+ * L'alternative serait d'utiliser utf8mb4
+ *
+ * @param string $raw_url_encoded
+ *     La chaîne à transformer
+ * @return string
+ *     La chaîne avec les caractères utf8 des hauts "planes" échappée
+ *     en unicode : &#128169;
+ */
+function decodeHtmlEnt($raw_url_encoded) {
+	$enc = rawurldecode($raw_url_encoded);
+	if(utf8_encode(utf8_decode($enc))==$enc){;
+
+		return rawurldecode($raw_url_encoded);
+	}else{
+		return utf8_encode(rawurldecode($raw_url_encoded));
+	}
+}

@@ -9,8 +9,7 @@
  *  Ce programme est un logiciel libre distribue sous licence GNU/GPL.     *
  *  Pour plus de details voir le fichier COPYING.txt ou l'aide en ligne.   *
 \***************************************************************************/
-header('Content-Type: text/html; charset=utf-8');
-
+ 
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
@@ -21,17 +20,15 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
+		include_spip('inc/charsets');
 
 		function corregir_conceptos($str) {
 			if (isset($str)) {
-				$hechos = base64_decode(urldecode($str), true);
-				if ($hechos === false) {
-					return "Error: Invalid base64 encoding.";
-				}
+				$hechos = base64_decode($str);
 				
 				// Assuming input data is in UTF-8 before base64 encoding
-				$hechos_utf8 = mb_convert_encoding(urldecode($hechos), "UTF-8", "UTF-8");
-				$hechos_html = htmlentities($hechos_utf8, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				 //$hechos_utf8 =urldecode($hechos);
+				$hechos_html = decodeHtmlEnt($hechos);
 				return $hechos_html;
 			}
 			return null;
@@ -428,7 +425,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			$chartic=array();
 
 
-			
+
 			// Validate and decode all necessary variables
 			$postKeys = ['entidad', 'ApiToken', 'Apikey', 'idUsuario', 'idActa', 'idSolicitud', 'idConcepto',0, 1, 2, 3, 4];
 			$decodedPost = [];
@@ -452,8 +449,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				'Apikey' => $decodedPost['Apikey'],
 				'idUsuario' => $decodedPost['idUsuario'],
 			];
-
-			 
 
 			$mensajeError = $app->verificarVariables($variablesAVerificar);
 			$validarTokes = $app->verificarApikeyApiToken($decodedPost['ApiToken'],$decodedPost['ApiToken'],$decodedPost['idUsuario']);
@@ -480,12 +475,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						break;
 						case '2':
 							$chartic = [
-								'contemplacion' => corregir_conceptos($_POST[1])
+								'contemplacion' =>corregir_conceptos($_POST[1]),
 							];							
 						break;
 						case '3':
 							$chartic = [
-								'frenteHechos' => corregir_conceptos($_POST[2]),
+								'frenteHechos' =>corregir_conceptos($_POST[2]),
 							];
 						break;
 						case '4':
@@ -530,11 +525,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$chartic = [
 					'idActa' => $decodedPost['idActa'],
 					'idSolicitud' => $decodedPost['idSolicitud'],
-					'hechos' => corregir_conceptos($_POST[0]),
-					'contemplacion' => corregir_conceptos($_POST[1]),
-					'frenteHechos' => corregir_conceptos($_POST[2]),
-					'recomendacion' => corregir_conceptos($_POST[3]),
-					'compromisos' => corregir_conceptos($_POST[4]),
+					'hechos' => $_POST[0],
+					'contemplacion' => $_POST[1],
+					'frenteHechos' => $_POST[2],
+					'recomendacion' => $_POST[3],
+					'compromisos' => $_POST[4],
 					'entidad' =>  $decodedPost['entidad'],
 				];
 						$chartic = pipeline('pre_insertion',
@@ -566,6 +561,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			}			
 		break;
 		case 'listarConceptos':
+
 			$idActa = base64_decode($_POST['idActa']);
 			$idSolicitud = base64_decode($_POST['idSolicitud']);
 			$entidad = base64_decode($_POST['entidad']);
@@ -581,9 +577,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$app=new Apis('sena_actas_conceptos');
 					$row2=$app->consultadatos('idActa="'.$idActa.'" AND idSolicitud="'.$idSolicitud.'" AND entidad="'.$entidad.'"',$select);				
 					foreach($row2 as $a => $val){
+
 							$chartic[] =array(
 								'hechos' => !empty($val['hechos']) ? $val['hechos']:'',
-								'contemplacion' => !empty($val['contemplacion']) ? $val['contemplacion']:'',
+								'contemplacion' => !empty($val['contemplacion']) ? $val['contemplacion'] :'',
 								'frenteHechos' => !empty($val['frenteHechos']) ? $val['frenteHechos']:'',
 								'recomendacion' => !empty($val['recomendacion']) ? $val['recomendacion']:'',
 								'compromisos' => !empty($val['compromisos']) ? $val['compromisos']:'',
