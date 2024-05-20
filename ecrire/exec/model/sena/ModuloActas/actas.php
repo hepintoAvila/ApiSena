@@ -690,12 +690,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 			$DatosAuteurs=array();
 			$select='*';
-			$set = array();	
+			$set = array();
+			if(!empty($idActa)){	
 			$sql = sql_select("COUNT(*) AS total",'sena_actas_conceptos','idActa="'.$idActa.'" AND idSolicitud="'.$idSolicitud.'" AND entidad="'.$entidad.'"');
 				while ($row = sql_fetch($sql)) {	
 					$total = $row['total'];
 				}
-				if($total >= 1){
+				if(!empty($total) ){
+				if($total >=1){
 					$app=new Apis('sena_actas_conceptos');
 					$row2=$app->consultadatos('idActa="'.$idActa.'" AND idSolicitud="'.$idSolicitud.'" AND entidad="'.$entidad.'"',$select);				
 					foreach($row2 as $a => $val){
@@ -721,7 +723,29 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$data = array("data"=>$records);
 					$var = var2js($data);	
 					echo $var;							
-				}			
+				}
+			}else{
+				$records[] = array('idActa'=>1,
+				'hechos'=>'',
+				'contemplacion'=>'',
+				'frenteHechos'=>'',
+				'recomendacion'=>'',
+				'compromisos'=>'');
+				$data = array("data"=>$records);
+				$var = var2js($data);	
+				echo $var;							
+			}
+			}else{
+				$records[] = array('idActa'=>1,
+				'hechos'=>'',
+				'contemplacion'=>'',
+				'frenteHechos'=>'',
+				'recomendacion'=>'',
+				'compromisos'=>'');
+				$data = array("data"=>$records);
+				$var = var2js($data);	
+				echo $var;					
+			}			
 		break;
 		
 		
