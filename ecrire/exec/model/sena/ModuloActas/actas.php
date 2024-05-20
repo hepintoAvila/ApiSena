@@ -305,6 +305,68 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					echo $var;	
 
 				}
+				//CREAMOS EL PDF DE LOS ESTUDIANTES ASIGNADOS AL ACTA
+				//ARMAR PDF PARA LA LISTA
+						//CREAMOS LA SOLICITUD EN PDF
+						$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaAprendiz'.$idActa.'.pdf';
+						if (@file_exists($path)){
+							spip_log("Supprimer ancien logo '.$idActa.'", 'listaAsistentes');
+							spip_unlink($path);
+						}
+						require('../ecrire/exec/model/sena/ModuloActas/fpdf_listAprendices.php');
+						$pdf = new PDF();
+						$pdf->AliasNbPages();
+						$pdf->AddPage('L','Legal');
+						$pdf = new PDF();
+						// Títulos de las columnas
+						$select='*';
+						$set = array();	
+						$w1 = array(8, 120,10,45,125,30);
+						$i=1;	
+						$sql1 = sql_select('casosComite','sena_actas','entidad="senaV1"');
+							while ($row1 = sql_fetch($sql1)) {	
+								$casos[]= $row1['casosComite'];	
+							}
+				
+							$itemsCasos = str_replace(' ', '', implode(", ",$casos));
+
+							$sql2 = sql_select('idAprendiz','sena_solicitudcomite','idSolicitud IN ('.$itemsCasos.') AND entidad="senaV1"');
+							while ($row2 = sql_fetch($sql2)) {	
+								$idAps[]= $row2['idAprendiz'];	
+							}
+							
+							$filUnicos = array_values(array_unique($idAps));				
+							$itemsidAps = str_replace(' ', '', implode(", ",$filUnicos));
+							
+							$sql3 = sql_select('*','sena_aprendiz','idAprendiz IN ('.$itemsidAps.') AND entidad="senaV1"');
+							$j=1;
+							while ($row3 = sql_fetch($sql3)) {
+								$dataApr[$j][]= array(''.$j.'',''.$row3['nombres'].' '.$row3['apellidos'].'',''.$row3['tipoIdentificacion'].'',''.$row3['identificacion'].'',''.$row3['programaFormacion'].'',''.$row3['ficha'].'');	
+								$j++;
+							}
+
+						$header1= array('#', 'NOMBRES Y APELLIDOS', 'TIPO', 'DOCUMENTO','PROGRAMA','FICHA');						
+						$header5 = array('');
+						
+						// Carga de datos
+						$pdf->SetFont('Arial','',14);
+						$pdf->AddPage('L','Legal');
+						for($i = 1; $i < count($dataApr); ++$i) {
+						$pdf->SimpleTable($header1,$dataApr[$i],$w1);
+						//$pdf->SingleColumnTable($header5);
+						$pdf->ln(2.5);
+						}
+
+						$pdf->Output('F',''.$idActa.'.pdf',true);
+						$pdf='../ecrire/'.$idActa.'.pdf';
+						if (@file_exists($pdf)){
+							$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaAprendiz'.$idActa.'.pdf';
+							$moved = rename($pdf, $newLocation);
+							if($moved)
+							  {
+								spip_unlink($pdf);
+							  }						
+						}					
 				break;
 		case 'addAsistente':						
 			$app=new Apis('sena_asistencias');
@@ -352,7 +414,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
 					
 				}else{
-			/*
+			
 					$chartic['idActa'] ="".$idActa."";
 					$chartic['nombresApellidos'] ="".$nombresApellidos."";
 					$chartic['documento'] ="".$documento."";
@@ -390,7 +452,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					'status'=>'202');
 					$var = var2js($arrayMensage);
 					echo $var;	
-				*/
+			
 				}
 				
 				//ARMAR PDF PARA LA LISTA
