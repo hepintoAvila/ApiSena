@@ -308,22 +308,20 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				//CREAMOS EL PDF DE LOS ESTUDIANTES ASIGNADOS AL ACTA
 				//ARMAR PDF PARA LA LISTA
 						//CREAMOS LA SOLICITUD EN PDF
-						$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaAprendiz'.$idActa.'.pdf';
+						$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/fpdf_actas'.$idActa.'.pdf';
 						if (@file_exists($path)){
-							spip_log("Supprimer ancien logo '.$idActa.'", 'listaAsistentes');
+							spip_log("Supprimer ancien logo '.$idActa.'", 'listaActas');
 							spip_unlink($path);
 						}
-						require('../ecrire/exec/model/sena/ModuloActas/fpdf_listAprendices.php');
+						require('../ecrire/exec/model/sena/ModuloActas/fpdf_actas.php');
 						$pdf = new PDF();
 						$pdf->AliasNbPages();
-						$pdf->AddPage('L','Legal');
-						$pdf = new PDF();
-						// Títulos de las columnas
+						$pdf->AddPage('P','Legal');
 						$select='*';
 						$set = array();	
-						$w1 = array(8, 120,10,45,125,30);
+						$pdf->$w1 = array(8,105,10,45,30);
 						$i=1;	
-						$sql1 = sql_select('casosComite','sena_actas','entidad="senaV1"');
+						$sql1 = sql_select('casosComite','sena_actas','idActa="'.$idActa.'" AND entidad="senaV1"');
 							while ($row1 = sql_fetch($sql1)) {	
 								$casos[]= $row1['casosComite'];	
 							}
@@ -341,26 +339,19 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$sql3 = sql_select('*','sena_aprendiz','idAprendiz IN ('.$itemsidAps.') AND entidad="senaV1"');
 							$j=1;
 							while ($row3 = sql_fetch($sql3)) {
-								$dataApr[$j][]= array(''.$j.'',''.$row3['nombres'].' '.$row3['apellidos'].'',''.$row3['tipoIdentificacion'].'',''.$row3['identificacion'].'',''.$row3['programaFormacion'].'',''.$row3['ficha'].'');	
+								$dataApr[$j][]= array(''.$j.'',''.$row3['nombres'].' '.$row3['apellidos'].'',''.$row3['tipoIdentificacion'].'',''.$row3['identificacion'].'',''.$row3['ficha'].'');	
 								$j++;
 							}
+						$pdf->$dataApr; 
+						$pdf->$header1= array('#', 'NOMBRES Y APELLIDOS', 'TIPO', 'DOCUMENTO','FICHA');
+						$pdf->Contenido();				
 
-						$header1= array('#', 'NOMBRES Y APELLIDOS', 'TIPO', 'DOCUMENTO','PROGRAMA','FICHA');						
-						$header5 = array('');
 						
-						// Carga de datos
-						$pdf->SetFont('Arial','',14);
-						$pdf->AddPage('L','Legal');
-						for($i = 1; $i < count($dataApr); ++$i) {
-						$pdf->SimpleTable($header1,$dataApr[$i],$w1);
-						//$pdf->SingleColumnTable($header5);
-						$pdf->ln(2.5);
-						}
-
-						$pdf->Output('F',''.$idActa.'.pdf',true);
-						$pdf='../ecrire/'.$idActa.'.pdf';
+						//$pdf->Footer();
+						$pdf->Output('F','Acta_'.$idActa.'.pdf',true);
+						$pdf='../ecrire/Acta_'.$idActa.'.pdf';
 						if (@file_exists($pdf)){
-							$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaAprendiz'.$idActa.'.pdf';
+							$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/Actas_'.$idActa.'.pdf';
 							$moved = rename($pdf, $newLocation);
 							if($moved)
 							  {

@@ -4,7 +4,7 @@ require('../ecrire/exec/model/sena/ModuloActas/fpdf.php');
 class PDF extends FPDF
 {
     // Cabecera de página
-    function Header()
+       function Header()
     {
         $logo = '../ecrire/exec/model/sena/ModuloActas/pdf/logo.png';
         $logo_sena = '../ecrire/exec/model/sena/ModuloActas/pdf/logo_sena.png';
