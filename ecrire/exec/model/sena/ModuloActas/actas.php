@@ -41,6 +41,33 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		$opcion = base64_decode($_POST['opcion']);
 		
 		switch ($opcion) {
+			case 'generarConsolidado':
+
+				$entidad = base64_decode($_POST['entidad']);
+				$DatosAuteurs=array();
+				$select='*';
+				$set = array();	
+				$sql = sql_select("COUNT(*) AS total",'sena_actas','entidad="'.$entidad.'" AND statut="Activo"');
+					while ($row = sql_fetch($sql)) {	
+						$total = $row['total'];
+					}
+					if($total >= 1){
+						$app=new Apis('sena_actas');
+						$aprendizes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
+						$data = array("data"=>$aprendizes);
+						$var = var2js($data);
+						echo $var;
+					}else{	
+					$records[] = array('idActa'=>1,
+					'nombre'=>'No existen registros',
+					'fecha'=>'2024',
+					'horaInicial'=>'08',
+					'status' => '202');
+					$data = array("data"=>$records);
+					$var = var2js($data);	
+					echo $var;	
+					}
+				break;
 			case 'listActas':
 				$entidad = base64_decode($_POST['entidad']);
 				$DatosAuteurs=array();
@@ -60,7 +87,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						$records[] = array('idActa'=>1,
 						'nombre'=>'No existen registros',
 						'fecha'=>'2024',
-						'horaInicial'=>'08');
+						'horaInicial'=>'08'
+					);
 						$data = array("data"=>$records);
 						$var = var2js($data);	
 						echo $var;							
