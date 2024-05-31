@@ -44,17 +44,48 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			case 'generarConsolidado':
 
 				$entidad = base64_decode($_POST['entidad']);
+				$items = base64_decode($_POST['items']);
+				 
+
 				$DatosAuteurs=array();
 				$select='*';
 				$set = array();	
-				$sql = sql_select("COUNT(*) AS total",'sena_actas','entidad="'.$entidad.'" AND statut="Activo"');
+				$sql = sql_select("COUNT(*) AS total",'sena_actas','idActa IN ('.$items.') AND entidad="'.$entidad.'" AND statut="Activo"');
 					while ($row = sql_fetch($sql)) {	
 						$total = $row['total'];
 					}
 					if($total >= 1){
 						$app=new Apis('sena_actas');
-						$aprendizes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
-						$data = array("data"=>$aprendizes);
+						//$aprendizes=$app->consultadatos('idActa IN ('.$items.') AND entidad="'.$entidad.'"',$select);				
+						$sql1 = sql_select('*','sena_actas','idActa IN ('.$items.') AND entidad="'.$entidad.'" AND statut="Activo"');
+						while ($row1 = sql_fetch($sql1)) {	
+							$consolidado[]= array(
+												"FECHA COMITE"=>$row1['fecha'],
+												"HORA"=>$row1['fecha'],
+												"APRENDIZ"=>'APRENDIZ',
+												"TIPO DOCUMENTO"=>'TP',
+												"NUMERO DE DOCUMENTO IDENTIDAD"=>'xxxx',
+												"ESPECIALIDAD"=>'ESPECIALIDAD',
+												"FICHA"=>'FICHA',
+												"INICIO LECTIVA"=>'INICIO LECTIVA',
+												"FECHA FIN FORMACION"=>'FECHA FIN FORMACION',
+												"INICIO PRODUCTIVA"=>'INICIO PRODUCTIVA',
+												"FIN 2 AÑOS"=>'FIN 2 AÑOS',
+												"CORREO"=>'CORREO',
+												"TELEFONO"=>'TELEFONO',
+												"SOLICITUD"=>'SOLICITUD',
+												"HECHOS"=>'La instructora informa que la empresa DELTA A SALUD SAS BIC cancela por mutuo acuerdo el contrato de aprendizaje a partir de septiembre 27/203, igualmente la aprendiz manifiesta dolencias físicas en el brazo derecho, jornadas de trabajo virtual muy extensas, se le permitió trabajar desde la casa.',
+												"CITACION"=>'1',
+												"ETAPA"=>'PRODUCTIVA',
+												"JORNADA"=>'MAÑANA',
+												"REGLA"=>'DEBERES DEL APRENDIZ. En el  articulo 9, numeral 1 "Cumplir con todas las actividades propias de su proceso de aprendizaje o del plan de mejoramiento, definidas durante su etapa lectiva y productiva.',
+												"TIPO DE FALTA"=>'ACADEMICA',
+												"COORDINADOR"=>'DORIS JUDITH',
+												"OBSERVACIONES"=>'El Aprendiz el día 24 de octubre de 2023, comienza su fase práctica en las instalaciones de la Universidad Autónoma De Bucaramanga U.N.A.B., el 01 de noviembre a las 4:15 pm, envía un mensaje de voz informándome el cambio de sede de práctica, diciendo que no conocía la sede del Cacique. El 02 de noviembre el ingeniero Rubén Darío Pérez, Coordinador Soporte Tecnológico, mediante comunicación telefónica informa que el aprendiz no se presentó y que no se ha logrado establecer comunicación con él. Se ha intentado contactar al aprendiz por diferentes medios, sin obtener respuesta alguna a la fecha',
+												);	
+						}
+						
+						$data = array("data"=>$consolidado);
 						$var = var2js($data);
 						echo $var;
 					}else{	
