@@ -69,7 +69,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									$correo1= $row1['correo'];		
 								  }	
  						 //DATOS DEL sena_instructor
-					$sql3 = sql_select("MAX(idSolicitud),academica,disciplinaria,inasistencias,verbal,escrito",
+					$sql3 = sql_select("*",
 					'sena_sancionesanteriores','idAprendiz="'.$idAprendiz.'"');
 								while ($row3 = sql_fetch($sql3)) {	
 									$academica= $row3['academica'] ? $row3['academica']:0;		
@@ -78,14 +78,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									$verbal= !empty($row3['verbal'])? $row3['verbal']:0;			
 									$escrito= !empty($row3['escrito'])? $row3['escrito']:0;			
 								  }	
-								  $Aprendices[] = array(
-									'disciplinaria'=>$disciplinaria,
-									'academica'=>$academica,
-									'inasistencias'=>$inasistencias,
-									'verbal'=>$verbal,
-									'escrito'=>$escrito,
-									); 
-									
+								   
+									$Aprendices= array(
+										'disciplinaria'=>!empty($disciplinaria) ? $disciplinaria :'0',
+										'academica'=>!empty($academica) ? $academica :'0',
+										'inasistencias'=>!empty($inasistencias) ? $inasistencias :'0',
+										'verbal'=>!empty($verbal) ? $verbal :'0',
+										'escrito'=>!empty($escrito) ? $escrito :'0',
+										); 
 						//CREAMOS LA SOLICITUD EN PDF
 									$path = '../ecrire/exec/model/sena/ModuloSolicitudComite/pdf/sc/'.$codigoFicha.'.pdf';
 									if (@file_exists($path)){
@@ -100,7 +100,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$pdf = new PDF();
 							$pdf->AliasNbPages();
 							$pdf->AddPage('P','Legal');
-							$pdf->saciones=$Aprendices;
+							$pdf->sanciones=$Aprendices;
 							$pdf->calificacion=$tipoAtencion;
 							$pdf->descripcion="".$descripcion."";
 							$pdf->tipoComiteAcademico=$tipoComiteAcademico;

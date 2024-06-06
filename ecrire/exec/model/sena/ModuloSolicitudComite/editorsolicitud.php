@@ -276,19 +276,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					case "datosAprendiz":
 							$nombrePrograma     = base64_decode($_POST["nombrePrograma"]);
 							$codigoFicha     = base64_decode($_POST["codigoFicha"]);
-							$faltaAcademica     = base64_decode($_POST["faltaAcademica"]);
-							$faltaDisciplinaria     = base64_decode($_POST["faltaDisciplinaria"]);
-							$faltaInasistencias     = base64_decode($_POST["faltaInasistencias"]);
-							$faltaVerbal     = base64_decode($_POST["faltaVerbal"]);
-							$faltaEscrito     = base64_decode($_POST["faltaEscrito"]);
+							//$faltaAcademica     = base64_decode($_POST["faltaAcademica"]);
+							//$faltaDisciplinaria     = base64_decode($_POST["faltaDisciplinaria"]);
+							//$faltaInasistencias     = base64_decode($_POST["faltaInasistencias"]);
+							//$faltaVerbal     = base64_decode($_POST["faltaVerbal"]);
+							//$faltaEscrito     = base64_decode($_POST["faltaEscrito"]);
 							$variablesAVerificar = [
 								'idSolicitud' => $idSolicitud,
 								'idAprendiz' => $e,
-								'faltaAcademica' => $faltaAcademica,
-								'faltaDisciplinaria' => $faltaDisciplinaria,
-								'faltaInasistencias' => $faltaInasistencias,
-								'faltaVerbal' => $faltaVerbal,
-								'faltaEscrito' => $faltaEscrito,
 								'codigoFicha' => $codigoFicha,
 								'nombrePrograma' => $nombrePrograma,
 								'idUsuario' => $idUsuario,
@@ -355,9 +350,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										{
 											sql_updateq('sena_solicitudcomite',array('tipoSolicitud' => $e),"idSolicitud=".intval($idSolicitud)."");
 										}
-								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Registro actualizado correctamente!','status'=>'202');
+								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Registro actualizado correctamente!!!!','status'=>'202');
 							}
-						echo var2js($arrayMensage);		
+						echo var2js($arrayMensage);	
+						
+						
 						break;
 						case "datosTipoAtencion":
 								$variablesAVerificar = [
@@ -415,7 +412,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						break;	
 						case "datosDescripcion":
 						//
-								$descripcion     = base64_decode($_POST["descripcion"]);
+								$descripcion     = base64_decode($_POST["e"]);
 								$variablesAVerificar = [
 								'idSolicitud' => $idSolicitud,
 								'e' => htmlspecialchars($e),
@@ -440,7 +437,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										{
 											sql_updateq('sena_solicitudcomite',array('hechos' => $texto_utf8),"idSolicitud=".intval($idSolicitud)."");
 										}								
-								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Registro actualizado correctamente!','status'=>'202');
+								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Descripcion actualizado correctamente!','status'=>'202');
 							}
 						echo var2js($arrayMensage);	
 						break;							
@@ -489,21 +486,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									$correo1= $row1['correo'];		
 								  }	
  				//DATOS DEL sena_instructor
-					$sql3 = sql_select("MAX(idSolicitud),academica,disciplinaria,inasistencias,verbal,escrito",
+					$sql3 = sql_select("*",
 					'sena_sancionesanteriores','idAprendiz="'.$idAprendiz.'"');
 								while ($row3 = sql_fetch($sql3)) {	
-									$academica= $row3['academica'] ? $row3['academica']:0;		
-									$disciplinaria= !empty($row3['disciplinaria']) ? $row3['disciplinaria']:0;			
-									$inasistencias= !empty($row3['inasistencias'])? $row3['inasistencias']:0;		
-									$verbal= !empty($row3['verbal'])? $row3['verbal']:0;			
-									$escrito= !empty($row3['escrito'])? $row3['escrito']:0;			
+									$academica= $row3['academica'] ? $row3['academica']:'0';		
+									$disciplinaria= !empty($row3['disciplinaria']) ? $row3['disciplinaria']:'0';		
+									$inasistencias= !empty($row3['inasistencias'])? $row3['inasistencias']:'0';	
+									$verbal= !empty($row3['verbal'])? $row3['verbal']:'0';			
+									$escrito= !empty($row3['escrito'])? $row3['escrito']:'0';		
 								  }	
-									$Aprendices[] = array(
-									'disciplinaria'=>$disciplinaria,
-									'academica'=>$academica,
-									'inasistencias'=>$inasistencias,
-									'verbal'=>$verbal,
-									'escrito'=>$escrito,
+									$Aprendices= array(
+									'disciplinaria'=>!empty($disciplinaria) ? $disciplinaria :'0',
+									'academica'=>!empty($academica) ? $academica :'0',
+									'inasistencias'=>!empty($inasistencias) ? $inasistencias :'0',
+									'verbal'=>!empty($verbal) ? $verbal :'0',
+									'escrito'=>!empty($escrito) ? $escrito :'0',
 									); 
 									
 						//CREAMOS LA SOLICITUD EN PDF
@@ -520,7 +517,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$pdf = new PDF();
 							$pdf->AliasNbPages();
 							$pdf->AddPage('P','Legal');
-							$pdf->saciones=$Aprendices;
+							$pdf->sanciones=$Aprendices;
 							$pdf->calificacion=$tipoAtencion;
 							$pdf->descripcion="".$descripcion."";
 							$pdf->tipoComiteAcademico=$tipoComiteAcademico;

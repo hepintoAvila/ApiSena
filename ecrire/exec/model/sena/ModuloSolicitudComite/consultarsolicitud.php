@@ -167,7 +167,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'idAprendiz'=>$value['idAprendiz'],
 								'aprendiz'=>"".$value['idAprendiz']."-".$nombresApellidosAprendiz,
 								'email'=>$correo,
-								'instructor'=>"".$value['idInstructor']."-".$nombresApellidosInstructor,
+								'instructor'=>$nombresApellidosInstructor,
 								'tipoSolicitud'=>$value['tipoSolicitud'],
 								'codigoFicha'=>$value['codigoFicha'],
 								'tipoAtencion'=>$value['tipoAtencion'],
