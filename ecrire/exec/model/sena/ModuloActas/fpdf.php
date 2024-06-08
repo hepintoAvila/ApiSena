@@ -104,6 +104,9 @@ function __construct($orientation='P', $unit='mm', $size='A4')
 	$this->w1 = array();
 	$this->dataApr = array();
 	$this->header1 = array();
+	$this->DatosActa = array();
+	$this->datosAprendiz = array();
+	$this->dataConceptos = array();
 	// Font path
 	if(defined('FPDF_FONTPATH'))
 		$this->fontpath = FPDF_FONTPATH;

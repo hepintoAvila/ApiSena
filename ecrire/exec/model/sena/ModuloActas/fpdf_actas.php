@@ -20,18 +20,17 @@ class PDF extends FPDF
         $this->Image($logo, 185, 15, 20);
 
         // Títulos
-        $titulo1 = utf8_decode('ACTA No.');
+        $titulo1 = utf8_decode('ACTA No.'.$this->DatosActa['idActa'].'');
         $titulo1_1 = utf8_decode('NOMBRE DEL COMITÉ O DE LA REUNIÓN:');
-        $titulo1_1_SUB = utf8_decode('ACTA DEL COMITÉ DE EVALUACIÓN Y SEGUIMIENTO');
+        $titulo1_1_SUB = utf8_decode('ACTA DEL COMITÉ DE EVALUACIÓN Y SEGUIMIENTO'.$this->DatosActa['nombreActa'].'');
         $Tex_Cuadro1 = utf8_decode('CIUDAD Y FECHA:');
-        $Tex_Cuadro1_sub = utf8_decode('Bucaramanga, septiembre 13 de 2023');
+        $Tex_Cuadro1_sub = utf8_decode('Bucaramanga,'.$this->DatosActa['Fecha'].'');
         $Tex_Cuadro2 = utf8_decode('HORA INICIO:');
-        $Tex_Cuadro2_sub = utf8_decode('8: 00 am');
+        $Tex_Cuadro2_sub = utf8_decode(''.$this->DatosActa['horaInicial'].'');
         $Tex_Cuadro3 = utf8_decode('HORA FIN:');
-        $Tex_Cuadro3_sub = utf8_decode('5: 00 am');
+        $Tex_Cuadro3_sub = utf8_decode(''.$this->DatosActa['horaFinal'].'');
         $Tex_Cuadro4 = utf8_decode('LUGAR Y/O ENLACE:');
         $Tex_Cuadro4_sub = utf8_decode('Centro de Servicios Empresariales y Turísticos, Auditorio Polivalente');
-        
         $Tex_Cuadro5 = utf8_decode('DIRECCIÓN GENERAL / REGIONAL / CENTRO:');
         $Tex_Cuadro5_sub = utf8_decode('Centro de Servicios Empresariales y Turísticos');
         
@@ -95,83 +94,26 @@ class PDF extends FPDF
         $this->Ln(15);	
     }
 
-    // Tabla coloreada
-    function FancyTable($header, $data, $columnWidths)
-    {
-        // Validación de la estructura de los datos
-        if (!is_array($header) || !is_array($data) || !is_array($columnWidths)) {
-            throw new InvalidArgumentException("Se esperaban arrays para los parámetros header, data y columnWidths.");
-        }
-
-        // Colores, ancho de línea y fuente en negrita rgba (234, 238, 241, 1)
-        $this->SetFillColor(162, 198, 151, 1);
-        $this->SetTextColor(255);
-        $this->SetDrawColor(94, 179, 25);
-        $this->SetLineWidth(.3);
-        $this->SetFont('', 'B');
-
-        // Cabecera
-        foreach ($header as $i => $col) {
-            $this->Cell($columnWidths[$i], 7, $col, 1, 0, 'C', true);
-        }
-        $this->Ln();
-
-        // Restauración de colores y fuentes
-        $this->SetFillColor(255);
-        $this->SetTextColor(0);
-        $this->SetFont('');
-
-        // Datos
-        $fill = false;
-        foreach ($data as $row) {
-            if (!is_array($row)) {
-                continue; // Saltar si no es un array
-            }
-
-            foreach ($row as $i => $col) {
-                if (!isset($columnWidths[$i])) {
-                    continue; // Saltar si no hay ancho de columna definido
-                }
-                $this->Cell($columnWidths[$i], 6, utf8_decode($col), 'LR', 0, 'L', $fill);
-            }
-            $this->Ln();
-            $fill = !$fill;
-        }
-
-        // Línea de cierre
-        $this->Cell(array_sum($columnWidths), 0, '', 'T');
-        $this->Ln();
-    }
-
-    function SimpleTable($header, $data, $columnWidths)
-    {
-        $this->FancyTable($header, $data, $columnWidths);
-    }
-
-    function SingleColumnTable($header)
-    {
-        $this->FancyTable($header, [], [190]);
-    }
     function Contenido(){
         $titulo1 = utf8_decode('AGENDA O PUNTOS PARA DESARROLLAR:');
         $titulo2 = utf8_decode('1. Presentación');
         $titulo3 = utf8_decode('2. Estudio casos de comité de los siguientes aprendices:');
         $titulo4 = utf8_decode('1. Presentación, saludo de bienvenida');
-        $titulo5 = utf8_decode('Siendo las 08:00 am del día 13 de septiembre de 2023, se reúne el Comité de Evaluación y Seguimiento de Aprendices, con el fin de analizar el rendimiento y desempeño de la etapa lectiva y productiva del Centro de Servicios Empresariales y Turísticos. A este comité asisten quienes se encuentran relacionados con su información personal en la planilla de asistencia que contiene este documento, ejerciendo las funciones de secretario de la reunión la Coordinadora Académica Doris Vargas. ');
+        $titulo5 = utf8_decode(''.$this->DatosActa['presentacion'].'');
         $titulo6 = utf8_decode('2. Estudios casos de Comité');
-        $titulo7 = utf8_decode('JUAN CARLOS BARRIOS AVILA');
-        $titulo8 = utf8_decode('TECNOLOGO EN GESTION DE MERCADOS');
-        $titulo9 = utf8_decode('Ficha: 2513170');
-        $titulo10 = utf8_decode('Correo: Maira5@gmail.con');
-        $titulo11 = utf8_decode('Teléfono: 312248525');
+        $titulo7 = utf8_decode(''.$this->datosAprendiz['nombreAprendiz'].'');
+        $titulo8 = utf8_decode(''.$this->datosAprendiz['programaFormacion'].'');
+        $titulo9 = utf8_decode('Ficha:'.$this->datosAprendiz['ficha'].'');
+        $titulo10 = utf8_decode('Correo: '.$this->datosAprendiz['correo'].'');
+        $titulo11 = utf8_decode('Teléfono:'.$this->datosAprendiz['telefono'].'');
         $titulo12 = utf8_decode('Hechos:');
-        $titulo13 = utf8_decode('El instructor informa inconvenientes presentados en el desarrollo de la etapa lectiva La aprendiz no presentó evidencia de producto de la guía');
+        $titulo13 = utf8_decode(''.$this->dataConceptos['hechos'].'');
         $titulo14 = utf8_decode('Contemplación del Caso:');
-        $titulo15 = utf8_decode('La aprendiz XXX presenta al comité de evaluación y seguimiento según citación enviada. La Coordinadora académica Doris presenta el caso y a los miembros del comité, según información reportada por el Instructor xxxxxx quien indica que xxxx');
+        $titulo15 = utf8_decode(''.$this->dataConceptos['contemplacion'].'');
         $titulo16 = utf8_decode('Frente a los hechos:');
-        $titulo17 = utf8_decode('La aprendiz XXX se presenta al comité de evaluación y seguimiento según citación enviada, la coordinadora académica Doris le pregunta al aprendiz si sabe porque fue citada al comité, Se le pregunta al aprendiz que, sí es clara la información entregada en el comité de evaluación y seguimiento, manifiesta que sí, igualmente se le informa que al correo registrado en el aplicativo le llega la recomendación del comité.');
+        $titulo17 = utf8_decode(''.$this->dataConceptos['frenteHechos'].'');
         $titulo18 = utf8_decode('Recomendación del Caso:');
-        $titulo19 = utf8_decode(strtoupper('CONDICIONAMIENTO DE REGISTRO DE MATRICULA POR INDOLE ACADEMICO Y DISCIPLINARIO, REPETIR COMPETENCIA DE EMPRENDIMIENTO EN CONTRA JORNADA CON LA INSTRUCTORA xxxxx'));
+        $titulo19 = utf8_decode(strtoupper(''.$this->dataConceptos['recomendacion'].''));
         $titulo20 = utf8_decode('COMPROMISOS');
 
         $r1  = 10;
@@ -190,10 +132,6 @@ class PDF extends FPDF
         $this->Cell(10);
         $this->Cell($r1+9,4, $titulo3);
         $this->Ln();
-        for($i = 1; $i < count($this->dataApr); ++$i) {
-            $this->SimpleTable($this->header1,$this->dataApr[$i],$this->w1);
-            $this->ln(2.5);
-            } 
         $this->Ln(); 
         $this->Cell(10);
         $this->SetFont('Arial','B', 12);  

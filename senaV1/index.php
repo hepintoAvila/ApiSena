@@ -1,205 +1,161 @@
 <?php
 /**
- *
  * @About:      API Interface
  * @File:       index.php
- * @Date:       $Date:$ febrero-2022
- * @Version:    $Rev:$ 1.0
- * @Developer:  hosmmer Eduardo
+ * @Date:       febrero-2022
+ * @Version:    1.0
+ * @Developer:  Hosmmer Eduardo
  **/
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: *");
 header("Content-Type: text/html; charset=utf-8");
-// Si no se han enviado encabezados, enviar uno
- 
+
+// Verificar si se han enviado encabezados
 if (headers_sent()) {
     header('Location: http://localhost/sicesv.1/apis.sena/senaV1/');
     exit;
 }
+
+/**
+ * Parse file path into components
+ *
+ * @param string $filepath
+ * @return array
+ */
 function mb_pathinfo($filepath) {
-    preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im',$filepath,$m);
-    if($m[1]) $ret['dirname']=$m[1];
-    if($m[2]) $ret['basename']=$m[2];
-    if($m[5]) $ret['extension']=$m[5];
-    if($m[3]) $ret['filename']=$m[3];
+    preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im', $filepath, $m);
+    $ret = [];
+    if (isset($m[1])) $ret['dirname'] = $m[1];
+    if (isset($m[2])) $ret['basename'] = $m[2];
+    if (isset($m[5])) $ret['extension'] = $m[5];
+    if (isset($m[3])) $ret['filename'] = $m[3];
     return $ret;
 }
-function getRequestUser($varibles,$refer = "", $timeout = 10, $header = [])
-{
-  	
-	//print_r($_SERVER);
-	$urls = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui"; 
-    $url = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis"; 
-    //ENVIAR LAS CREDENCIALES DE LA API
- 
-	if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
-		$ha = base64_decode( substr($_SERVER['HTTP_AUTHORIZATION'],6) );
-		list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', $ha);
-		 $data = array('var_login' =>$_SERVER['PHP_AUTH_USER'],'password' =>$_SERVER['PHP_AUTH_PW']);
-	} else {
 
-		$data = array('var_login' =>$_SERVER['PHP_AUTH_USER'],'password' =>$_SERVER['PHP_AUTH_PW']);
-	}
-				
-   
-	$POSTFIELDS = array_merge($varibles, $data); 
+/**
+ * Make a cURL request with given variables and authentication
+ *
+ * @param array $variables
+ * @param string $refer
+ * @param int $timeout
+ * @param array $header
+ * @return mixed
+ */
+function makeCurlRequest($variables, $refer = "", $timeout = 10, $header = []) {
+    $url = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui";
+    $data = [];
+
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $ha = base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6));
+        if (!empty($ha) && strpos($ha, ':') !== false) {
+            list($php_auth_user, $php_auth_pw) = explode(':', $ha);
+            $data = ['var_login' => $php_auth_user, 'password' => $php_auth_pw];
+        } else {
+            $data = ['var_login' => '', 'password' => ''];
+            exit;
+        }
+    } else {
+        $php_auth_user = $_SERVER['PHP_AUTH_USER'] ?? '';
+        $php_auth_pw = $_SERVER['PHP_AUTH_PW'] ?? '';
+        $data = ['var_login' => $php_auth_user, 'password' => $php_auth_pw];
+    }
+
+    $POSTFIELDS = array_merge($variables, $data);
     $ch = curl_init();
-	
-    $ssl = stripos($urls,'http://') === 0 ? true : false;
+
+    $ssl = stripos($url, 'https://') === 0;
     $options = [
-        CURLOPT_URL => $urls,
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => 1,
-		CURLOPT_USERPWD=>$data['var_login'].':'.$data['password'],
+        CURLOPT_USERPWD => $data['var_login'] . ':' . $data['password'],
         CURLOPT_POSTFIELDS => $POSTFIELDS,
         CURLOPT_FOLLOWLOCATION => 1,
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_AUTOREFERER => 1,
         CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)',
-        CURLOPT_TIMEOUT => 3000,
+        CURLOPT_TIMEOUT => $timeout,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
-        CURLOPT_HTTPHEADER => ['Expect:'],
+        CURLOPT_HTTPHEADER => array_merge(['Expect:'], $header),
         CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
         CURLOPT_REFERER => $refer
     ];
-     
-    if (!empty($header)) {
-        $options[CURLOPT_HTTPHEADER] = $header;
-    }
-    if ($refer) {
-        $options[CURLOPT_REFERER] = $refer;
-    }
+
     if ($ssl) {
-        //support https
         $options[CURLOPT_SSL_VERIFYHOST] = false;
         $options[CURLOPT_SSL_VERIFYPEER] = false;
     }
-    curl_setopt_array($ch,$options);
 
- //$httpcode = curl_getinfo($ch, 'CURLINFO_HTTP_CODE');
+    curl_setopt_array($ch, $options);
+
     $returnData = curl_exec($ch);
 
     if (curl_errno($ch)) {
-        //error message
         $returnData = curl_error($ch);
-         
     }
+
     curl_close($ch);
     return $returnData;
-    
-    
 }
-function getRequestDatos($varibles,$refer = "", $timeout = 10, $header = [])
-{
-  	
-	//print_r($_SERVER);
-	$urls = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui"; 
-    $url = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis"; 
-    //ENVIAR LAS CREDENCIALES DE LA API
-   
-	if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
-		//SERVIDOR WEB
-		$ha = base64_decode( substr($_SERVER['HTTP_AUTHORIZATION'],6) );
-		list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', $ha);
-		 $data = array('var_login' =>$_SERVER['PHP_AUTH_USER'],'password' =>$_SERVER['PHP_AUTH_PW']);
-        
-	} else {
-		//SERVIDOR LOCAL
-		$data = array('var_login' =>$_SERVER['PHP_AUTH_USER'],'password' =>$_SERVER['PHP_AUTH_PW']);
 
-	}
-		
-	
-	$POSTFIELDS = array_merge($varibles, $data); 
-    $ch = curl_init();
+/**
+ * Handle the API request based on the action
+ */
+function handleRequest() {
+    $accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : '';
 
-    $ssl = stripos($urls,'http://') === 0 ? true : false;
-    $options = [
-        CURLOPT_URL => $urls,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => 1,
-		CURLOPT_USERPWD=>$data['var_login'].':'.$data['password'],
-        CURLOPT_POSTFIELDS => $POSTFIELDS,
-        CURLOPT_FOLLOWLOCATION => 1,
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_AUTOREFERER => 1,
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)',
-        CURLOPT_TIMEOUT => 3000,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
-        CURLOPT_HTTPHEADER => ['Expect:'],
-        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-        CURLOPT_REFERER => $refer
-    ];
-     
-    if (!empty($header)) {
-        $options[CURLOPT_HTTPHEADER] = $header;
-    }
-    if ($refer) {
-        $options[CURLOPT_REFERER] = $refer;
-    }
-    if ($ssl) {
-        //support https
-        $options[CURLOPT_SSL_VERIFYHOST] = false;
-        $options[CURLOPT_SSL_VERIFYPEER] = false;
-    }
-    curl_setopt_array($ch,$options);
+    switch ($accion) {
+        case "auteur":
+            if (isset($_SERVER['HTTP_URL'])) {
+                $str = explode('&', $_SERVER['HTTP_URL']);
+                if (count($str) > 3) {
+                    $username = explode('=', $str[3]);
+                    if (count($username) > 1) {
+                        $user = explode('=', $username[1]);
+                        if (count($user) > 0) {
+                            $r['username'] = $user[0];
+                            $variables = array_merge($r, $_GET);
+                            echo makeCurlRequest($variables);
+                            break;
+                        }
+                    }
+                }
+            }
+            echo "Invalid URL structure for 'auteur' action";
+            break;
 
- //$httpcode = curl_getinfo($ch, 'CURLINFO_HTTP_CODE');
-    $returnData = curl_exec($ch);
+        case "permisos":
+        case "menu":
+        case "AdminUsuarios":
+        case "AdminRoles":
+        case "GestionMenu":
+        case "ModuloNotificaciones":
+        case "ModuloHistorial":
+        case "ModuloSolicitudComite":
+        case "ModuloAprendiz":
+        case "ModuloActas":
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!is_null($input)) {
+                $r['fileContent'] = $input;
+                $variables = array_merge($r, $_GET);
+            } else {
+                $variables = $_GET;
+            }
+            echo makeCurlRequest($variables);
+            break;
 
-    if (curl_errno($ch)) {
-        //error message
-        $returnData = curl_error($ch);
-         
+        default:
+            echo "Acción no reconocida";
+            break;
     }
-    curl_close($ch);
-    return $returnData;
-    
-    
 }
-	$accion = base64_decode($_GET['accion']);
-//print_r($_GET);
-	switch($accion) {
-		
-		case "auteur":
-	
-			$str=explode('&',$_SERVER['HTTP_URL']);
-			$username=explode('=',$str[3]);
-			$user=explode('=',$username[1]);
-			$r['username']=$user[0];
-			$varibles = array_merge($r,$_GET);
-			$getRes = getRequestUser($varibles );
-			echo $getRes;
-			break;
-			
-			case "permisos":
-			case "menu":
-			case "AdminUsuarios":
-			case "AdminRoles":
-			case "GestionMenu":
-			case "ModuloNotificaciones":
-			case "ModuloHistorial":
-			case "ModuloSolicitudComite":
-            case "ModuloAprendiz":
-            case "ModuloActas":
-				if (!is_null(json_decode(file_get_contents('php://input'), true))) {
-					//pasamos el contenido del archivo a POST
-					$r['fileContent']=json_decode(file_get_contents('php://input'), true);
-					$varibles = array_merge($r,$_GET);
-					$getRes = getRequestDatos($varibles);
-					echo $getRes;
-				}else{
-					
-					$getRes = getRequestDatos($_GET);
-					echo $getRes;	
-					
-				}
 
-
-			break;
-	}
+// Ejecutar la solicitud
+handleRequest();
 
 ?>
