@@ -57,7 +57,54 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$var = var2js($data);
 					echo $var;						
 			break;
-			
+			case 'changePassword':
+				$app=new Apis('api_auteurs');
+				$erreurs = array();
+				$msg = array();
+				$session_password = base64_decode($_POST['palabraclave']);
+				$new_pass = unicode2charset(utf_8_to_unicode($session_password), 'iso-8859-1');
+				$id_auteur = base64_decode($_POST['idUsuario']);
+				$entidad = base64_decode($_POST['entidad']);
+				$ApiToken     = base64_decode($_POST["ApiToken"]);
+				$Apikey     = base64_decode($_POST["Apikey"]);	
+				$variablesAVerificar = [
+					'password' => $session_password,
+					'new_pass' => $new_pass,
+					'id_auteur' => $id_auteur,
+					'entidad' => $entidad,
+					'ApiToken' => $ApiToken,
+					'Apikey' => $Apikey,
+				];
+
+				$mensajeError = $app->verificarVariables($variablesAVerificar);
+				$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$id_auteur);
+				if (($mensajeError !== null) OR (!$validarTokes)){
+					
+				 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
+				 $arrayMensage=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
+					
+				}else{				
+
+					$cpass = array();
+					include_spip('inc/acces');
+					include_spip('auth/sha256.inc');
+					$htpass = generer_htpass($new_pass);
+					$alea_actuel = creer_uniqid();
+					$alea_futur = creer_uniqid();
+					$pass = spip_sha256($alea_actuel . $new_pass);
+					$cpass['pass'] = $pass;
+					$cpass['htpass'] = $htpass;
+					$cpass['alea_actuel'] = $alea_actuel;
+					$cpass['alea_futur'] = $alea_futur;
+					$cpass['low_sec'] = '';
+				
+					include_spip('action/editer_auteur');
+					auteur_modifier($id_auteur, $cpass, true); //	
+					$arrayMensage= array('message'=>'Password cambido con exito!!','status' => '200');
+					}
+				$var = var2js($arrayMensage);	
+				echo $var;		
+			break;	
 			case 'add':
 					$app=new Apis('api_auteurs');
 					$variablesAVerificar=array();
