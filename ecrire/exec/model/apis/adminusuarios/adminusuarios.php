@@ -100,7 +100,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				
 					include_spip('action/editer_auteur');
 					auteur_modifier($id_auteur, $cpass, true); //	
-					$arrayMensage= array('message'=>'Password cambido con exito!!','status' => '200');
+					$arrayMensage= array('message'=>'Clave actualizada con exito!!','status' => '200');
 					}
 				$var = var2js($arrayMensage);	
 				echo $var;		

@@ -98,11 +98,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										while ($rowact = sql_fetch($sqlact)) {
 											$idSolicituds= $rowact['casosComite'];	
 										}
-										if($idSolicituds=='0'){
+
+										
+										if(empty($idSolicituds)){
 											$row=$apps->consultadatos('estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
 										}else{
 											$row=$apps->consultadatos('idSolicitud NOT IN ('.$idSolicituds.') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
 										}
+										//print_r($row);
 								break;
 								case '9':
 
@@ -112,15 +115,16 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										while ($rowact = sql_fetch($sqlact)) {
 											$idSolicituds= $rowact['casosComite'];	
 										}
-										if($idSolicituds=='0'){
-											$row=$apps->consultadatos('estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+										if(empty($idSolicituds)){
+											$row=[];
 										}else{
 											$row=$apps->consultadatos('idSolicitud IN ('.$idSolicituds.') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+										
 										}
 								break;																									
 							}
-							
-							foreach($row as $a => $value){
+							 
+					 		foreach($row as $a => $value){
 								$sql1 = sql_select("nombres,apellidos,correo",'sena_aprendiz','idAprendiz="'.$value['idAprendiz'].'"');
 								while ($row1 = sql_fetch($sql1)) {	
 									$nombresApellidosAprendiz= $row1['nombres'].' '.$row1['apellidos'];		
@@ -130,8 +134,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								while ($row2 = sql_fetch($sql2)) {	
 									$nombresApellidosInstructor= $row2['nombres'].' '.$row2['apellidos'];		
 								  }	
-					$sql2 = sql_select("academica,disciplinaria,inasistencias,verbal,escrito",
-					'sena_sancionesanteriores','idAprendiz="'.$value['idAprendiz'].'"');
+								$sql2 = sql_select("academica,disciplinaria,inasistencias,verbal,escrito",
+									'sena_sancionesanteriores','idAprendiz="'.$value['idAprendiz'].'"');
 								while ($row2 = sql_fetch($sql2)) {	
 									$academica= $row2['academica'] ? $row2['academica']:0;		
 									$disciplinaria= !empty($row2['disciplinaria']) ? $row2['disciplinaria']:0;			
@@ -182,7 +186,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									),
 								'sancionesAprendiz'=>$Aprendices[0]
 								);
-							}
+							
 							 
 							//CONSULTAR MIEMBROPS DEL COMITE
 							$tblComite='sena_directivo';
@@ -233,14 +237,23 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									'className'=>$className,
 									'title'=>'-S'.$val3['idSolicitud'],
 									);
-							}							
+							}
+														
 							//print_r($Solicitudes);
 							$Agenda = array("Agenda"=>$Agendas);
 							$Directivo = array("Directivos"=>$directivos);
 							$Solicitud = array("Solicitudes"=>$Solicitudes);
 							$datos = array_merge($Directivo,$Solicitud,$Agenda);
 							$arrayMensage = array("data"=>$datos);
+						
+							$Agenda = array("Agenda"=>array());
+							$Directivo = array("Directivos"=>array());
+							$Solicitud = array("Solicitudes"=>$Solicitudes);
+							$datos = array_merge($Directivo,$Solicitud,$Agenda);
+							$arrayMensage = array("data"=>$datos);						
 						}
+						
+				}
 					echo var2js($arrayMensage);	
 				break;
 				

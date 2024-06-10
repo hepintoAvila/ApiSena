@@ -69,6 +69,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						$casos = $row1['casosComite'];
 					}
 				}
+				
 					// Obtener Acta
 				$sql4 = sql_select('*', 'sena_actas', 'idActa = "'.$idActa.'" AND entidad="senaV1"');
 					while ($row4 = sql_fetch($sql4)) {
@@ -89,7 +90,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						'horaFinal'=>$horaFinal,
 						'presentacion'=>$presentacion,
 					);
- 				
+ 			
+					
+			
+	if (!empty($caso)) {		
 			$pdf->DatosActa=$DatosActa;
 			$itemsSolicitud = explode(',',$casos);
 			$i=0;
@@ -182,6 +186,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			}
 		}
 	}
+}
 		
 		function corregir_conceptos($str) {
 			if (isset($str)) {
@@ -266,7 +271,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					}
 					if($total >= 1){
 						$app=new Apis('sena_actas');
-						$aprendizes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
+						$aprendizes=$app->consultadatos('entidad="'.$entidad.'"  AND statut="Activo"',$select);				
 						$data = array("data"=>$aprendizes);
 						$var = var2js($data);
 						echo $var;
@@ -281,7 +286,60 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						echo $var;							
 					}						
 			break;
-			
+			case 'listActasInactivas':
+			case 'updateInactivas':
+				
+				
+				if($opcion=='updateInactivas'){
+							$idActa = base64_decode($_POST['idActa']);
+							$chartic['statut'] ='Activo';                                   
+							$chartic = pipeline('pre_insertion',
+							array(
+								'args' => array(
+								'table' => 'sena_actas',
+							),
+							'data' => $chartic
+							)
+						);							
+						sql_updateq('sena_actas',$chartic,"idActa=" . intval($idActa) . "");
+						pipeline('post_insertion',
+						array(
+							'args' => array(
+							'table' =>'sena_actas',
+							'id_objet' => $idActa
+							),
+							'data' => $chartic
+							)
+						);
+				}
+				
+				
+				$entidad = base64_decode($_POST['entidad']);
+				$DatosAuteurs=array();
+				$select='*';
+				$set = array();	
+				$sql = sql_select("COUNT(*) AS total",'sena_actas','entidad="'.$entidad.'" AND statut="Inactiva"');
+					while ($row = sql_fetch($sql)) {	
+						$total = $row['total'];
+					}
+					if($total >= 1){
+						$app=new Apis('sena_actas');
+						$aprendizes=$app->consultadatos('entidad="'.$entidad.'"  AND statut="Inactiva"',$select);				
+						$data = array("data"=>$aprendizes);
+						$var = var2js($data);
+						echo $var;
+					}else{
+						$records[] = array('idActa'=>1,
+						'nombre'=>'No existen registros',
+						'fecha'=>'0000',
+						'horaInicial'=>'00',
+						'horaFinal'=>'00'
+					);
+						$data = array("data"=>$records);
+						$var = var2js($data);	
+						echo $var;							
+					}						
+			break;
 			case 'add':
                 
 					$app=new Apis('sena_actas');
@@ -369,12 +427,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$horaInicial = base64_decode($_POST['horaInicial']);
 				$horaFinal = base64_decode($_POST['horaFinal']);
 				$secretario = base64_decode($_POST['secretario']);
-				$presentacion = base64_decode($_POST['presentacion']);
+				//$presentacion = utf8_encode(base64_decode($_POST['presentacion']));
                 $entidad = base64_decode($_POST['entidad']);
                 $ApiToken     = base64_decode($_POST["ApiToken"]);
                 $Apikey     = base64_decode($_POST["Apikey"]);	
                 $idUsuario = base64_decode($_POST["idUsuario"]);
 				$idActa = base64_decode($_POST["idActa"]);
+				
                      // Crea un array con las variables que deseas verificar
                     $variablesAVerificar = [
                         'nombre' => $nombre,
@@ -386,7 +445,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                         'ApiToken' => $ApiToken,
                         'Apikey' => $Apikey,
                         'idUsuario' => $idUsuario,
-						'idAprendiz' =>$idActa
+						'idActa' =>$idActa
                     ];
                       //print_r($variablesAVerificar);
                     $mensajeError = $app->verificarVariables($variablesAVerificar);
@@ -398,14 +457,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                         
                     }else{
                    
-
+							 				//unicode2charset(utf_8_to_unicode
                                             $chartic['nombre'] ="".$nombre."";
                                             $chartic['fecha'] ="".$fecha."";
                                             $chartic['horaInicial'] ="".$horaInicial."";
                                             $chartic['horaFinal'] ="".$horaFinal."";
                                             $chartic['secretario'] ="".$secretario."";                                   
-                                            $chartic['presentacion'] =''.$presentacion.'';                                   
-								    	$chartic = pipeline('pre_insertion',
+                                            $chartic['presentacion'] =utf8_encode(base64_decode($_POST['presentacion']));                                   
+											$chartic = pipeline('pre_insertion',
 											array(
 												'args' => array(
 												'table' => 'sena_actas',
@@ -428,7 +487,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 											'id'=>1,
 											'message'=>'::OK:: Acta Acualizado!',
 											'status'=>'202');
-											crearPdfActa($idActa,'actualizar');
+											crearPdfActa(intval($idActa),'actualizar');
                                             $var = var2js($arrayMensage);
 											echo $var;	
                     }						
@@ -436,12 +495,30 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			break;
 			case 'delete':
 					$idActa = base64_decode($_POST["id"]);
-
-					sql_delete("sena_actas","idActa=" . intval($idActa));
+					$chartic['statut'] ='Inactiva';                                   
+					$chartic = pipeline('pre_insertion',
+					array(
+						'args' => array(
+						'table' => 'sena_actas',
+					),
+					'data' => $chartic
+					)
+				);							
+				sql_updateq('sena_actas',$chartic,"idActa=" . intval($idActa) . "");
+				pipeline('post_insertion',
+				array(
+					'args' => array(
+					'table' =>'sena_actas',
+					'id_objet' => $idActa
+					),
+					'data' => $chartic
+					)
+				);
+					//sql_delete("sena_actas","idActa=" . intval($idActa));
 					
-					$res = sql_select("*", "sena_actas", "AND statut='Activo' AND idActa=" . intval($idActa));
+					$res = sql_select("*", "sena_actas", "statut='Activo' AND idActa=" . intval($idActa));
 					if ($res){
-					$msg[] = array('menssage'=>'OK. El Registro Del Acta '.$idActa.' fue eliminado correctamente!','status' => '200');
+					$msg[] = array('menssage'=>'OK. El Registro Del Acta '.$idActa.' fue enviado a la papelera!','status' => '200');
 					}	
 					$var = var2js($msg);	
 					echo $var;					
