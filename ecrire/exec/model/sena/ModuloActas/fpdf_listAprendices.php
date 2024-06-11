@@ -48,10 +48,10 @@ class PDF extends FPDF
 		$this->Ln(2);				
     }
     // Tabla coloreada
-    function FancyTable($header, $data, $columnWidths)
+    function FancyTable($data, $columnWidths)
     {
         // Validación de la estructura de los datos
-        if (!is_array($header) || !is_array($data) || !is_array($columnWidths)) {
+        if (!is_array($data) || !is_array($columnWidths)) {
             throw new InvalidArgumentException("Se esperaban arrays para los parámetros header, data y columnWidths.");
         }
 
@@ -62,10 +62,7 @@ class PDF extends FPDF
         $this->SetLineWidth(.3);
         $this->SetFont('', 'B');
 
-        // Cabecera
-        foreach ($header as $i => $col) {
-            $this->Cell($columnWidths[$i], 7, $col, 1, 0, 'C', true);
-        }
+
         $this->Ln();
 
         // Restauración de colores y fuentes
@@ -91,19 +88,17 @@ class PDF extends FPDF
         }
 
         // Línea de cierre
-        $this->Cell(array_sum($columnWidths), 0, '', 'T');
+       $this->Cell(array_sum($columnWidths), 0, '', 'T');
         $this->Ln();
     }
 
-    function SimpleTable($header, $data, $columnWidths)
+    function TableAprendices($data, $columnWidths)
     {
-        $this->FancyTable($header, $data, $columnWidths);
+        // Colores, ancho de línea y fuente en negrita rgba (234, 238, 241, 1)
+        $this->FancyTable($data, $columnWidths);
     }
 
-    function SingleColumnTable($header)
-    {
-        $this->FancyTable($header, [], [190]);
-    }
+
 }
 
 ?>

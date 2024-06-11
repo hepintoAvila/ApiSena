@@ -26,7 +26,77 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/actions');
 		include_spip('inc/editer');
 		include_spip('inc/notifications');
+	 
 
+		function generarPDFAsistencia($idActa) {
+			$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/asistencia' . $idActa . '.pdf';
+			if (@file_exists($path)) {
+				spip_log("Supprimer ancien logo '$idActa'", 'listaAsistentes');
+				spip_unlink($path);
+			}
+		
+			require('../ecrire/exec/model/sena/ModuloActas/fpdf_listAsistencias.php');
+			$pdf = new PDF();
+			$pdf->AliasNbPages();
+			$pdf->AddPage('P', 'Legal');
+		
+			// Títulos de las columnas
+			$select = '*';
+			$w1 = array(8, 83, 40, 20, 39);
+			$w2 = array(190);
+			$w3 = array(95, 95);
+			$data = array();
+		
+			if (sql_countsel('sena_asistencias', 'idActa="' . $idActa . '" AND entidad="senaV1"') > 0) {
+				$k = 1;
+				$sqls = sql_select($select, 'sena_asistencias', 'idActa="' . $idActa . '" AND entidad="senaV1"');
+				while ($rows = sql_fetch($sqls)) {
+					$data[$k][] = array(
+						'' . $k . '',
+						'' . $rows['nombresApellidos'] . '',
+						'' . $rows['documento'] . '' . $rows['planta'] . '',
+						'' . $rows['contratista'] . ''
+					);
+					$data2[$k][] = array('' . $rows['contratistaOtros'] . '');
+					$data3[$k][] = array('' . $rows['dependencia'] . '', '' . $rows['email'] . '');
+					$data4[$k][] = array('' . $rows['autorizacion'] . '', '');
+					$k++;
+				}
+			} else {
+				$data[1][] = array('1', 'SIN REGISTROS', '00000', 'SIN REGISTROS');
+				$data2[1][] = array('SIN REGISTROS');
+				$data3[1][] = array('SIN REGISTROS', 'SIN REGISTROS');
+				$data4[1][] = array('SIN REGISTROS', '');
+			}
+		
+			$header1 = array('#', 'NOMBRES Y APELLIDOS', 'DOCUMENTO', 'PLANTA', 'CONTRATISTA');
+			$header2 = array('OTRO ¿CUAL?');
+			$header3 = array('DEPENDENCIA/ EMPRESA', 'CORREO ELECTRÓNICO');
+			$header4 = array('AUTORIZA GRABACIÓN', 'FIRMA O PARTICIPACIÓN VIRTUAL');
+			$header5 = array('');
+		
+			// Carga de datos
+			$pdf->SetFont('Arial', '', 14);
+			for ($i = 1; $i < $k; ++$i) {
+				$pdf->SimpleTable($header1, $data[$i], $w1);
+				$pdf->SimpleTable($header2, $data2[$i], $w2);
+				$pdf->SimpleTable($header3, $data3[$i], $w3);
+				$pdf->SimpleTable($header4, $data4[$i], $w3);
+				$pdf->ln(6);
+			}
+		
+			$pdf->Output('F', '' . $idActa . '.pdf', true);
+			$pdf = '../ecrire/' . $idActa . '.pdf';
+			if (@file_exists($pdf)) {
+				$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/asistencia' . $idActa . '.pdf';
+				$moved = rename($pdf, $newLocation);
+				if ($moved) {
+					spip_unlink($pdf);
+				}
+			}
+		}
+		 
+		
 		function formatearFecha($fechaEntrada) {
 			// Crear un objeto DateTime a partir de la fecha de entrada
 			$fecha = new DateTime($fechaEntrada);
@@ -55,53 +125,52 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		 * @param int $idActa
 		 */
 		function crearPdfActa($idActa,$opcion) {
-			$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/fpdf_actas'.$idActa.'.pdf';
+			$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaActas'.$idActa.'.pdf';
 			if (file_exists($path)) {
 				spip_log("Supprimer ancien logo '.$idActa.'", 'listaActas');
 				spip_unlink($path);
 			}
 			require('../ecrire/exec/model/sena/ModuloActas/fpdf_actas.php');
-			$pdf = new PDF();
-			if($opcion=='actualizar'){
+			
+			
+ 
 				$sql1 = sql_select('casosComite', 'sena_actas', 'idActa="'.$idActa.'" AND entidad="senaV1"');
 				while ($row1 = sql_fetch($sql1)) {
 					if (!empty($row1['casosComite'])) {
 						$casos = $row1['casosComite'];
 					}
 				}
-				
-					// Obtener Acta
-				$sql4 = sql_select('*', 'sena_actas', 'idActa = "'.$idActa.'" AND entidad="senaV1"');
-					while ($row4 = sql_fetch($sql4)) {
-						if (!empty($row4['nombre'])) {
-							$idActa = $row4['idActa'];
-							$NombreActa = $row4['nombre'];
-							$Fecha = $row4['fecha'];
-							$horaInicial = $row4['horaInicial'];
-							$horaFinal = $row4['horaFinal'];
-							$presentacion = $row4['presentacion'];
-						}
-					}
-					$DatosActa =array(
-						'idActa'=>$idActa,
-						'nombreActa'=>$NombreActa,
-						'Fecha'=>formatearFecha($Fecha),
-						'horaInicial'=>$horaInicial,
-						'horaFinal'=>$horaFinal,
-						'presentacion'=>$presentacion,
-					);
- 			
-					
 			
-	if (!empty($caso)) {		
+			if (!empty($caso)) {
+				$i=0;
+				$datosAprendiz = [];
+				$dataConceptos = [];
+				$dataApr = [];
+								// Obtener Acta
+								$sql4 = sql_select('*', 'sena_actas', 'idActa = "'.$idActa.'" AND entidad="senaV1"');
+								while ($row4 = sql_fetch($sql4)) {
+									if (!empty($row4['nombre'])) {
+										$idActa = $row4['idActa'];
+										$NombreActa = $row4['nombre'];
+										$Fecha = $row4['fecha'];
+										$horaInicial = $row4['horaInicial'];
+										$horaFinal = $row4['horaFinal'];
+										$presentacion = $row4['presentacion'];
+									}
+								}
+								$DatosActa =array(
+									'idActa'=>$idActa,
+									'nombreActa'=>$NombreActa,
+									'Fecha'=>formatearFecha($Fecha),
+									'horaInicial'=>$horaInicial,
+									'horaFinal'=>$horaFinal,
+									'presentacion'=>$presentacion,
+								);	
+			$pdf = new PDF();
 			$pdf->DatosActa=$DatosActa;
 			$itemsSolicitud = explode(',',$casos);
-			$i=0;
-			$datosAprendiz = [];
-			$dataConceptos = [];
-			$dataApr = [];
+
 			foreach ($itemsSolicitud as $idSolicitud) {
-				
 			$sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
 			while ($row2 = sql_fetch($sql2)) {
 				if (!empty($row2['idAprendiz'])) {
@@ -175,17 +244,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$pdf->Contenido();
 				$pdf->AliasNbPages();
 			}
-			$pdf->Output('F', 'Acta_'.$idActa.'.pdf', true);
-			$pdfPath = '../ecrire/Acta_'.$idActa.'.pdf';
+			$pdf->Output('F', 'listaActas'.$idActa.'.pdf', true);
+			$pdfPath = '../ecrire/listaActas'.$idActa.'.pdf';
 			if (file_exists($pdfPath)) {
-				$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/Actas_'.$idActa.'.pdf';
+				$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaActas'.$idActa.'.pdf';
 				$moved = rename($pdfPath, $newLocation);
 				if ($moved) {
 					spip_unlink($pdfPath);
 				}
 			}
 		}
-	}
+	 
 }
 		
 		function corregir_conceptos($str) {
@@ -411,7 +480,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 												);
 											$msg[] = 'Acta guardado con exito';
 											$arrayMensage[] = array('message'=>'¡OK!. El Acta fue GUARDADO! '.implode(',',$msg).'','status' => '202');
-											crearPdfActa($idActa,'add');
+											//crearPdfActa($idActa,'add');
 										}	
 				
 				$var = var2js($arrayMensage);
@@ -456,6 +525,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                      $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
                         
                     }else{
+						
                    
 							 				//unicode2charset(utf_8_to_unicode
                                             $chartic['nombre'] ="".$nombre."";
@@ -487,10 +557,135 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 											'id'=>1,
 											'message'=>'::OK:: Acta Acualizado!',
 											'status'=>'202');
-											crearPdfActa(intval($idActa),'actualizar');
+			$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/listaActas'.$idActa.'.pdf';
+			if (file_exists($path)) {
+				spip_log("Supprimer ancien logo '.$idActa.'", 'listaActas');
+				spip_unlink($path);
+			}
+			require('../ecrire/exec/model/sena/ModuloActas/fpdf_actas.php');
+			$sql1 = sql_select('casosComite', 'sena_actas', 'idActa="'.$idActa.'" AND entidad="senaV1"');
+				while ($row1 = sql_fetch($sql1)) {
+					if (!empty($row1['casosComite'])) {
+						$casos = $row1['casosComite'];
+					}
+				}
+			
+			if (!empty($caso)) {
+				$i=0;
+				$datosAprendiz = [];
+				$dataConceptos = [];
+				$dataApr = [];
+								// Obtener Acta
+								$sql4 = sql_select('*', 'sena_actas', 'idActa = "'.$idActa.'" AND entidad="senaV1"');
+								while ($row4 = sql_fetch($sql4)) {
+									if (!empty($row4['nombre'])) {
+										$idActa = $row4['idActa'];
+										$NombreActa = $row4['nombre'];
+										$Fecha = $row4['fecha'];
+										$horaInicial = $row4['horaInicial'];
+										$horaFinal = $row4['horaFinal'];
+										$presentacion = $row4['presentacion'];
+									}
+								}
+								$DatosActa =array(
+									'idActa'=>$idActa,
+									'nombreActa'=>$NombreActa,
+									'Fecha'=>formatearFecha($Fecha),
+									'horaInicial'=>$horaInicial,
+									'horaFinal'=>$horaFinal,
+									'presentacion'=>$presentacion,
+								);	
+			$pdf = new PDF();
+			$pdf->DatosActa=$DatosActa;
+			$itemsSolicitud = explode(',',$casos);
+
+			foreach ($itemsSolicitud as $idSolicitud) {
+			$sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
+			while ($row2 = sql_fetch($sql2)) {
+				if (!empty($row2['idAprendiz'])) {
+						$sql3 = sql_select('*', 'sena_aprendiz', 'idAprendiz="'.$row2['idAprendiz'].'" AND entidad="senaV1"');
+					
+					$j=1;
+					while ($row3 = sql_fetch($sql3)) {
+						if (!empty($row3['nombres'])) {
+							$dataApr= array(
+							'no'=>''.$j,
+							'nombreAprendiz'=> ''.$row3['nombres'].' '.$row3['apellidos'].'', 
+							'tipoIdentificacion'=>!empty($row3['tipoIdentificacion']) ? $row3['tipoIdentificacion']:'CC',
+							'identificacion'=>!empty($row3['identificacion']) ? $row3['identificacion']:'1111111',
+							'correo'=>!empty($row3['correo']) ? $row3['correo']:'sienemail@gmail.com',
+							'telefono'=>!empty($row3['telefono']) ? $row3['telefono']:'5555555',
+							'programaFormacion'=>!empty($row3['programaFormacion']) ? $row3['programaFormacion']:'SIN PROGRAMA FORMACION',
+							'ficha'=>!empty($row3['ficha']) ? $row3['ficha']:'000001'
+							);
+						}
+						$j++;
+					}
+
+				}
+			}
+			$i=1;
+			//print_r('idActa ="'.$idActa.'" AND idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
+			$sql5 = sql_select('*','sena_actas_conceptos', 'idActa ="'.$idActa.'" AND idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
+			while ($row5 = sql_fetch($sql5)) {
+							$dataConceptos= array(
+							'no'=>''.$i,
+							'hechos'=>!empty($row5['hechos']) ? $row5['hechos']:'sin hechos',
+							'contemplacion'=>!empty($row5['contemplacion']) ? $row5['contemplacion']:'sin contemplacion',
+							'frenteHechos'=>!empty($row5['frenteHechos']) ? $row5['frenteHechos']:'frenteHechos',
+							'recomendacion'=>!empty($row5['recomendacion']) ? $row5['recomendacion']:'recomendacion',
+							'compromisos'=>!empty($row5['compromisos']) ? $row5['compromisos']:'compromisos',
+							);
+				
+				$i++;
+			}
+			
+			if (!empty($dataConceptos)) {
+				$dataConceptosActa = $dataConceptos;
+			}else{
+				$dataConceptosActa= array(
+					'no'=>'1', 
+					'hechos'=>'hechos', 
+					'contemplacion'=>'contemplacion',
+					'frenteHechos'=>'frenteHechos',
+					'recomendacion'=>'recomendacion',
+					'compromisos'=>'compromisos'
+					);
+			}
+			if (!empty($dataApr)) {
+				$datosAprendiz = $dataApr;
+			}else{
+				$datosAprendiz= array(
+					'nombreAprendiz'=>'SiN REGISTRO', 
+					'tipoIdentificacion'=>'cc',
+					'identificacion'=>'000000',
+					'correo'=>'sienemail@gmail.com',
+					'telefono'=>'000000',
+					'ficha'=>'000001',
+					'programaFormacion'=>'SIN PROGRAMA FORMACION'
+					);
+			}
+			
+				$i++;
+				$pdf->datosAprendiz=$datosAprendiz;
+				$pdf->dataConceptos=$dataConceptosActa;
+				$pdf->AddPage('P', 'Legal');
+				$pdf->Contenido();
+				$pdf->AliasNbPages();
+			}
+			$pdf->Output('F', 'Actas_'.$idActa.'.pdf', true);
+			$pdfPath = '../ecrire/Actas_'.$idActa.'.pdf';
+			if (file_exists($pdfPath)) {
+				$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/Actas_'.$idActa.'.pdf';
+				$moved = rename($pdfPath, $newLocation);
+				if ($moved) {
+					spip_unlink($pdfPath);
+				}
+			}
+		}
                                             $var = var2js($arrayMensage);
 											echo $var;	
-                    }						
+        }						
 					
 			break;
 			case 'delete':
@@ -685,82 +880,26 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					'id'=>1,
 					'message'=>'::OK:: Asistente registrado!',
 					'status'=>'202');
-					$var = var2js($arrayMensage);
-					echo $var;	
-			
 				}
 				
-				//ARMAR PDF PARA LA LISTA
-						//CREAMOS LA SOLICITUD EN PDF
-						$path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/'.$idActa.'.pdf';
-						if (@file_exists($path)){
-							spip_log("Supprimer ancien logo '.$idActa.'", 'listaAsistentes');
-							spip_unlink($path);
-						}
-						require('../ecrire/exec/model/sena/ModuloActas/fpdf_listAsistencias.php');
-						$pdf = new PDF();
-						$pdf->AliasNbPages();
-						$pdf->AddPage('P','Legal');
-						$pdf = new PDF();
-						// Títulos de las columnas
-						$select='*';
-						$set = array();	
-						$w1 = array(8, 83, 40, 20,39);
-						$w2 = array(190);
-						$w3 = array(95, 95);
-							
-						$i=1;				
-						$sql = sql_select($select,'sena_asistencias','entidad="senaV1"');
-							while ($row = sql_fetch($sql)) {	
-								$data[$i][]= array(''.$i.'',''.$row['nombresApellidos'].'',''.$row['documento'].''.$row['planta'].'',''.$row['contratista'].'');	
-								$data2[$i][]= array(''.$row['contratistaOtros'].'');	
-								$data3[$i][]= array(''.$row['dependencia'].'',''.$row['email'].'');	
-								$data4[$i][]= array(''.$row['autorizacion'].'','');	
-								$i++;
-							}
-						$header1= array('#', 'NOMBRES Y APELLIDOS', 'DOCUMENTO', 'PLANTA','CONTRATISTA');						
-						$header2 = array('OTRO ¿CUAL?');
-						$header3 = array('DEPENDENCIA/ EMPRESA', 'CORREO ELECTRÓNICO');
-						$header4 = array('AUTORIZA GRABACIÓN', 'FIRMA O PARTICIPACIÓN VIRTUAL');
-						$header5 = array('');
-						
-						// Carga de datos
-						$pdf->SetFont('Arial','',14);
-						$pdf->AddPage();
-						for($i = 1; $i < count($data); ++$i) {
-						$pdf->SimpleTable($header1,$data[$i],$w1);
-						$pdf->SimpleTable($header2,$data2[$i],$w2);
-						$pdf->SimpleTable($header3,$data3[$i],$w3);
-						$pdf->SimpleTable($header4,$data4[$i],$w3);
-						//$pdf->SingleColumnTable($header5);
-						$pdf->ln(6);
-						}
-
-						$pdf->Output('F',''.$idActa.'.pdf',true);
-						$pdf='../ecrire/'.$idActa.'.pdf';
-						if (@file_exists($pdf)){
-							$newLocation = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/'.$idActa.'.pdf';
-							$moved = rename($pdf, $newLocation);
-							if($moved)
-							  {
-								spip_unlink($pdf);
-							  }						
-						}						 
+						generarPDFAsistencia($idActa);					 
 					   //FIN GENERA LA FICHA
-
+					   $var = var2js($arrayMensage);
+					   echo $var;	
 		break;
 		case 'ConsultarAsistentes':	
 			$entidad = base64_decode($_POST['entidad']);
+			$idActa = base64_decode($_POST['idActa']);
 			$DatosAuteurs=array();
 			$select='*';
 			$set = array();	
-			$sql = sql_select("COUNT(*) AS total",'sena_asistencias','entidad="'.$entidad.'"');
-				while ($row = sql_fetch($sql)) {	
-					$total = $row['total'];
-				}
-				if($total >= 1){
+			generarPDFAsistencia($idActa);	
+			if (
+				sql_countsel('sena_asistencias','idActa="'.$idActa.'" AND entidad="senaV1"') > 0
+				) {	
 					$app=new Apis('sena_asistencias');
-					$Asistentes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
+					$Asistentes=$app->consultadatos('idActa="'.$idActa.'" AND entidad="'.$entidad.'"',$select);				
+					
 					$data = array("data"=>$Asistentes);
 					$var = var2js($data);
 					echo $var;
