@@ -481,39 +481,53 @@ switch ($opcion) {
 		$consolidado= array();
         $DatosAuteurs=array();
         $select='*';
-        $set = array();
-        if (sql_countsel('sena_actas', 'idActa IN ('.$items.') AND entidad="'.$entidad.'" AND statut="Activo"') >= 1) {
-            $app=new Apis('sena_actas');
-            //$aprendizes=$app->consultadatos('idActa IN ('.$items.') AND entidad="'.$entidad.'"',$select);
-            $sql1 = sql_select('*','sena_actas','idActa IN ('.$items.') AND entidad="'.$entidad.'" AND statut="Activo"');
+        $conceptos = array(); 
+		$app=new Apis('sena_actas');
+	
+		$itemsActas = explode(',',$items);
+		// Verificar si todos los elementos son numéricos
+				$todosActa = true;
+				foreach ($itemsActas as $item) {
+					if (!is_numeric($item)) {
+						$todosActa  = false;
+						break;
+					}
+				}
+
+        if ($todosActa) {
+			foreach ($itemsActas as $idActa) {	
+            $sql1 = sql_select('*','sena_actas','idActa="'.$idActa.'" AND entidad="'.$entidad.'" AND statut="Activo"');
             while ($row1 = sql_fetch($sql1)) {
 
                 $itemsSolicitud = explode(',',$row1['casosComite']);
-                if(is_array($itemsSolicitud )){
-                    foreach ($itemsSolicitud as $idSolicitud) {
-                        $sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
-
+			// Verificar si todos los elementos son numéricos
+					$todosNumericos = true;
+					foreach ($itemsSolicitud as $elemento) {
+						if (!is_numeric($elemento)) {
+							$todosNumericos  = false;
+							break;
+						}
+					}
+				 
+                if ($todosNumericos) {
+                    foreach ($itemsSolicitud as $idSolicitud) {	
+						
+						if (sql_countsel('sena_actas_conceptos','idActa="'.intval($idActa).'" AND idSolicitud="'.$idSolicitud.'"') > 0) {
+							$sql4 = sql_select('*', 'sena_actas_conceptos', 'idActa="'.intval($idActa).'" AND idSolicitud="'.$idSolicitud.'"');
+							while ($row4 = sql_fetch($sql4)) {
+							$conceptos= array(
+									'hechos'=>$row4['hechos'],
+									'contemplacion'=>$row4['contemplacion'],
+									'frenteHechos'=>$row4['frenteHechos'],
+									'recomendacion'=>$row4['recomendacion'],
+									'compromisos'=>$row4['compromisos']);
+							}
+							
+						}
+						 
+						$sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
                         while ($row2 = sql_fetch($sql2)) {
                             if (!empty($row2['idAprendiz'])) {
-
-                                if (sql_countsel('sena_actas_conceptos','idActa="'.intval($row1['idActa']).'" AND idAcidSolicitudta="'.$idSolicitud.'"') >= 1) {
-
-                                    $sql4 = sql_select('*', 'sena_actas_conceptos', 'idActa="'.intval($row1['idActa']).'" AND idAcidSolicitudta="'.$idSolicitud.'"');
-                                    while ($row4 = sql_fetch($sql4)) {
-                                        $hechos=$row4['hechos'];
-                                        $contemplacion=$row4['contemplacion'];
-                                        $frenteHechos=$row4['frenteHechos'];
-                                        $recomendacion=$row4['recomendacion'];
-                                        $compromisos=$row4['compromisos'];
-                                    }
-                                } else {
-                                    $hechos='';
-                                    $contemplacion='';
-                                    $frenteHechos='';
-                                    $recomendacion='';
-                                    $compromisos='';
-                                }
-
                                 $h=1;
                                 $sql3 = sql_select('*', 'sena_aprendiz', 'idAprendiz="'.$row2['idAprendiz'].'" AND entidad="senaV1"');
                                 while ($row3 = sql_fetch($sql3)) {
@@ -534,17 +548,17 @@ switch ($opcion) {
                                             "CORREO"=>!empty($row3['correo']) ? $row3['correo']:'sienemail@gmail.com',
                                             "TELEFONO"=>!empty($row3['telefono']) ? $row3['telefono']:'0000',
                                             "SOLICITUD"=>'SOLICITUD',
-                                            "HECHOS"=>!empty($hechos) ? $hechos:'',
-                                            "FRENTE A LOS HECHOS"=>!empty($frenteHechos) ? $frenteHechos:'',
-                                            "RECOMENDACIONES"=>!empty($recomendacion) ? $recomendacion:'',
-                                            "COMPROMISO"=>!empty($compromisos) ? $compromisos:'',
+                                            "HECHOS"=>!empty($conceptos['hechos']) ? $conceptos['hechos']:'',
+                                            "FRENTE A LOS HECHOS"=>!empty($conceptos['frenteHechos']) ? $conceptos['frenteHechos']:'',
+                                            "RECOMENDACIONES"=>!empty($conceptos['recomendacion']) ? $conceptos['recomendacion']:'',
+                                            "COMPROMISO"=>!empty($conceptos['compromisos']) ? $conceptos['compromisos']:'',
                                             "CITACION"=>'1',
                                             "ETAPA"=>'PRODUCTIVA',
                                             "JORNADA"=>'MAÑANA',
                                             "REGLA"=>'',
                                             "TIPO DE FALTA"=>'ACADEMICA',
                                             "COORDINADOR"=>'DORIS JUDITH',
-                                            "OBSERVACIONES"=>!empty($compromisos) ? $compromisos:'',
+                                            "OBSERVACIONES"=>!empty($conceptos['contemplacion']) ? $conceptos['contemplacion']:'',
                                         );
 
                                     }
@@ -583,6 +597,7 @@ switch ($opcion) {
                 }
 
             }
+		}
         }else{
 			$consolidado[]= array(
 				"FECHA COMITE"=>'',
@@ -613,8 +628,41 @@ switch ($opcion) {
 			);
 		}
 		$data = array("data"=>$consolidado);
-		$var = var2js($data);
-		echo $var;
+		if(empty($data)){
+			$consolidado[]= array(
+				"FECHA COMITE"=>'',
+				"HORA"=>'',
+				"APRENDIZ"=>'',
+				"TIPO DOCUMENTO"=>'CC',
+				"NUMERO DE DOCUMENTO IDENTIDAD"=>'1111111',
+				"ESPECIALIDAD"=>'SIN PROGRAMA FORMACION',
+				"FICHA"=>'000011',
+				"INICIO LECTIVA"=>'',
+				"FECHA FIN FORMACION"=>'0000-00-00',
+				"INICIO PRODUCTIVA"=>'0000-00-00',
+				"FIN 2 AÑOS"=>'',
+				"CORREO"=>'sienemail@gmail.com',
+				"TELEFONO"=>'0000',
+				"SOLICITUD"=>'SOLICITUD',
+				"HECHOS"=>'',
+				"FRENTE A LOS HECHOS"=>'',
+				"RECOMENDACIONES"=>'',
+				"COMPROMISO"=>'',
+				"CITACION"=>'1',
+				"ETAPA"=>'PRODUCTIVA',
+				"JORNADA"=>'MAÑANA',
+				"REGLA"=>'',
+				"TIPO DE FALTA"=>'ACADEMICA',
+				"COORDINADOR"=>'DORIS JUDITH',
+				"OBSERVACIONES"=>'',
+			);
+			$var = var2js($consolidado);
+			echo $var;
+		}else{
+			$var = var2js($data);
+			echo $var;
+		}
+
         break;
     case 'listActas':
         $entidad = base64_decode($_POST['entidad']);
