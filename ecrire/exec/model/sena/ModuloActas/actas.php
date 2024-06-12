@@ -487,30 +487,56 @@ switch ($opcion) {
             //$aprendizes=$app->consultadatos('idActa IN ('.$items.') AND entidad="'.$entidad.'"',$select);
             $sql1 = sql_select('*','sena_actas','idActa IN ('.$items.') AND entidad="'.$entidad.'" AND statut="Activo"');
             while ($row1 = sql_fetch($sql1)) {
-                $consolidado[]= array(
-                    "FECHA COMITE"=>$row1['fecha'],
-                    "HORA"=>$row1['fecha'],
-                    "APRENDIZ"=>'APRENDIZ',
-                    "TIPO DOCUMENTO"=>'TP',
-                    "NUMERO DE DOCUMENTO IDENTIDAD"=>'xxxx',
-                    "ESPECIALIDAD"=>'ESPECIALIDAD',
-                    "FICHA"=>'FICHA',
-                    "INICIO LECTIVA"=>'INICIO LECTIVA',
-                    "FECHA FIN FORMACION"=>'FECHA FIN FORMACION',
-                    "INICIO PRODUCTIVA"=>'INICIO PRODUCTIVA',
-                    "FIN 2 AÑOS"=>'FIN 2 AÑOS',
-                    "CORREO"=>'CORREO',
-                    "TELEFONO"=>'TELEFONO',
-                    "SOLICITUD"=>'SOLICITUD',
-                    "HECHOS"=>'La instructora informa que la empresa DELTA A SALUD SAS BIC cancela por mutuo acuerdo el contrato de aprendizaje a partir de septiembre 27/203, igualmente la aprendiz manifiesta dolencias físicas en el brazo derecho, jornadas de trabajo virtual muy extensas, se le permitió trabajar desde la casa.',
-                    "CITACION"=>'1',
-                    "ETAPA"=>'PRODUCTIVA',
-                    "JORNADA"=>'MAÑANA',
-                    "REGLA"=>'DEBERES DEL APRENDIZ. En el  articulo 9, numeral 1 "Cumplir con todas las actividades propias de su proceso de aprendizaje o del plan de mejoramiento, definidas durante su etapa lectiva y productiva.',
-                    "TIPO DE FALTA"=>'ACADEMICA',
-                    "COORDINADOR"=>'DORIS JUDITH',
-                    "OBSERVACIONES"=>'El Aprendiz el día 24 de octubre de 2023, comienza su fase práctica en las instalaciones de la Universidad Autónoma De Bucaramanga U.N.A.B., el 01 de noviembre a las 4:15 pm, envía un mensaje de voz informándome el cambio de sede de práctica, diciendo que no conocía la sede del Cacique. El 02 de noviembre el ingeniero Rubén Darío Pérez, Coordinador Soporte Tecnológico, mediante comunicación telefónica informa que el aprendiz no se presentó y que no se ha logrado establecer comunicación con él. Se ha intentado contactar al aprendiz por diferentes medios, sin obtener respuesta alguna a la fecha',
-                );
+               
+
+ 
+
+    
+            $itemsSolicitud = explode(',',$row1['casosComite']);
+    
+            foreach ($itemsSolicitud as $idSolicitud) {
+                $sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
+    
+                while ($row2 = sql_fetch($sql2)) {
+                    if (!empty($row2['idAprendiz'])) {
+                        $sql3 = sql_select('*', 'sena_aprendiz', 'idAprendiz="'.$row2['idAprendiz'].'" AND entidad="senaV1"');
+    
+                        $h=1;
+                        while ($row3 = sql_fetch($sql3)) {
+                            if (!empty($row3['nombres'])) {
+                               
+                                $consolidado[]= array(
+                                    "FECHA COMITE"=>$row1['fecha'],
+                                    "HORA"=>$row1['horaInicial'],
+                                    "APRENDIZ"=>''.$row3['nombres'].' '.$row3['apellidos'].'',
+                                    "TIPO DOCUMENTO"=>!empty($row3['tipoIdentificacion']) ? $row3['tipoIdentificacion']:'CC',
+                                    "NUMERO DE DOCUMENTO IDENTIDAD"=>!empty($row3['identificacion']) ? $row3['identificacion']:'1111111',
+                                    "ESPECIALIDAD"=>!empty($row3['programaFormacion']) ? $row3['programaFormacion']:'SIN PROGRAMA FORMACION',
+                                    "FICHA"=>!empty($row3['ficha']) ? $row3['ficha']:'000011',
+                                    "INICIO LECTIVA"=>!empty($row3['etapa']) ? $row3['etapa']:'',
+                                    "FECHA FIN FORMACION"=>'0000-00-00',
+                                    "INICIO PRODUCTIVA"=>'0000-00-00',
+                                    "FIN 2 AÑOS"=>'',
+                                    "CORREO"=>!empty($row3['correo']) ? $row3['correo']:'sienemail@gmail.com',
+                                    "TELEFONO"=>!empty($row3['telefono']) ? $row3['telefono']:'0000',
+                                    "SOLICITUD"=>'SOLICITUD',
+                                    "HECHOS"=>'La instructora informa que la empresa DELTA A SALUD SAS BIC cancela por mutuo acuerdo el contrato de aprendizaje a partir de septiembre 27/203, igualmente la aprendiz manifiesta dolencias físicas en el brazo derecho, jornadas de trabajo virtual muy extensas, se le permitió trabajar desde la casa.',
+                                    "CITACION"=>'1',
+                                    "ETAPA"=>'PRODUCTIVA',
+                                    "JORNADA"=>'MAÑANA',
+                                    "REGLA"=>'DEBERES DEL APRENDIZ. En el  articulo 9, numeral 1 "Cumplir con todas las actividades propias de su proceso de aprendizaje o del plan de mejoramiento, definidas durante su etapa lectiva y productiva.',
+                                    "TIPO DE FALTA"=>'ACADEMICA',
+                                    "COORDINADOR"=>'DORIS JUDITH',
+                                    "OBSERVACIONES"=>'El Aprendiz el día 24 de octubre de 2023, comienza su fase práctica en las instalaciones de la Universidad Autónoma De Bucaramanga U.N.A.B., el 01 de noviembre a las 4:15 pm, envía un mensaje de voz informándome el cambio de sede de práctica, diciendo que no conocía la sede del Cacique. El 02 de noviembre el ingeniero Rubén Darío Pérez, Coordinador Soporte Tecnológico, mediante comunicación telefónica informa que el aprendiz no se presentó y que no se ha logrado establecer comunicación con él. Se ha intentado contactar al aprendiz por diferentes medios, sin obtener respuesta alguna a la fecha',
+                                );   
+            
+                            }
+                        }
+                    }
+                }
+            }
+                
+ 
             }
 
             $data = array("data"=>$consolidado);
@@ -1076,7 +1102,7 @@ switch ($opcion) {
                     'frenteHechos' => base64_decode($_POST[2]),
                     'recomendacion' => base64_decode($_POST[3]),
                     'compromisos' => base64_decode($_POST[4],),
-                    'entidad' =>  $decodedPost['entidad'],
+                    'entidad' =>  ($decodedPost['entidad']),
                 ];
                 $chartic = pipeline('pre_insertion',
                     array(
