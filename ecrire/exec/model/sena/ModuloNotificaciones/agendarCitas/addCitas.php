@@ -421,7 +421,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 			}
 
 		    $apps_dir=new Apis('sena_directivo');			
-			$Directivos=$apps_dir->consultadatos('entidad="'.$entidad.'"','*');
+			$Directivos=$apps_dir->consultadatos("rol IN ('Apoyo','Coordinador') AND entidad='".$entidad."'",'*');
 			$directivo = array("Directivos"=>$Directivos);
 			$agenda = array("Agenda"=>$Agendas);
 			$datos = array_merge($directivo,$agenda);

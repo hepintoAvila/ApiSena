@@ -217,10 +217,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$comt=new Apis($tblComite);	
 							$campos_comit = $GLOBALS['tables_principales']['sena_directivo']['field'];
 							$select_comit = implode(',',array_keys($campos_comit));
-							$row2=$comt->consultadatos('entidad="'.$entidad.'"',$select_comit);
+							$row2=$comt->consultadatos(" entidad='".$entidad."'",$select_comit);
+						
 							foreach($row2 as $a => $val){
 									$directivos[] = array(
-									'id'=>$val['idDirectivo'],
+									'id'=>$val['id_auteur'],
 									'nombresApellidos'=>$val['nombres'].' '.$val['apellidos'],
 									'correo'=>$val['correo']
 									);
