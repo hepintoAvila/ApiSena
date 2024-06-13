@@ -163,22 +163,26 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 											}
 										else{
 													switch ($rol) {
+													case 'Administrador':
+															$table ='sena_directivo';
+													break;
 													case 'Instructor':
-														$table ='sena_instructor';
+														$table ='sena_directivo';
 													break;
 													case 'Apoyo':
-														$table ='sena_apoyo';
+														$table ='sena_directivo';
 													break;
 													case 'Coordinador':
 														$table ='sena_directivo';
 													break;
 													}
-												$chartic['idInstructor'] ="".$desc['id_auteur']."";
+												$chartic['id_auteur'] ="".$desc['id_auteur']."";
 												$chartic['identificacion'] ="".$identificacion."";
 												$chartic['nombres'] =$nombres;
 												$chartic['apellidos'] =$apellidos;
-												$chartic['telefono'] =$telefono;
 												$chartic['correo'] =$email;
+												$chartic['celular'] =$telefono;
+												$chartic['rol'] =$rol;
 												$chartic = pipeline('pre_insertion',
 													array(
 														'args' => array(
