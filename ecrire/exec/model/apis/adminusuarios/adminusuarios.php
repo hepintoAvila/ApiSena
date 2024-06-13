@@ -168,7 +168,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 													break;
 													case 'Apoyo':
 														$table ='sena_apoyo';
-													break;case 'Coordinador':
+													break;
+													case 'Coordinador':
 														$table ='sena_directivo';
 													break;
 													}
