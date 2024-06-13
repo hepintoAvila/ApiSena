@@ -425,6 +425,9 @@ function crearPdfActa($idActa) {
             $pdf->AddPage('P', 'Legal');
             $pdf->Contenido();
             $pdf->AliasNbPages();
+            unset($datosAprendiz);
+            unset($dataConceptos);
+            unset($dataApr);
         }
 
         $pdf->Output('F', 'evidenciActas_'.$idActa.'.pdf', true);
@@ -572,7 +575,7 @@ switch ($opcion) {
                                             "FRENTE A LOS HECHOS"=>!empty($conceptos['frenteHechos']) ? $conceptos['frenteHechos']:'',
                                             "RECOMENDACIONES"=>!empty($conceptos['recomendacion']) ? $conceptos['recomendacion']:'',
                                             "COMPROMISO"=>!empty($conceptos['compromisos']) ? $conceptos['compromisos']:'',
-                                            "CITACION"=>sql_countsel('sena_solicitudcomite','idAprendiz="'.intval($row1['idAprendiz']).'"'),
+                                            "CITACION"=>sql_countsel('sena_solicitudcomite','idAprendiz="'.intval($row2['idAprendiz']).'"'),
                                             "ETAPA"=>'PRODUCTIVA',
                                             "JORNADA"=>'MAÑANA',
                                             "REGLA"=>'',
@@ -737,10 +740,10 @@ switch ($opcion) {
         $DatosAuteurs=array();
         $select='*';
         $set = array();
-        if (sql_countsel('sena_actas','sena_actas','entidad="'.$entidad.'" AND statut="Inactiva"') >= 1) {
+        if (sql_countsel('sena_actas','entidad="'.$entidad.'" AND statut="Inactiva"') >= 1) {
             $app=new Apis('sena_actas');
-            $aprendizes=$app->consultadatos('entidad="'.$entidad.'"  AND statut="Inactiva"',$select);
-            $data = array("data"=>$aprendizes);
+            $actas=$app->consultadatos('entidad="'.$entidad.'"  AND statut="Inactiva"',$select);
+            $data = array("data"=>$actas);
             $var = var2js($data);
             echo $var;
         } else {
@@ -782,6 +785,7 @@ switch ($opcion) {
             'idUsuario' => $idUsuario,
             'presentacion' => $presentacion,
         ];
+        //print_r($variablesAVerificar);
         $mensajeError = $app->verificarVariables($variablesAVerificar);
         $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
         if (($mensajeError !== null) OR (!$validarTokes)){
@@ -822,7 +826,7 @@ switch ($opcion) {
             );
             $msg[] = 'Acta guardado con exito';
             $arrayMensage[] = array('message'=>'¡OK!. El Acta fue GUARDADO! '.implode(',',$msg).'','status' => '202');
-            crearPdfActa($idActa);
+            //crearPdfActa($idActa);
         }
         $var = var2js($arrayMensage);
         echo $var;
@@ -922,7 +926,7 @@ switch ($opcion) {
         );
         //sql_delete("sena_actas","idActa=" . intval($idActa));
 
-        $res = sql_select("*", "sena_actas", "statut='Activo' AND idActa=" . intval($idActa));
+        $res = sql_select("*", "sena_actas", "statut='Inactiva'");
         if ($res){
             $msg[] = array('menssage'=>'OK. El Registro Del Acta '.$idActa.' fue enviado a la papelera!','status' => '200');
         }
@@ -1252,7 +1256,7 @@ switch ($opcion) {
                     'contemplacion' => base64_decode($_POST[1]),
                     'frenteHechos' => base64_decode($_POST[2]),
                     'recomendacion' => base64_decode($_POST[3]),
-                    'compromisos' => base64_decode($_POST[4],),
+                    'compromisos' => base64_decode($_POST[4]),
                     'entidad' =>  ($decodedPost['entidad']),
                 ];
                 $chartic = pipeline('pre_insertion',

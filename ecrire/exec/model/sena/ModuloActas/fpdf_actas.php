@@ -115,6 +115,8 @@ class PDF extends FPDF
         $titulo18 = utf8_decode('Recomendación del Caso:');
         $titulo19 = utf8_decode(strtoupper(''.$this->dataConceptos['recomendacion'].''));
         $titulo20 = utf8_decode('COMPROMISOS');
+        $titulo21 = utf8_decode(strtoupper(''.$this->dataConceptos['compromisos'].''));
+
 
         $r1  = 10;
         $r2  = $r1 + 120;
@@ -205,6 +207,11 @@ class PDF extends FPDF
         $this->Cell(10);
         $this->SetFont('Arial','B', 12);
         $this->Cell($r1+9,4, $titulo20);
+        $this->Ln(); 
+        $this->Cell(10);
+        $this->SetFont('Arial', 'B', 10);
+        $this->MultiCell(180,5,$titulo21,0,'J');
+        $this->Ln(); 
     }
 
     function Footer()
