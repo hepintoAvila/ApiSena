@@ -89,7 +89,7 @@ function action_inscrire_auteur_dist($statut, $mail_complet, $nom, $options = ar
 
 	// attribuer un jeton pour confirmation par clic sur un lien
 	$desc['jeton'] = auteur_attribuer_jeton($desc['id_auteur']);
-
+/*
 	// charger de suite cette fonction, pour ses utilitaires
 	$envoyer_inscription = charger_fonction("envoyer_inscription", "");
 	list($sujet, $msg, $from, $head) = $envoyer_inscription($desc, $nom, $statut, $options);
@@ -101,7 +101,7 @@ function action_inscrire_auteur_dist($statut, $mail_complet, $nom, $options = ar
 	$notifications('inscription', $desc['id_auteur'],
 		array('nom' => $desc['nom'], 'email' => $desc['email'])
 	);
-
+*/
 	return $desc;
 }
 

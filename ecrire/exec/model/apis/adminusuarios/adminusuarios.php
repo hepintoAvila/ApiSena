@@ -155,27 +155,18 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								}else{
 									$options=array('tipo'=>$rol,'entidad'=>$entidad);
 									$inscrire_auteur = charger_fonction('inscrire_auteur', 'action');
-									$desc = $inscrire_auteur('', $email, $login, $options);
-									
+									$desc = $inscrire_auteur('0minirezo', $email, $login, $options);
+									$mensajeError = $app->verificarVariables($desc);
+									print_r($mensajeError);	
+
+
+
 									if (!is_null($desc)) {
 										if($desc['pass']=='I'){
 											$msg[] = 'WARNING. El Usuario no se pudo guardar!';
-											}
-										else{
-													switch ($rol) {
-													case 'Administrador':
-															$table ='sena_directivo';
-													break;
-													case 'Instructor':
-														$table ='sena_directivo';
-													break;
-													case 'Apoyo':
-														$table ='sena_directivo';
-													break;
-													case 'Coordinador':
-														$table ='sena_directivo';
-													break;
-													}
+										
+										}else{
+												$table ='sena_directivo';		
 												$chartic['id_auteur'] ="".$desc['id_auteur']."";
 												$chartic['identificacion'] ="".$identificacion."";
 												$chartic['nombres'] =$nombres;
