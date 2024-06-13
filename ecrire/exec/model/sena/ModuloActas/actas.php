@@ -28,6 +28,28 @@ include_spip('inc/actions');
 include_spip('inc/editer');
 include_spip('inc/notifications');
 
+
+function processElements($a, $b) {
+        // Verificar si 'a' o 'b' están vacíos o contienen solo '0'
+    if (empty($a) || empty($b) || $a == '0' || $b == '0') {
+            return ['a' => $a, 'b' => $b];
+    }
+    // Convertir las cadenas en arrays
+    $arrayA = explode(',', $a);
+    $arrayB = explode(',', $b);
+
+    // Eliminar elementos de B que están en A
+    $arrayB = array_diff($arrayB, $arrayA);
+
+    // Eliminar elementos de A que no están en B
+    $arrayA = array_intersect($arrayA, $arrayB);
+
+    // Convertir los arrays de vuelta a cadenas
+    $resultA = implode(',', $arrayA);
+    $resultB = implode(',', $arrayB);
+
+    return ['a' => $resultA, 'b' => $resultB];
+}
 function generarPDFAsistencia($idActa) {
     $path = '../ecrire/exec/model/sena/ModuloActas/pdf/sc/evidenciAsistencia_' . $idActa . '.pdf';
     if (@file_exists($path)) {
@@ -493,7 +515,6 @@ switch ($opcion) {
 						break;
 					}
 				}
-
         if ($todosActa) {
 			foreach ($itemsActas as $idActa) {	
             $sql1 = sql_select('*','sena_actas','idActa="'.$idActa.'" AND entidad="'.$entidad.'" AND statut="Activo"');
@@ -508,12 +529,12 @@ switch ($opcion) {
 							break;
 						}
 					}
-				 
+				
                 if ($todosNumericos) {
                     foreach ($itemsSolicitud as $idSolicitud) {	
-						
-						if (sql_countsel('sena_actas_conceptos','idActa="'.intval($idActa).'" AND idSolicitud="'.$idSolicitud.'"') > 0) {
-							$sql4 = sql_select('*', 'sena_actas_conceptos', 'idActa="'.intval($idActa).'" AND idSolicitud="'.$idSolicitud.'"');
+						//echo 'idActa="'.intval($idActa).'" AND idSolicitud="'.intval($idSolicitud).'"';
+						if (sql_countsel('sena_actas_conceptos','idActa="'.intval($idActa).'" AND idSolicitud="'.intval($idSolicitud).'"') > 0) {
+							$sql4 = sql_select('*', 'sena_actas_conceptos', 'idActa="'.intval($idActa).'" AND idSolicitud="'.intval($idSolicitud).'"');
 							while ($row4 = sql_fetch($sql4)) {
 							$conceptos= array(
 									'hechos'=>$row4['hechos'],
@@ -524,7 +545,6 @@ switch ($opcion) {
 							}
 							
 						}
-						 
 						$sql2 = sql_select('*','sena_solicitudcomite', 'idSolicitud ="'.$idSolicitud.'" AND entidad="senaV1"');
                         while ($row2 = sql_fetch($sql2)) {
                             if (!empty($row2['idAprendiz'])) {
@@ -552,7 +572,7 @@ switch ($opcion) {
                                             "FRENTE A LOS HECHOS"=>!empty($conceptos['frenteHechos']) ? $conceptos['frenteHechos']:'',
                                             "RECOMENDACIONES"=>!empty($conceptos['recomendacion']) ? $conceptos['recomendacion']:'',
                                             "COMPROMISO"=>!empty($conceptos['compromisos']) ? $conceptos['compromisos']:'',
-                                            "CITACION"=>'1',
+                                            "CITACION"=>sql_countsel('sena_solicitudcomite','idAprendiz="'.intval($row1['idAprendiz']).'"'),
                                             "ETAPA"=>'PRODUCTIVA',
                                             "JORNADA"=>'MAÑANA',
                                             "REGLA"=>'',
@@ -927,7 +947,7 @@ switch ($opcion) {
     case 'addIds':
         $app=new Apis('sena_actas');
         $variablesAVerificar=array();
-        $desc=array();
+        $chartic=array();
         $id_ou_options=0;
         $idActa = base64_decode($_POST['idActa']);
         $items = base64_decode($_POST['items']);
@@ -936,6 +956,8 @@ switch ($opcion) {
         $Apikey     = base64_decode($_POST["Apikey"]);
         $idUsuario = base64_decode($_POST["idUsuario"]);
         $idActa = base64_decode($_POST["idActa"]);
+        $opcionBusqueda = base64_decode($_POST["opcionBusqueda"]);
+
         // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
             'idActa' => $idActa,
@@ -943,43 +965,61 @@ switch ($opcion) {
             'ApiToken' => $ApiToken,
             'Apikey' => $Apikey,
             'idUsuario' => $idUsuario,
+            'opcionBusqueda' =>$opcionBusqueda,
+            'items' => $items,
         ];
-
+        
         $mensajeError = $app->verificarVariables($variablesAVerificar);
         $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
         if (($mensajeError !== null) OR (!$validarTokes)){
             $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
             $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
         } else {
-            $chartic['casosComite'] ="".$items."";
-            $chartic = pipeline('pre_insertion',
-                array(
-                    'args' => array(
-                        'table' => 'sena_actas',
-                    ),
-                    'data' => $chartic
-                )
-            );
-            sql_updateq('sena_actas',$chartic,"idActa=" . intval($idActa) . "");
-
-            pipeline('post_insertion',
-                array(
-                    'args' => array(
-                        'table' =>'sena_actas',
-                        'id_objet' => $idActa
-                    ),
-                    'data' => $chartic
-                )
-            );
-            $arrayMensage[]=array(
-                'id'=>1,
-                'message'=>'::OK:: Acta Acualizado!',
-                'status'=>'202');
-
+            switch ($opcionBusqueda) {
+                case 'ASIGNAR':
+                    $chartic['casosComite'] ="".$items."";
+                break;
+                case 'ASIGNADOS':
+                    $sqlact = sql_select("casosComite",
+						'sena_actas','idActa="'.$idActa.'"');
+						while ($rowact = sql_fetch($sqlact)) {
+						 $idSolicituds= $rowact['casosComite'];	
+						}
+                        $result = processElements($items, $idSolicituds);
+                        $chartic['casosComite'] ="".$result['b']."";
+                break;
+            }
+      
+               
+                $chartic = pipeline('pre_insertion',
+                    array(
+                        'args' => array(
+                            'table' => 'sena_actas',
+                        ),
+                        'data' => $chartic
+                    )
+                );
+                sql_updateq('sena_actas',$chartic,"idActa=" . intval($idActa) . "");
+    
+                pipeline('post_insertion',
+                    array(
+                        'args' => array(
+                            'table' =>'sena_actas',
+                            'id_objet' => $idActa
+                        ),
+                        'data' => $chartic
+                    )
+                );
+                $arrayMensage[]=array(
+                    'id'=>1,
+                    'message'=>'::OK:: solicitud quitada de la lista!',
+                    'status'=>'202');
+           } 
+           
             $var = var2js($arrayMensage);
             echo $var;
 
-        }
+        
         //CREAMOS EL PDF DE LOS ESTUDIANTES ASIGNADOS AL ACTA
         crearPdfAprendices($idActa);
 

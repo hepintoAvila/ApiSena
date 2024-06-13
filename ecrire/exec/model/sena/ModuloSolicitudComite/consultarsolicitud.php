@@ -22,7 +22,31 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('exec/model/sena/email');	
 		//include_spip('fpdf.php');	
 		include_spip('inc/charsets');
- 
+
+		function processArray($array) {
+			// Inicializar un array para almacenar los valores únicos
+			$uniqueValues = [];
+		
+			// Recorrer el array de entrada
+			foreach ($array as $item) {
+				// Separar los valores por comas
+				$values = explode(',', $item);
+		
+				// Añadir cada valor al array de valores únicos si no es 0 y no está ya en el array
+				foreach ($values as $value) {
+					if ($value != 0 && !in_array($value, $uniqueValues)) {
+						$uniqueValues[] = $value;
+					}
+				}
+			}
+		
+			// Convertir los valores únicos en una cadena separada por comas
+			$uniqueValuesString = implode(',', $uniqueValues);
+		
+			// Devolver ambos resultados
+			return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
+		}
+
 		switch($_POST['obj']) {
 				case "ConsultarSolicitud":
 				case "ConsultarSolicitudByID":
@@ -91,35 +115,35 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 								break;
 								case '8':
-
-									$idActa = base64_decode($_POST["idActa"]);
-										$sqlact = sql_select("casosComite",
-											'sena_actas','idActa="'.$idActa.'"');
-										while ($rowact = sql_fetch($sqlact)) {
-											$idSolicituds= $rowact['casosComite'];	
+									//dashboard/ModuloActas/Actas?p=
+									//MUESTRE TODAS LAS SOLICITUDES QUE NO ESTAN REGISTRADA EN LAS ACTAS
+										$sq = sql_select("casosComite",
+											'sena_actas','');
+										while ($r= sql_fetch($sq)) {
+											$casosComite[]= $r['casosComite'];	
 										}
-
-										
-										if(empty($idSolicituds)){
-											$row=$apps->consultadatos('estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+										$result = processArray($casosComite);
+										if(is_array($result['array'])){
+											$row=$apps->consultadatos('idSolicitud NOT IN ('.$result['string'].') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
 										}else{
-											$row=$apps->consultadatos('idSolicitud NOT IN ('.$idSolicituds.') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
+											$row=[];
 										}
-										//print_r($row);
+									 
 								break;
 								case '9':
-
+									//dashboard/ModuloActas/Actas?p=
+									//MUESTREME TODA LAS SOLICITUDES ASIGNADAS A SU RESPECTIVO ID DEL ACTA
 									$idActa = base64_decode($_POST["idActa"]);
 										$sqlact = sql_select("casosComite",
 											'sena_actas','idActa="'.$idActa.'"');
 										while ($rowact = sql_fetch($sqlact)) {
-											$idSolicituds= $rowact['casosComite'];	
+											$idSolicituds[]= $rowact['casosComite'];	
 										}
-										if(empty($idSolicituds)){
-											$row=[];
+										$result = processArray($idSolicituds);
+										if(is_array($result['array'])){
+											$row=$apps->consultadatos('idSolicitud IN ('.$result['string'].') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);	
 										}else{
-											$row=$apps->consultadatos('idSolicitud IN ('.$idSolicituds.') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
-										
+											$row=[];
 										}
 								break;																									
 							}
