@@ -352,10 +352,10 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 				'maj' => 'maj',
 				'principale' => 'oui',
 				'introduction_longueur' => '600',
-				'champs_editables' => array('identificacion', 'nombres', 'apellidos','correo', 'celular'),
-				'champs_versionnes' => array('nombres', 'apellidos ', 'correo','celular', 'entidad'),
+				'champs_editables' => array('identificacion', 'nombres', 'apellidos','correo', 'celular','rol'),
+				'champs_versionnes' => array('nombres', 'apellidos ', 'correo','celular','rol', 'entidad'),
 				'field' => array(
-					'idDirectivo' => 'bigint(21) NOT NULL',
+					'id_auteur' => 'bigint(21) NOT NULL',
 					'nombres' =>  'bigint(21) NOT NULL',
 					'apellidos' =>  'bigint(21) NOT NULL',
 					'correo' => "varchar(255) DEFAULT '0' NOT NULL",
@@ -365,7 +365,7 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'maj' => 'TIMESTAMP',
 				),
 				'key' => array(
-					'PRIMARY KEY' => 'idDirectivo ',
+					'PRIMARY KEY' => 'id_auteur',
 				),
 				'rechercher_champs' => array(
 					'nombres' => 1,
