@@ -26,25 +26,23 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			function generateNonce() {
 				return bin2hex(random_bytes(16));
 			}
-
-			function generateSecretKey($userId, $alea_actuel, $alea_futur) {
-				$data = $userId . $alea_actuel . $alea_futur;
-				return hash('sha256', $data);
-			}
+ 
 
 			// Funciones de cifrado y descifrado
 			function encryptData($data, $secretKey) {
 				$method = 'AES-256-CBC';
-				$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
+				$ivLength = openssl_cipher_iv_length($method);
+				$iv = openssl_random_pseudo_bytes($ivLength);
 				$encryptedData = openssl_encrypt($data, $method, $secretKey, 0, $iv);
-				return base64_encode($encryptedData . '::' . $iv);
+				return $encryptedData . '::' . base64_encode($iv);
 			}
-
-			function decryptData($encryptedData, $secretKey) {
-				$method = 'AES-256-CBC';
-				list($encryptedData, $iv) = explode('::', base64_decode($encryptedData), 2);
-				return openssl_decrypt($encryptedData, $method, $secretKey, 0, $iv);
+			function generateSecretKey() {
+				// Genera 32 bytes de datos aleatorios
+				$key = random_bytes(32);
+				// Convierte los bytes en una cadena hexadecimal
+				return bin2hex($key);
 			}
+ 
 	
 		$opcion = base64_decode($_POST['opcion']);
 		switch ($opcion) {
@@ -59,8 +57,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$statut=$row['statut'];
 				}
 				
-				$secretKey = generateSecretKey($row['id_auteur'],$row['alea_actuel'], $row['alea_futur']);
-			    $encryptedData = encryptData($session_password, $secretKey);
+				//$encryptedData = generateSecretKey($row['id_auteur'],$row['alea_actuel'], $row['alea_futur']);
+			    $secretKey = generateSecretKey();
+				$encryptedData = encryptData($session_password, $secretKey);
 			$app=new Apis("api_auteurs");
 				$Auth['Auth']= array(
 				'status' => '202',
@@ -71,6 +70,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				'Rol' => $row['tipo'],
 				'Apikey' =>$encryptedData,
 				'ApiToken' =>$secretKey,
+				'alea_actuel' =>$row['alea_actuel'],
 				'entidad' =>$row['entidad']
 				);
 							$res = sql_select("*", "apis_roles", "entidad ='".$row['entidad']."' AND tipo=" . sql_quote($row['tipo']));

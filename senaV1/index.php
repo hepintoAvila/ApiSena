@@ -62,49 +62,15 @@ error_log("Accion decodificada: $accion");
 
 // Handle the request
 $router->handleRequest();
-
-/**
- * Make a cURL request with given variables and authentication
- *
- * @param array $variables
- * @param string $refer
- * @param int $timeout
- * @param array $header
- * @return mixed
- */
-function decryptData($encryptedData, $secretKey) {
-    $method = 'AES-256-CBC';
-    list($encryptedData, $iv) = explode('::', base64_decode($encryptedData), 2);
-    return openssl_decrypt($encryptedData, $method, $secretKey, 0, $iv);
-}
-function makeCurlRequest($variables, $refer = "", $timeout = 10, $header = []) {
+function makeCurlRequest($variables,  $data, $refer = "", $timeout = 10, $header = []) {
     $url = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui";
-    $data = [];
    
-    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        $ha = base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6));
-        if (!empty($ha) && strpos($ha, ':') !== false) {
-            list($php_auth_user, $php_auth_pw) = explode(':', $ha);
-            $data = ['var_login' => $php_auth_user, 'password' => $php_auth_pw];
-        } else {
-            $data = ['var_login' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']];
-            //exit;
-        }
-    } else {
-        $php_auth_user = $_SERVER['PHP_AUTH_USER'] ?? '';
-        $php_auth_pw = $_SERVER['PHP_AUTH_PW'] ?? '';
-        $data = ['var_login' => $php_auth_user, 'password' => $php_auth_pw];
-    }
-    $php_auth_pw = $_SERVER['PHP_AUTH_PW'];
-    $encryptedData = $_SERVER['PHP_AUTH_USER'];
-   // $secretKey = $_SERVER['PHP_AUTH_PW'];
-   // $decryptedData = decryptData($encryptedData, $secretKey);
- print_r($php_auth_pw);
-//$data = ['var_login' => 'Administrador', 'password' => 'd3ecca500ebee079c2e01ed53128a3b905fa5ab388943cad3b39d8dd7838b4bb'];
-    $POSTFIELDS = array_merge($variables, $data);
+
+ $POSTFIELDS = array_merge($variables, $data);
+
     $ch = curl_init();
 
-    $ssl = stripos($url, 'https://') === 0;
+    $ssl = stripos($url, 'http://') === 0;
     $options = [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,

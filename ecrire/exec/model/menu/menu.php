@@ -30,21 +30,42 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			$menu=array();
 			$menuParent=array();
 			$IdMenu = base64_decode($_POST['IdMenu']);
+			$entidad = base64_decode($_POST['entidad']);
+			$apiToken = $_POST['apiToken'];
+			$apikey = $_POST['apikey'];
+			$variablesAVerificar = [
+				'idSolicitudComite' => $IdMenu,
+				'entidad' => $entidad,
+				'entidad' => $ApiToken,
+				'apiToken' => $apiToken,
+				'apikey' => $Apikey,
+			];	
+ 
+ 
+			// Llama a la función para verificar las variables
+			$mensajeError = $apps->verificarVariables($variablesAVerificar);
+			//$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
+			if ($mensajeError !== null){
+				$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001::','status'=>'404');
+				
+			} else {
+
+			 
 				$res = sql_select("*", "apis_roles", "Tipo=" . sql_quote($IdMenu));
 				while ($r = sql_fetch($res)) {
-					$idTipo=$r['idRol'];
+					$idRol=$r['idRol'];
 				}	
 				//print_r($IdMenu);
 				//$admin = ($idTipo==1)? '': 'AND mu.idMenu!="8"';
 				$q = sql_select("DISTINCT m.idRol AS idMenu,m.key,m.label,m.isTitle,m.icon",
 					'apis_autorizaciones AS mu,apis_menu AS m',
-					"mu.idMenu=m.idMenu AND mu.idRol='".$idTipo."' AND mu.c='S' AND m.status='Active' ORDER BY m.idMenu");
+					"mu.idMenu=m.idMenu AND mu.idRol='".$idRol."' AND mu.c='S' AND m.status='Active' ORDER BY m.idMenu");
 				$k=0;
 				while ($r = sql_fetch($q)) {
 						//CHILDREN
 						$child = sql_select('mc.key,mc.label,mc.icon,mc.url,m.key AS parentKey',
 						'apis_autorizaciones AS a,apis_menu AS m,apis_submenus AS mc',
-						'a.idRol="'.$idTipo.'" AND a.idMenu="'.$r['idMenu'].'" AND a.c="S" AND a.idSubmenu =mc.idSubmenu AND a.idMenu=m.idMenu AND mc.status="Active" ORDER BY mc.idSubmenu ASC');
+						'a.idRol="'.$idRol.'" AND a.idMenu="'.$r['idMenu'].'" AND a.c="S" AND a.idSubmenu =mc.idSubmenu AND a.idMenu=m.idMenu AND mc.status="Active" ORDER BY mc.idSubmenu ASC');
 						
 						$i=0;
 						while ($ch = sql_fetch($child)) {
@@ -70,12 +91,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$var = var2js($records);	
 					echo $var;	 
 				}
+			}
 				break;
  			case 'configurar':
 			echo 'No registrado';
 			break;
 			
-		}	
 			
+	}		
 										
 ?>
