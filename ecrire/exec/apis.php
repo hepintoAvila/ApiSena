@@ -46,7 +46,7 @@ function exec_apis_dist(){
 					include_spip('exec/model/apis/consultarusuario/consultarusuario');		    
 				break;
 				case "menu":
-					 
+
 					include_spip('exec/model/apis/menu/menu');		    
 				break;
 				case "AdminUsuarios":

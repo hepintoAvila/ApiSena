@@ -23,26 +23,48 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/filtres');
 		include_spip('inc/utils');
 		include_spip('inc/json');
-		
+		include_spip('exec/model/sena/claseapi');
+
 		$opcion = base64_decode($_POST['opcion']);
 		switch($opcion) {
 		case 'consultar':
 			$menus=array();
 			$menu=array();
-			$menuParent=array();
-			$IdMenu = base64_decode($_POST['IdMenu']);
-			$entidad = base64_decode($_POST['entidad']);
 			
-				$res = sql_select("*", "apis_roles", "entidad ='".$entidad."' AND tipo=" . sql_quote($IdMenu));
+			$menuParent=array();
+			$role = base64_decode($_POST['role']);
+			$entidad = base64_decode($_POST['entidad']);
+			$ApiToken     = base64_decode($_POST["apiToken"]);
+			$Apikey     = base64_decode($_POST["apikey"]);
+
+
+			// Crea un array con las variables que deseas verificar
+			$variablesAVerificar = [
+				'role' => $role,
+				'entidad' => $entidad,
+				'ApiToken' => $ApiToken,
+				'Apikey' => $Apikey,
+			];
+				$app=new Apis('apis_roles');
+				$mensajeError = $app->verificarVariables($variablesAVerificar);
+			if ($mensajeError !== null){
+			 
+				$message =array('id'=>1,'message'=>'::ERROR-001:: ','status'=>'404');
+				$arrayMensage['status'] = array('status'=>'404','message'=>$message);
+				$var = var2js($arrayMensage);	
+				echo $var;	 
+			
+			} else {			
+				$res = sql_select("*", "apis_roles", "entidad ='".$entidad."' AND tipo=" . sql_quote($role));
 				while ($r = sql_fetch($res)) {
-					$idTipo=$r['idRol'];
+					$idRol=$r['idRol'];
 				}	
 			 
 				//apis_autorizaciones
 				
 				$q = sql_select("DISTINCT M.idMenu,M.key,M.label,M.isTitle,M.icon",
 					'apis_autorizaciones as A,apis_roles as R,apis_menu AS M',
-					"A.idRol='".$idTipo."'
+					"A.idRol='".$idRol."'
 					AND A.entidad ='".$entidad."'					
 					AND M.entidad ='".$entidad."'				
 					AND R.entidad ='".$entidad."'				
@@ -55,7 +77,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						//CHILDREN
 						$child = sql_select('DISTINCT S.key,S.label,S.icon,S.url,M.key AS parentKey',
 						'apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R',
-						'R.idRol="'.$idTipo.'" 
+						'R.idRol="'.$idRol.'" 
 						AND A.idRol= R.idRol 
 						AND M.idMenu= A.idMenu 
 						AND A.entidad="'.$entidad.'" 
@@ -82,11 +104,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$i=0;
 					$k++;	
 				 }
- 					//validamos usuarios y contraseña
-				//$session_login = _request('var_login');
-				//$session_password = _request('password');
-				//include_spip('inc/auth');
-				//$row = auth_identifier_login($session_login, $session_password);   				 
 				if (!is_null($menus)) {
 					$ouput = var2js($menus);
 					echo $ouput; 
@@ -95,12 +112,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$var = var2js($records);	
 					echo $var;	 
 				}
-				break;
+			}
+			break;
  			case 'configurar':
 			echo 'No registrado';
 			break;
 			
 		}	
+		
 			
 										
 ?>

@@ -20,12 +20,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/utils');
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
-		include_spip('exec/model/apis/claseapi');
+
 		include_spip('inc/auth');
-			// Funciones de generación de nonces y claves secretas
-			function generateNonce() {
-				return bin2hex(random_bytes(16));
-			}
  
 
 			// Funciones de cifrado y descifrado
@@ -60,7 +56,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				//$encryptedData = generateSecretKey($row['id_auteur'],$row['alea_actuel'], $row['alea_futur']);
 			    $secretKey = generateSecretKey();
 				$encryptedData = encryptData($session_password, $secretKey);
-			$app=new Apis("api_auteurs");
 				$Auth['Auth']= array(
 				'status' => '202',
 				'Nom' => $row['nom'].'',
@@ -71,7 +66,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				'Apikey' =>$encryptedData,
 				'ApiToken' =>$secretKey,
 				'alea_actuel' =>$row['alea_actuel'],
-				'entidad' =>$row['entidad']
+				'entidad' =>$row['entidad'],
+				'status'=>'202'
 				);
 							$res = sql_select("*", "apis_roles", "entidad ='".$row['entidad']."' AND tipo=" . sql_quote($row['tipo']));
 							while ($r = sql_fetch($res)) {

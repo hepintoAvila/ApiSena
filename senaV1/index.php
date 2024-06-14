@@ -92,7 +92,7 @@ function makeCurlRequest($variables,  $data, $refer = "", $timeout = 10, $header
         $options[CURLOPT_SSL_VERIFYHOST] = false;
         $options[CURLOPT_SSL_VERIFYPEER] = false;
     }
-
+    // Crea un array con las variables que deseas verificar
     curl_setopt_array($ch, $options);
 
     $returnData = curl_exec($ch);
