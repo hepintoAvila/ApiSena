@@ -13,6 +13,7 @@
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
+
 		include_spip('base/connect_sql');
 		include_spip('inc/filtres_ecrire');
 		include_spip('inc/filtres');
@@ -21,11 +22,34 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/autoriser');
 		include_spip('exec/model/apis/claseapi');
 		include_spip('inc/auth');
+			// Funciones de generaciÃ³n de nonces y claves secretas
+			function generateNonce() {
+				return bin2hex(random_bytes(16));
+			}
+
+			function generateSecretKey($userId, $alea_actuel, $alea_futur) {
+				$data = $userId . $alea_actuel . $alea_futur;
+				return hash('sha256', $data);
+			}
+
+			// Funciones de cifrado y descifrado
+			function encryptData($data, $secretKey) {
+				$method = 'AES-256-CBC';
+				$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
+				$encryptedData = openssl_encrypt($data, $method, $secretKey, 0, $iv);
+				return base64_encode($encryptedData . '::' . $iv);
+			}
+
+			function decryptData($encryptedData, $secretKey) {
+				$method = 'AES-256-CBC';
+				list($encryptedData, $iv) = explode('::', base64_decode($encryptedData), 2);
+				return openssl_decrypt($encryptedData, $method, $secretKey, 0, $iv);
+			}
+	
 		$opcion = base64_decode($_POST['opcion']);
-			//print_r($_POST);
 		switch ($opcion) {
 			case 'consultarusuario':
-				//validamos usuarios y contraseña var_login
+				//validamos usuarios y contraseï¿½a var_login
 				$session_login =_request('var_login');
 				$session_password = _request('password');
 				$row = auth_identifier_login($session_login, $session_password);
@@ -34,16 +58,19 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				}else{
 					$statut=$row['statut'];
 				}
+				
+				$secretKey = generateSecretKey($row['id_auteur'],$row['alea_actuel'], $row['alea_futur']);
+			    $encryptedData = encryptData($session_password, $secretKey);
 			$app=new Apis("api_auteurs");
-				$valeurs['Auth']= array(
+				$Auth['Auth']= array(
 				'status' => '202',
-				'Nom' => $row['nom'],
+				'Nom' => $row['nom'].'',
 				'Idsuario' => $row['id_auteur'],
 				'Usuario' => $row['login'],
 				'Email' => $row['email'],
 				'Rol' => $row['tipo'],
-				'Apikey' =>$row['alea_actuel'],
-				'ApiToken' =>$row['alea_futur'],
+				'Apikey' =>$encryptedData,
+				'ApiToken' =>$secretKey,
 				'entidad' =>$row['entidad']
 				);
 							$res = sql_select("*", "apis_roles", "entidad ='".$row['entidad']."' AND tipo=" . sql_quote($row['tipo']));
@@ -65,7 +92,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									}				
 								 			
 							if (!is_null($menus)) {
-								$data = array('data'=>array_merge($valeurs,$menus));
+								$data = array('data'=>array_merge($Auth,$menus));
 								$var = var2js($data);
 								echo $var;
 							}else{

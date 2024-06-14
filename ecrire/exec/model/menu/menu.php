@@ -34,7 +34,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				while ($r = sql_fetch($res)) {
 					$idTipo=$r['idRol'];
 				}	
-				print_r($IdMenu);
+				//print_r($IdMenu);
 				//$admin = ($idTipo==1)? '': 'AND mu.idMenu!="8"';
 				$q = sql_select("DISTINCT m.idRol AS idMenu,m.key,m.label,m.isTitle,m.icon",
 					'apis_autorizaciones AS mu,apis_menu AS m',

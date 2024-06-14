@@ -23,7 +23,8 @@ class Router {
 
         // If no route matched, return 404
         header("HTTP/1.0 404 Not Found");
-        echo "Acción no reconocida";
+        echo "Acción no reconocida: '".$path."'".$path."'";
+       // print_r($this->routes);
     }
 }
 ?>

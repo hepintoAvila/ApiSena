@@ -16,15 +16,26 @@
  *
  * @package SPIP\Core\Rechercher
  **/
+use Spip\Chiffrer\SpipCles;
+
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 		include_spip('base/connect_sql');
 		include_spip('exec/model/claseapi');	
 		include_spip('fpdf.php');	
-
+		include_spip('inc/utils');
+		header("Content-Type: application/json");
+	
 
 function exec_apis_dist(){
+	/*
+	$login = $GLOBALS['visiteur_session']['login'];
+    $session_password = $GLOBALS['visiteur_session']['pass'];
+	include_spip('inc/auth');
+	$row = auth_informer_login($login);
+	*/
+	//print_r($row);
 		$accion = base64_decode($_POST['accion']);
 		
 		switch($accion) {	
