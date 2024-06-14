@@ -65,24 +65,16 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$new_pass = unicode2charset(utf_8_to_unicode($session_password), 'iso-8859-1');
 				$id_auteur = base64_decode($_POST['idUsuario']);
 				$entidad = base64_decode($_POST['entidad']);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);	
 				$variablesAVerificar = [
 					'password' => $session_password,
 					'new_pass' => $new_pass,
 					'id_auteur' => $id_auteur,
 					'entidad' => $entidad,
-					'ApiToken' => $ApiToken,
-					'Apikey' => $Apikey,
-				];
+					];
 
 				$mensajeError = $app->verificarVariables($variablesAVerificar);
-				$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$id_auteur);
-				if (($mensajeError !== null) OR (!$validarTokes)){
-					
-				 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-				 $arrayMensage=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-					
+				if ($mensajeError !== null){
+				 $arrayMensage=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 				}else{				
 
 					$cpass = array();
@@ -121,8 +113,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				 	$telefono = base64_decode($_POST['telefono']);
 				 	
 					$entidad = base64_decode($_POST['entidad']);
-					$ApiToken     = base64_decode($_POST["ApiToken"]);
-					$Apikey     = base64_decode($_POST["Apikey"]);	
+
 					$idUsuario = base64_decode($_POST["idUsuario"]);					
  						// Crea un array con las variables que deseas verificar
 						$variablesAVerificar = [
@@ -135,17 +126,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'telefono' => $telefono,
 							'rol' => $rol,
 							'entidad' => $entidad,
-							'ApiToken' => $ApiToken,
-							'Apikey' => $Apikey,
 						];
  
 						$mensajeError = $app->verificarVariables($variablesAVerificar);
-						$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							
-						 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-						 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
 								//$res = sql_select("statut, id_auteur, login, email", "api_auteurs", "entidad='".$entidad."' AND email=" . sql_quote($email));
 								

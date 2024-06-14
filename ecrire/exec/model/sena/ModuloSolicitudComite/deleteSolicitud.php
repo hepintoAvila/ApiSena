@@ -25,25 +25,18 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$apps=new Apis($tbls);
  
 				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
 				$idSolicitud     = base64_decode($_POST["idSolicitud"]);
 
 						$variablesAVerificar = [
 							'idSolicitud' => $idSolicitud,
-							'ApiToken' => $ApiToken,
-							'Apikey' => $Apikey,
 						];
  
 						// Llama a la función para verificar las variables
 					 
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
-						} else {
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+						}else{
 						 
 								$sql1 = sql_select("codigoFicha",'sena_solicitudcomite','idSolicitud="'.$idSolicitud.'"');
 								while ($row1 = sql_fetch($sql1)) {		
@@ -71,23 +64,16 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$apps=new Apis($tbls);
 				$path ='';
 				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
 				$idOpcion     = base64_decode($_POST["idOpcion"]);
 				$codigoFicha     = base64_decode($_POST["codigoFicha"]);
 				$variablesAVerificar = [
 							'idOpcion' => $idOpcion,
 							'codigoFicha' => $codigoFicha,
-							'ApiToken' => $ApiToken,
-							'Apikey' => $Apikey,
 						];				
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
-						} else {
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+						}else{
 								if($idOpcion==1){
 									$path='../ecrire/exec/model/sena/ModuloIncidentes/pdf/'.$codigoFicha.'.pdf';
 									if (@file_exists($path)){

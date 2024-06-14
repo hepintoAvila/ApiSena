@@ -63,14 +63,12 @@ error_log("Accion decodificada: $accion");
 
 // Handle the request
 $router->handleRequest();
+
 function makeCurlRequest($variables,  $data, $refer = "", $timeout = 10, $header = []) {
     $url = "http://localhost/sicesv.1/apis.sena/ecrire/?exec=apis&bonjour=oui";
-   
-
- $POSTFIELDS = array_merge($variables, $data);
+    $POSTFIELDS = array_merge($variables, $data);
 
     $ch = curl_init();
-
     $ssl = stripos($url, 'http://') === 0;
     $options = [
         CURLOPT_URL => $url,

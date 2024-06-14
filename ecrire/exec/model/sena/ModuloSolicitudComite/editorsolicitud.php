@@ -66,17 +66,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'idUsuario' => $idUsuario,
 							'entidad' => $entidad,
 							'selectedFile' => $fileAtribute
-							//'ApiToken' => $ApiToken,
-							//'Apikey' => $Apikey,
 						];
 						// Llama a la función para verificar las variables
-					// print_r($variablesAVerificar);
 						$mensajeError = $apps->verificarVariables($variablesAVerificar);
 					 
-					 
-						//$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						//if (($mensajeError !== null) OR (!$validarTokes)){
-						
 						if ($mensajeError !== null){
 							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
 							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
@@ -265,8 +258,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$chactualiza=array();
 				$opcionUpdate     = base64_decode($_POST["opcionUpdate"]);
 				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
 				$entidad     = base64_decode($_POST["entidad"]);
 				$e     = base64_decode($_POST["e"]); 
 				$idSolicitud     = base64_decode($_POST["idSolicitud"]);
@@ -276,11 +267,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					case "datosAprendiz":
 							$nombrePrograma     = base64_decode($_POST["nombrePrograma"]);
 							$codigoFicha     = base64_decode($_POST["codigoFicha"]);
-							//$faltaAcademica     = base64_decode($_POST["faltaAcademica"]);
-							//$faltaDisciplinaria     = base64_decode($_POST["faltaDisciplinaria"]);
-							//$faltaInasistencias     = base64_decode($_POST["faltaInasistencias"]);
-							//$faltaVerbal     = base64_decode($_POST["faltaVerbal"]);
-							//$faltaEscrito     = base64_decode($_POST["faltaEscrito"]);
 							$variablesAVerificar = [
 								'idSolicitud' => $idSolicitud,
 								'idAprendiz' => $e,
@@ -288,18 +274,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'nombrePrograma' => $nombrePrograma,
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
-								'ApiToken' => $ApiToken,
-								'Apikey' => $Apikey,
 							];
 						
 
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-					 $validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-								echo var2js($arrayMensage);								
-							} else {
+							$mensajeError = $app->verificarVariables($variablesAVerificar);
+							if ($mensajeError !== null) {
+							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+							}else{
 								
 									$sql2 = sql_select("max(idSolicitud), idSancion",'sena_sancionesAnteriores','idAprendiz="'.$e.'"');
 									while ($row2 = sql_fetch($sql2)) {	
@@ -334,17 +315,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'tipoComite' => htmlspecialchars($e),
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
-								'ApiToken' => $ApiToken,
-								'Apikey' => $Apikey,
 							];
 							
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-							$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-								
-							} else {
+							$mensajeError = $app->verificarVariables($variablesAVerificar);
+							if ($mensajeError !== null) {
+							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+							}else{
 									
 									if ($idSolicitud)
 										{
@@ -362,17 +338,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'tipoAtencion' =>htmlspecialchars($e),
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
-								'ApiToken' => $ApiToken,
-								'Apikey' => $Apikey,
 							];
 							
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-							$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-								
-							} else {
+							$mensajeError = $app->verificarVariables($variablesAVerificar);
+							if ($mensajeError !== null) {
+							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+							}else{
 								
 									if ($idSolicitud)
 										{
@@ -388,19 +359,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'fechaIncidente' => base64_decode($_POST["fechaIncidente"]),
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
-								'ApiToken' => $ApiToken,
-								'Apikey' => $Apikey,
 								'e' => $e,
 							];
 							$fechaFormateada =base64_decode($_POST["fechaIncidente"]);
-							//print_r($variablesAVerificar);
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-							$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-								
-							} else {
+							$mensajeError = $app->verificarVariables($variablesAVerificar);
+							if ($mensajeError !== null) {
+							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+							}else{
 								$fechaIncidentes= date_ical($fechaIncidente);
 									if ($idSolicitud)
 										{
@@ -418,19 +383,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'e' => htmlspecialchars($e),
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
-								'ApiToken' => $ApiToken,
 								'hechos' => $descripcion,
-								'Apikey' => $Apikey,
 							];
 							//print_r($variablesAVerificar);
 							
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-							$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-								
-							} else {
+							$mensajeError = $app->verificarVariables($variablesAVerificar);
+							if ($mensajeError !== null) {
+							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+							}else{
 									//$descripcions= corriger_caracteres(htmlspecialchars($descripcion));
 									$texto_utf8 = utf8_encode($descripcion);
 									if ($idSolicitud)
@@ -542,12 +502,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				
 		break;
 		case "add_documentos":
-		$tbls='sena_solicitudcomite';
-		$apps=new Apis($tbls);
-		
-		$ApiToken     = base64_decode($_POST["ApiToken"]);
-		$Apikey     = base64_decode($_POST["Apikey"]);
-		$options     = base64_decode($_POST["options"]);
+				$tbls='sena_solicitudcomite';
+				$apps=new Apis($tbls);
+				$options     = base64_decode($_POST["options"]);
 				$idSolicitud = base64_decode($_POST["idSolicitud"]);
 				$idUsuario = base64_decode($_POST["idUsuario"]);
 				$entidad = base64_decode($_POST["entidad"]);
@@ -562,15 +519,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'idUsuario' => $idUsuario,
 							'entidad' => $entidad,
 							'selectedFile' => $fileAtribute,
-							'ApiToken' => $ApiToken,
-							'Apikey' => $Apikey,
 						];
-							$mensajeError = $apps->verificarVariables($variablesAVerificar);
-							$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-							if (($mensajeError !== null) OR (!$validarTokes)){
-								$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-								$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							}else{						
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+						}else{					
 								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Documento actualizado correctamente!','status'=>'202');
 								//if(options=='1'){
 										//GUARDAMOS EL PDF DE LOS HECHOS EN EL SERVIDOR
@@ -593,31 +546,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		break;
 			
 	}
-	/*
-	const App = () => {
-  const [list, setList] = React.useState([]);
-  const fetchList = () => {
-    // Simulate fetching data from the server via setTimeout
-    setTimeout(() => {
-      setList([])
-    }, 1000)
-  }
-
-  React.useEffect(() => {
-    fetchList()
-  }, [])
-  return (
-    list.length && (
-      <div className="name-list-container">
-        {list.map((name) => {
-          return <div className="name-list-item">{name}</div>;
-        })}
-      </div>
-    )
-  );
-};
-ReactDOM.render(<App />, document.getElementById('app'))
-	*/
 ?>
   
  

@@ -58,9 +58,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     $ficha = base64_decode($_POST["ficha"]);	
                     $municipio = base64_decode($_POST["municipio"]);	
                     $entidad = base64_decode($_POST['entidad']);
-                    $ApiToken     = base64_decode($_POST["ApiToken"]);
-					$Apikey     = base64_decode($_POST["Apikey"]);	
-                    $idUsuario = base64_decode($_POST["idUsuario"]);
+                        $idUsuario = base64_decode($_POST["idUsuario"]);
  						// Crea un array con las variables que deseas verificar
 						$variablesAVerificar = [
 							'nombres' => $nombres,
@@ -77,18 +75,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                             'ficha' => $ficha,
                             'municipio' => $municipio,
                             'entidad' => $entidad,
-                            'ApiToken' => $ApiToken,
-                            'Apikey' => $Apikey,
                             'idUsuario' => $idUsuario,
 						];
-                          //print_r($variablesAVerificar);
 						$mensajeError = $app->verificarVariables($variablesAVerificar);
-						$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							
-						 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-						 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
                             $table='sena_aprendiz';
 	
@@ -155,8 +146,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                 $ficha = base64_decode($_POST["ficha"]);	
                 $municipio = base64_decode($_POST["municipio"]);	
                 $entidad = base64_decode($_POST['entidad']);
-                $ApiToken     = base64_decode($_POST["ApiToken"]);
-                $Apikey     = base64_decode($_POST["Apikey"]);	
                 $idUsuario = base64_decode($_POST["idUsuario"]);
 				$idAprendiz = base64_decode($_POST["idAprendiz"]);
                      // Crea un array con las variables que deseas verificar
@@ -175,20 +164,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                         'ficha' => $ficha,
                         'municipio' => $municipio,
                         'entidad' => $entidad,
-                        'ApiToken' => $ApiToken,
-                        'Apikey' => $Apikey,
                         'idUsuario' => $idUsuario,
 						'idAprendiz' =>$idAprendiz
                     ];
-                      //print_r($variablesAVerificar);
-                    $mensajeError = $app->verificarVariables($variablesAVerificar);
-                    $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-                    if (($mensajeError !== null) OR (!$validarTokes)){
-                        
-                     $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-                     $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-                        
-                    }else{
+					$mensajeError = $app->verificarVariables($variablesAVerificar);
+					if ($mensajeError !== null) {
+					$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+					}else{
                    
 
                                             $chartic['nombres'] ="".$nombres."";
@@ -280,8 +262,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			$inasistencias = base64_decode($_POST["inasistencias"]);
 			$verbal = base64_decode($_POST["verbal"]);
 			$escrito = base64_decode($_POST["escrito"]);
-			$ApiToken     = base64_decode($_POST["ApiToken"]);
-			$Apikey     = base64_decode($_POST["Apikey"]);	
 			$idUsuario = base64_decode($_POST["idUsuario"]);
 
 		
@@ -293,19 +273,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					'inasistencias' => $inasistencias === '0' ? '1' : $inasistencias,
 					'verbal' => $verbal === '0' ? '1' : $verbal,
 					'escrito' => $escrito === '0' ? '1' : $escrito,
-					'ApiToken' => $ApiToken,
-					'Apikey' => $Apikey,
 					'idUsuario' => $idUsuario,
 				];
-				//print_r($variablesAVerificar);
-
 				$mensajeError = $app->verificarVariables($variablesAVerificar);
-				$validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-				if (($mensajeError !== null) OR (!$validarTokes)){
-					
-				 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-				 $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-					
+				if ($mensajeError !== null) {
+				$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 				}else{
 			   
 					$sql = sql_select("COUNT(*) AS total",'sena_sancionesanteriores','idAprendiz="'.$idAprendiz.'"');

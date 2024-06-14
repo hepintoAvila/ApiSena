@@ -34,16 +34,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			$menuParent=array();
 			$role = base64_decode($_POST['role']);
 			$entidad = base64_decode($_POST['entidad']);
-			$ApiToken     = base64_decode($_POST["apiToken"]);
-			$Apikey     = base64_decode($_POST["apikey"]);
-
 
 			// Crea un array con las variables que deseas verificar
 			$variablesAVerificar = [
 				'role' => $role,
 				'entidad' => $entidad,
-				'ApiToken' => $ApiToken,
-				'Apikey' => $Apikey,
 			];
 				$app=new Apis('apis_roles');
 				$mensajeError = $app->verificarVariables($variablesAVerificar);

@@ -80,8 +80,6 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 				$hechos = base64_decode($_POST["hechos"]);
 				$reglas = base64_decode($_POST["reglas"]);
 				$entidad = base64_decode($_POST["entidad"]);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
 				$idUsuario     = base64_decode($_POST["idUsuario"]);
 				$codigoFicha     = base64_decode($_POST["codigoFicha"]);
  
@@ -104,14 +102,10 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							'className' => $className,
 						];	
 					
-						// Llama a la función para verificar las variables
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-						 $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
-						} else {
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+						}else{
 							 
 							  $row=$apps->consultadatos('entidad="'.$entidad.'" AND idSolicitud="'.$idSolicitudComite.'"',$select);
 							  if(!empty($row)){
@@ -256,11 +250,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 			$fechaCita = base64_decode($_POST["fechaCita"]);
 			$tiempoEstipulado = base64_decode($_POST["tiempoEstipulado"]);
 			$idAgenda = base64_decode($_POST["idAgenda"]);
-			
-				
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
-				$idUsuario     = base64_decode($_POST["idUsuario"]);
+			$idUsuario     = base64_decode($_POST["idUsuario"]);
 				
 						$variablesAVerificar = [
 							'idAgenda' => $idAgenda,
@@ -268,13 +258,9 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							'tiempoEstipulado' => $tiempoEstipulado,
 						];
 						
-						// Llama a la función para verificar las variables
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
 							$row=$apps->consultadatos('idAgenda="'.intval($idAgenda).'"',$select);
 							foreach($row as $a => $value){
@@ -331,18 +317,12 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 			$tbls='sena_agenda';
 		     $apps=new Apis($tbls);			
 			$idAgenda = base64_decode($_POST["idAgenda"]);
-			$ApiToken     = base64_decode($_POST["ApiToken"]);
-			$Apikey     = base64_decode($_POST["Apikey"]);
 			$idUsuario     = base64_decode($_POST["idUsuario"]);
 			$variablesAVerificar = ['idAgenda' => $idAgenda];
 			
-						// Llama a la función para verificar las variables
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
 							if (intval($idAgenda)) {
 								
@@ -435,8 +415,6 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 				$emailEntrada     = trim(base64_decode($_POST["emailEntrada"]));
 				$emailAprendiz     = trim(base64_decode($_POST["emailAprendiz"]));
 				$idSolicitud     = base64_decode($_POST["idSolicitud"]);
-				$ApiToken     = base64_decode($_POST["ApiToken"]);
-				$Apikey     = base64_decode($_POST["Apikey"]);
 				$idUsuario     = base64_decode($_POST["idUsuario"]);
 				
 						$variablesAVerificar = [
@@ -444,13 +422,9 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							'emailAprendiz' => $emailAprendiz,
 							'emailEntrada' => $emailEntrada,
 						];
-						// Llama a la función para verificar las variables
-						$mensajeError = $apps->verificarVariables($variablesAVerificar);
-						$validarTokes = $apps->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-						if (($mensajeError !== null) OR (!$validarTokes)){
-							$mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-							
+						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						if ($mensajeError !== null) {
+						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
 							
 						//ENVIAR CORREO

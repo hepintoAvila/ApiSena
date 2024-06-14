@@ -769,8 +769,6 @@ switch ($opcion) {
         $horaFinal = base64_decode($_POST['horaFinal']);
         $secretario = base64_decode($_POST['secretario']);
         $entidad = base64_decode($_POST['entidad']);
-        $ApiToken     = base64_decode($_POST["ApiToken"]);
-        $Apikey     = base64_decode($_POST["Apikey"]);
         $idUsuario = base64_decode($_POST["idUsuario"]);
         $presentacion = base64_decode($_POST["presentacion"]);
         // Crea un array con las variables que deseas verificar
@@ -780,17 +778,13 @@ switch ($opcion) {
             'horaInicial' => $horaInicial,
             'horaFinal' => $horaFinal,
             'entidad' => $entidad,
-            'ApiToken' => $ApiToken,
-            'Apikey' => $Apikey,
             'idUsuario' => $idUsuario,
             'presentacion' => $presentacion,
         ];
         //print_r($variablesAVerificar);
         $mensajeError = $app->verificarVariables($variablesAVerificar);
-        $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-        if (($mensajeError !== null) OR (!$validarTokes)){
-            $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
+      if ($mensajeError !== null){
+            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
         } else {
             $table='sena_actas';
             $chartic['nombre'] ="".$nombre."";
@@ -843,8 +837,6 @@ switch ($opcion) {
         $secretario = base64_decode($_POST['secretario']);
         //$presentacion = utf8_encode(base64_decode($_POST['presentacion']));
         $entidad = base64_decode($_POST['entidad']);
-        $ApiToken     = base64_decode($_POST["ApiToken"]);
-        $Apikey     = base64_decode($_POST["Apikey"]);
         $idUsuario = base64_decode($_POST["idUsuario"]);
         $idActa = base64_decode($_POST["idActa"]);
 
@@ -856,18 +848,14 @@ switch ($opcion) {
             'horaFinal' => $horaFinal,
             'secretario' => $secretario,
             'entidad' => $entidad,
-            'ApiToken' => $ApiToken,
-            'Apikey' => $Apikey,
             'idUsuario' => $idUsuario,
             'idActa' =>$idActa
         ];
         //print_r($variablesAVerificar);
         $mensajeError = $app->verificarVariables($variablesAVerificar);
-        $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-        if (($mensajeError !== null) OR (!$validarTokes)){
-            $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-        } else {
+        if ($mensajeError !== null) {
+        $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+        }else{
             //unicode2charset(utf_8_to_unicode
             $chartic['nombre'] ="".$nombre."";
             $chartic['fecha'] ="".$fecha."";
@@ -956,8 +944,6 @@ switch ($opcion) {
         $idActa = base64_decode($_POST['idActa']);
         $items = base64_decode($_POST['items']);
         $entidad = base64_decode($_POST['entidad']);
-        $ApiToken     = base64_decode($_POST["ApiToken"]);
-        $Apikey     = base64_decode($_POST["Apikey"]);
         $idUsuario = base64_decode($_POST["idUsuario"]);
         $idActa = base64_decode($_POST["idActa"]);
         $opcionBusqueda = base64_decode($_POST["opcionBusqueda"]);
@@ -966,19 +952,15 @@ switch ($opcion) {
         $variablesAVerificar = [
             'idActa' => $idActa,
             'entidad' => $entidad,
-            'ApiToken' => $ApiToken,
-            'Apikey' => $Apikey,
             'idUsuario' => $idUsuario,
             'opcionBusqueda' =>$opcionBusqueda,
             'items' => $items,
         ];
         
         $mensajeError = $app->verificarVariables($variablesAVerificar);
-        $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-        if (($mensajeError !== null) OR (!$validarTokes)){
-            $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-        } else {
+        if ($mensajeError !== null) {
+        $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+        }else{
             switch ($opcionBusqueda) {
                 case 'ASIGNAR':
                     $chartic['casosComite'] ="".$items."";
@@ -1046,8 +1028,6 @@ switch ($opcion) {
         $nombresDigital = base64_decode($_POST['nombresDigital']);
         $idActa = base64_decode($_POST['idActa']);
         $entidad = base64_decode($_POST['entidad']);
-        $ApiToken     = base64_decode($_POST["ApiToken"]);
-        $Apikey     = base64_decode($_POST["Apikey"]);
         $idUsuario = base64_decode($_POST["idUsuario"]);
         // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
@@ -1062,16 +1042,12 @@ switch ($opcion) {
             'autorizacion' => $autorizacion,
             'firmaDigital' => $firmaDigital,
             'nombresDigital' => $nombresDigital,
-            'ApiToken' => $ApiToken,
-            'Apikey' => $Apikey,
             'idUsuario' => $idUsuario,
         ];
         $mensajeError = $app->verificarVariables($variablesAVerificar);
-        $validarTokes = $app->verificarApikeyApiToken($Apikey,$ApiToken,$idUsuario);
-        if (($mensajeError !== null) OR (!$validarTokes)){
-            $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-        } else {
+        if ($mensajeError !== null) {
+        $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+        }else{
             $chartic['idActa'] ="".$idActa."";
             $chartic['nombresApellidos'] ="".$nombresApellidos."";
             $chartic['documento'] ="".$documento."";
@@ -1157,7 +1133,7 @@ switch ($opcion) {
         $chartic=array();
 
         // Validate and decode all necessary variables
-        $postKeys = ['entidad', 'ApiToken', 'Apikey', 'idUsuario', 'idActa', 'idSolicitud', 'idConcepto', 0, 1, 2, 3, 4];
+        $postKeys = ['entidad','idUsuario', 'idActa', 'idSolicitud', 'idConcepto', 0, 1, 2, 3, 4];
         $decodedPost = [];
         foreach ($postKeys as $key) {
             if (isset($_POST[$key])) {
@@ -1175,17 +1151,13 @@ switch ($opcion) {
             'idActa' => $decodedPost['idActa'],
             'idSolicitud' => $decodedPost['idSolicitud'],
             'entidad' => $decodedPost['entidad'],
-            'ApiToken' => $decodedPost['ApiToken'],
-            'Apikey' => $decodedPost['Apikey'],
             'idUsuario' => $decodedPost['idUsuario'],
         ];
 
         $mensajeError = $app->verificarVariables($variablesAVerificar);
-        $validarTokes = $app->verificarApikeyApiToken($decodedPost['ApiToken'],$decodedPost['ApiToken'],$decodedPost['idUsuario']);
-        if (($mensajeError !== null) OR (!$validarTokes)){
-            $mensajeErrors = $mensajeError == '' ? 'Error del Token':$mensajeError;
-            $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeErrors.'','status'=>'404');
-        } else {
+        if ($mensajeError !== null) {
+        $arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+        }else{
             $sql = sql_select("COUNT(*) AS total",'sena_actas_conceptos','idActa="'.$decodedPost['idActa'].'" AND idSolicitud="'.$decodedPost['idSolicitud'].'"');
             while ($row = sql_fetch($sql)) {
                 $total = $row['total'];

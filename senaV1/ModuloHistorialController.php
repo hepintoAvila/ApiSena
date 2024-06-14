@@ -5,8 +5,9 @@ class ModuloHistorialController {
         $data = [];
         if (isset($_SERVER['REQUEST_URI'])) {
             $str = explode('&', $_SERVER['REQUEST_URI']);
-            $secretKey = base64_decode($_GET['apiToken']);
-            $encryptedData = base64_decode($_GET['apikey']);
+            $headers = getallheaders();
+            $encryptedData = base64_decode($headers['X-SICES-API-AppKey']);
+            $secretKey = base64_decode($headers['X-SICES-API-AppToken']);
             $password = obtenerPass($encryptedData,$secretKey);;
           if (count($str) > 3) {
                 $opcion = explode('=', $str[0]);
