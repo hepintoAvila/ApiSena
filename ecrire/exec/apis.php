@@ -68,6 +68,7 @@ function exec_apis_dist(){
 					include_spip('exec/model/sena/ModuloHistorial/historial');		        
 				break;	
 				case "ModuloSolicitudComite":
+				case "ModuloEnviarComite":
 					include_spip('exec/model/sena/ModuloSolicitudComite/ModuloSolicitudComite');	
 				break;
 				case "ModuloAprendiz":
