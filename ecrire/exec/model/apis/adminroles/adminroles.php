@@ -24,7 +24,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		//$session_password = $GLOBALS['visiteur_session']['pass'];
 		include_spip('inc/auth');
 		//$row = auth_informer_login($login);
-	 	$accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : base64_decode($_POST['accion']);
+	 	$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 	 	$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 	 	
 		switch ($opcion) {

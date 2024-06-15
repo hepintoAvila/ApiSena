@@ -3,7 +3,6 @@ require_once 'Segurity.php';
 require_once 'makeCurlRequest.php';
 class AdminUsuariosController {
     public static function handleRequest() {
-        public static function handleRequest() {
             $data = [];
             if (isset($_SERVER['REQUEST_URI'])) {
                 $str = explode('&', $_SERVER['REQUEST_URI']);
@@ -28,5 +27,5 @@ class AdminUsuariosController {
             echo json_encode(["error" => "Invalid URL structure for ' Menu'"]);
         }
 }
-}
+
 ?>

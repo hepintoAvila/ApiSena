@@ -1095,7 +1095,7 @@ switch ($opcion) {
         $var = var2js($arrayMensage);
         echo $var;
         break;
-    ca 
+ 
         $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
         $DatosAuteurs=array();
         $select='*';

@@ -77,15 +77,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			break;
 			case 'update':
 				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
-				$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
- 
+	
 					$chartic=array();
 			
 						$apps=new Apis('api_auteurs','Entidad="'.$entidad.'"');
     					$chartic['login']=$_POST['login'];
     					$chartic['tipo']=$_POST['rol'];
 						$apps->actualizar($chartic,'id_auteur',$id);
-						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id'-'.$nombres.' fue actualizado correctamente!','status' => '200');
+						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id.' fue actualizado correctamente!','status' => '200');
 						$var = var2js($msg);	
 						echo $var;				
 			

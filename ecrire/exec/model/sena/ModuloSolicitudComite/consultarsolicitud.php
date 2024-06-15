@@ -97,7 +97,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								
 								break;
 								case '4':
-									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idAprendiz="'.base64_decode($_POST["idAprendiz"]).'" ORDER BY idSolicitud ASC',$select);
+									$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);
+									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idAprendiz="'.$idAprendiz.'" ORDER BY idSolicitud ASC',$select);
 								break;
 								//CONSULTE LAS NOVEDADES DE  LAS SOLICITUDES
 								//ConsultarSolicitudSinEnviar
