@@ -46,8 +46,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			// Devolver ambos resultados
 			return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
 		}
-
-		switch($_POST['obj']) {
+		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
+		
+		switch($obj) {
 				case "ConsultarSolicitud":
 				case "ConsultarSolicitudByID":
 				case "queryByIdComite":
@@ -60,12 +61,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$select = implode(',',array_keys($campos));
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
-				$idUsuario = base64_decode($_POST["idUsuario"]);
+ 
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+				$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
 				
-				$entidad = base64_decode($_POST["entidad"]);
-				$rol = base64_decode($_POST["rol"]);
-				
-						$variablesAVerificar = [
+				$variablesAVerificar = [
 							'idUsuario' => $idUsuario,
 							'entidad' => $entidad,
 						];
@@ -78,7 +79,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							switch($_POST['sw']) {
 								///dashboard/ModuloNotificaciones/AgendarCitas
 								case '3':
-									$idSolicitud = empty(base64_decode($_POST["idSolicitud"])) ? 1 :base64_decode($_POST["idSolicitud"]);
+									$roidSolicitudl = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
 									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idSolicitud="'.$idSolicitud.'" ORDER BY idSolicitud ASC',$select);
 								break;	
 								//dashboard/ModuloNotificaciones/ConsultaNotificaciones
@@ -131,9 +132,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									 
 								break;
 								case '9':
+									$idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+									
 									//dashboard/ModuloActas/Actas?p=
 									//MUESTREME TODA LAS SOLICITUDES ASIGNADAS A SU RESPECTIVO ID DEL ACTA
-									$idActa = base64_decode($_POST["idActa"]);
+									 
 										$sqlact = sql_select("casosComite",
 											'sena_actas','idActa="'.$idActa.'"');
 										while ($rowact = sql_fetch($sqlact)) {

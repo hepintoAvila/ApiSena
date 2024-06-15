@@ -24,10 +24,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('exec/model/sena/claseapi');	
 		include_spip('inc/charsets');
-		
-		$codigoFicha = base64_decode($_POST["codigoFicha"]);
-		$tipo = base64_decode($_POST['tipo']);
-		$entidad = base64_decode($_POST['entidad']);
+		$codigoFicha = isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
+		$tipo = isset($_GET['tipo']) ? base64_decode($_GET['tipo']) : base64_decode($_POST['tipo']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 		
 		switch($tipo) {
 				case "EnviarSolicitud":

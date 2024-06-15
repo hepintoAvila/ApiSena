@@ -40,7 +40,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			}
  
 	
-		$opcion = base64_decode($_POST['opcion']);
+			 
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch ($opcion) {
 			case 'consultarusuario':
 				//validamos usuarios y contrase�a var_login

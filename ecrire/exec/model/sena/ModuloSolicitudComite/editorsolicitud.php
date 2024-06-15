@@ -30,25 +30,28 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/editer');
 		include_spip('inc/notifications');
 	
-		$tipo = base64_decode($_POST['tipo']);	
+		$tipo = isset($_GET['tipo']) ? base64_decode($_GET['tipo']) : base64_decode($_POST['tipo']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+
 
 		switch($tipo) {
 				case "EnviarSolicitud":
+					$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);
+					$tipoComite = isset($_GET['tipoComite']) ? base64_decode($_GET['tipoComite']) : base64_decode($_POST['tipoComite']);
+					$tipoAtencion = isset($_GET['tipoAtencion']) ? base64_decode($_GET['tipoAtencion']) : base64_decode($_POST['tipoAtencion']);
+					$nombrePrograma = isset($_GET['nombrePrograma']) ? base64_decode($_GET['nombrePrograma']) : base64_decode($_POST['nombrePrograma']);
+					$hechos = isset($_GET['descripcion']) ? base64_decode($_GET['descripcion']) : base64_decode($_POST['descripcion']);
+					$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+					$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+					$selectedFile = isset($_GET['selectedFile']) ? base64_decode($_GET['selectedFile']) : base64_decode($_POST['selectedFile']);
+					$fileAtribute = json_decode($selectedFile, true);
+					$fechaIncidentes = isset($_GET['fechaIncidentes']) ? base64_decode($_GET['fechaIncidentes']) : base64_decode($_POST['fechaIncidentes']);
+
+
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
 				$chartic=array();
 				$chactualiza=array();
-				
-				$idAprendiz     = base64_decode($_POST["idAprendiz"]);
-				$tipoComite     = base64_decode($_POST["tipoComite"]);
-				$tipoAtencion    = base64_decode($_POST["tipoAtencion"]);
-				$nombrePrograma = base64_decode($_POST["nombrePrograma"]);
-				$hechos = base64_decode($_POST["descripcion"]);
-				$idUsuario = base64_decode($_POST["idUsuario"]);
-				$entidad = base64_decode($_POST["entidad"]);
-				$selectedFile = base64_decode($_POST["selectedFile"]);
-				$fileAtribute = json_decode($selectedFile, true);
-				$fechaIncidentes = base64_decode($_POST["fechaIncidente"]);				
 				$fechaIncidente= date_ical($fechaIncidentes);
 				$descripcion= corriger_caracteres(htmlspecialchars($hechos));
 
@@ -256,18 +259,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$apps=new Apis($tbls);
 				$chartic=array();
 				$chactualiza=array();
-				$opcionUpdate     = base64_decode($_POST["opcionUpdate"]);
-				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$entidad     = base64_decode($_POST["entidad"]);
-				$e     = base64_decode($_POST["e"]); 
-				$idSolicitud     = base64_decode($_POST["idSolicitud"]);
-				$fechaIncidente = base64_decode($_POST["fechaIncidente"]);				
-				//$fechaIncidente= date_ical($fechaIncidentes);				
+				$opcionUpdate = isset($_GET['opcionUpdate']) ? base64_decode($_GET['opcionUpdate']) : base64_decode($_POST['opcionUpdate']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$e = isset($_GET['e']) ? base64_decode($_GET['e']) : base64_decode($_POST['e']);
+				$idSolicitud = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
+				$fechaIncidente = isset($_GET['fechaIncidente']) ? base64_decode($_GET['fechaIncidente']) : base64_decode($_POST['fechaIncidente']);
+				
 				switch($opcionUpdate) {
 					case "datosAprendiz":
-							$nombrePrograma     = base64_decode($_POST["nombrePrograma"]);
-							$codigoFicha     = base64_decode($_POST["codigoFicha"]);
-							$variablesAVerificar = [
+						$nombrePrograma = isset($_GET['nombrePrograma']) ? base64_decode($_GET['nombrePrograma']) : base64_decode($_POST['nombrePrograma']);
+						$codigoFicha = isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
+						$variablesAVerificar = [
 								'idSolicitud' => $idSolicitud,
 								'idAprendiz' => $e,
 								'codigoFicha' => $codigoFicha,
@@ -354,14 +356,15 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						echo var2js($arrayMensage);							
 						break;
 						case "datosFechaIncidente":
+							    $fechaIncidente = isset($_GET['fechaIncidente']) ? base64_decode($_GET['fechaIncidente']) : base64_decode($_POST['fechaIncidente']);
 								$variablesAVerificar = [
 								'idSolicitud' => $idSolicitud,
-								'fechaIncidente' => base64_decode($_POST["fechaIncidente"]),
+								'fechaIncidente' => $fechaIncidente ,
 								'idUsuario' => $idUsuario,
 								'entidad' => $entidad,
 								'e' => $e,
 							];
-							$fechaFormateada =base64_decode($_POST["fechaIncidente"]);
+							 
 							$mensajeError = $app->verificarVariables($variablesAVerificar);
 							if ($mensajeError !== null) {
 							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
@@ -406,8 +409,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				
 				
 				//GENERE NUEVAMENTE EL pdf
-				$codigoFicha     = base64_decode($_POST["codigoFicha"]);
-				$entidad = base64_decode($_POST['entidad']);
+				$codigoFicha = isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
+				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+								
+				 
+				 
 						 $sql = sql_select("idSolicitud,
 						 idAprendiz,
 						 idInstructor,
@@ -504,14 +510,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		case "add_documentos":
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
-				$options     = base64_decode($_POST["options"]);
-				$idSolicitud = base64_decode($_POST["idSolicitud"]);
-				$idUsuario = base64_decode($_POST["idUsuario"]);
-				$entidad = base64_decode($_POST["entidad"]);
-				$codigoFicha = base64_decode($_POST["codigoFicha"]);
-				$selectedFile = base64_decode($_POST["selectedFile"]);
-				$fileAtribute = json_decode($selectedFile, true);	
-				$decodedImage = base64_decode($_POST['fileContent']);
+				$codigoFicha = isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
+				$options = isset($_GET['options']) ? base64_decode($_GET['options']) : base64_decode($_POST['options']);
+				$idSolicitud = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
+				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$selectedFile = isset($_GET['selectedFile']) ? base64_decode($_GET['selectedFile']) : base64_decode($_POST['selectedFile']);
+				$decodedImage = isset($_GET['decodedImage']) ? base64_decode($_GET['decodedImage']) : base64_decode($_POST['decodedImage']);
+				$fileContent = isset($_GET['fileContent']) ? base64_decode($_GET['fileContent']) : base64_decode($_POST['fileContent']);
+
+
 						$variablesAVerificar = [
 							'codigoFicha' => $codigoFicha,
 							'decodedImage' => $decodedImage,
@@ -527,7 +536,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								$arrayMensage[]=array('id'=>1,'message'=>'::OK:: Documento actualizado correctamente!','status'=>'202');
 								//if(options=='1'){
 										//GUARDAMOS EL PDF DE LOS HECHOS EN EL SERVIDOR
-										$decodedImage = base64_decode($_POST['fileContent']);
+										$decodedImage = $fileContent;
 										$dir_doc='../ecrire/exec/model/sena/ModuloIncidentes/';
 										$path=$dir_doc.'pdf';
 										$destino=$dir_doc.'pdf/';

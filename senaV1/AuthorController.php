@@ -1,5 +1,6 @@
 <?php
 require_once 'Segurity.php';
+require_once 'makeCurlRequest.php';
 class AuthorController {
     public static function handleRequest() {
         if (isset($_SERVER['HTTP_URL'])) {

@@ -21,10 +21,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/autoriser');
 		include_spip('exec/model/apis/claseapi');
 	
-		$opcion = base64_decode($_POST['opcion']);
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+ 
 	switch ($opcion) {
 			case 'consultar':
-				$entidad = base64_decode($_POST['entidad']);
 				$DatosAuteurs=array();
 				$select='*';
 				$set = array();	
@@ -45,11 +46,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					echo $var;						
 			break;
 			case 'add':
-					$entidad = base64_decode($_POST['entidad']);
+				    $login = isset($_GET['login']) ? base64_decode($_GET['login']) : base64_decode($_POST['login']);
+				    $email = isset($_GET['email']) ? base64_decode($_GET['email']) : base64_decode($_POST['email']);
+				    $rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
+ 
 					$desc=array();
 					$id_ou_options=0;
-					$login = trim(corriger_caracteres($_POST['login']));
-					$mail =$_POST['email'];
+					$login = trim(corriger_caracteres($entidad));
+		 
 					$res = sql_select("statut, id_auteur, login, email", "api_auteurs", "entidad='".$entidad."' AND email=" . sql_quote($mail));
 					if (!$r = email_valide($mail)or!$res) {
 						$msg[] = array('menssage'=>'ERROR. El email ya existe');
@@ -57,7 +61,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						echo $var;
 						//break;
 					}else{
-						$options['tipo']=$_POST['rol'];
+						$options['tipo']=$rol;
 						$inscrire_auteur = charger_fonction('inscrire_auteur', 'action');
 						$desc = $inscrire_auteur('', $mail, $login, $options);
 						
@@ -72,24 +76,27 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					}					
 			break;
 			case 'update':
-					$entidad = base64_decode($_POST['entidad']);
+				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+				$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
+ 
 					$chartic=array();
 			
 						$apps=new Apis('api_auteurs','Entidad="'.$entidad.'"');
     					$chartic['login']=$_POST['login'];
     					$chartic['tipo']=$_POST['rol'];
-						$apps->actualizar($chartic,'id_auteur',$_POST['id']);
-						$msg[] = array('menssage'=>'OK. El Usuarios: '.$_POST['id'].'-'.$_POST['nombres'].' fue actualizado correctamente!','status' => '200');
+						$apps->actualizar($chartic,'id_auteur',$id);
+						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id'-'.$nombres.' fue actualizado correctamente!','status' => '200');
 						$var = var2js($msg);	
 						echo $var;				
 			
 			break;
 			case 'delete':
-					sql_delete("api_auteurs","id_auteur=" . intval($_POST['id']));
+					$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+					sql_delete("api_auteurs","id_auteur=" . intval($id));
 					
 					$res = sql_select("statut, id_auteur, login, email", "api_auteurs", "id_auteur=" . intval($_POST['id']));
 					if ($res){
-					$msg[] = array('menssage'=>'OK. El registro '.$_POST['id'].' fue eliminado correctamente!','status' => '200');
+					$msg[] = array('menssage'=>'OK. El registro '.$id.' fue eliminado correctamente!','status' => '200');
 					}	
 					
 					$var = var2js($msg);	

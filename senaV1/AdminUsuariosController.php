@@ -1,5 +1,6 @@
 <?php
 require_once 'Segurity.php';
+require_once 'makeCurlRequest.php';
 class AdminUsuariosController {
     public static function handleRequest() {
         public static function handleRequest() {

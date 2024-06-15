@@ -18,14 +18,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('base/connect_sql');
 		include_spip('exec/model/sena/claseapi');
 		
-		$obj = base64_decode($_POST['obj']);	
+		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
 		switch($obj) {
 			case "deleteSolicitud":
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
+				$idUsuario= isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$idSolicitud = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
  
-				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$idSolicitud     = base64_decode($_POST["idSolicitud"]);
 
 						$variablesAVerificar = [
 							'idSolicitud' => $idSolicitud,
@@ -63,9 +63,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
 				$path ='';
-				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$idOpcion     = base64_decode($_POST["idOpcion"]);
-				$codigoFicha     = base64_decode($_POST["codigoFicha"]);
+				$idUsuario= isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$idOpcion= isset($_GET['idOpcion']) ? base64_decode($_GET['idOpcion']) : base64_decode($_POST['idOpcion']);
+				$codigoFicha= isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
+
 				$variablesAVerificar = [
 							'idOpcion' => $idOpcion,
 							'codigoFicha' => $codigoFicha,

@@ -25,17 +25,15 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('exec/model/sena/claseapi');
 
-		$opcion = base64_decode($_POST['opcion']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+		$role = isset($_GET['role']) ? base64_decode($_GET['role']) : base64_decode($_POST['role']);
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch($opcion) {
 		case 'consultar':
 			$menus=array();
 			$menu=array();
-			
 			$menuParent=array();
-			$role = base64_decode($_POST['role']);
-			$entidad = base64_decode($_POST['entidad']);
-
-			// Crea un array con las variables que deseas verificar
+		// Crea un array con las variables que deseas verificar
 			$variablesAVerificar = [
 				'role' => $role,
 				'entidad' => $entidad,

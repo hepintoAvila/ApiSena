@@ -29,24 +29,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	
 
 function exec_apis_dist(){
-	/*
-	$login = $GLOBALS['visiteur_session']['login'];
-    $session_password = $GLOBALS['visiteur_session']['pass'];
-	include_spip('inc/auth');
-	$row = auth_informer_login($login);
-	*/
-	
-		$accion = base64_decode($_POST['accion']);
-		
+			$accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : base64_decode($_POST['accion']);
+ 
 		switch($accion) {	
-				case "registrarse":
-					include_spip('exec/model/apis/registrarse/registrarse');		    	    
-				break;
 				case "auteur":
 					include_spip('exec/model/apis/consultarusuario/consultarusuario');		    
 				break;
 				case "menu":
-
 					include_spip('exec/model/apis/menu/menu');		    
 				break;
 				case "AdminUsuarios":
@@ -61,7 +50,6 @@ function exec_apis_dist(){
 				case "permisos":
 					include_spip('exec/model/apis/permisos/permisos');
 			    case "ModuloNotificaciones":
-				
 					include_spip('exec/model/sena/ModuloNotificaciones/agendarCitas/agendarCitas');		        
 				break;
 			    case "ModuloHistorial":

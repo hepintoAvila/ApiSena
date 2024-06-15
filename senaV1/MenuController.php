@@ -1,6 +1,7 @@
 <?php
 // ModuloAprendizController.php
 require_once 'Segurity.php';
+require_once 'makeSendRequest.php';
 
 class MenuController {
     public static function handleRequest() {
@@ -10,16 +11,16 @@ class MenuController {
             $headers = getallheaders();
             $encryptedData = base64_decode($headers['X-SICES-API-AppKey']);
             $secretKey = base64_decode($headers['X-SICES-API-AppToken']);
-            $password = obtenerPass($encryptedData,$secretKey);;
+            $password = obtenerPass($encryptedData,$secretKey);
           if (count($str) > 3) {
                 $opcion = explode('=', $str[0]);
                 $data = ['var_login' => $_SERVER['PHP_AUTH_USER'], 'password' => $password ];
                 if (count($opcion) > 1) {
                     $menu = explode('=', $opcion[1]);
                     if (count($menu) > 0) {
-                        $r['opcion'] = base64_decode($opcion[0]);
-                        $variables = array_merge($r, $_GET);
-                        echo makeCurlRequest($variables,$data);
+                       $r['opcion'] = base64_decode($opcion[0]);
+                       $variables = array_merge($r, $_GET);
+                        echo makeSendRequest($variables,$data);
                         return;
                     }
                 }

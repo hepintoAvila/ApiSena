@@ -22,12 +22,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		 
 		$campos = $GLOBALS['tables_principales']['sena_aprendiz']['field'];
 		$select = implode(',',array_keys($campos));		
-		$opcion = base64_decode($_POST['opcion']);	
-
+		 
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+									
 		switch($opcion) {
 			case 'queryByIdAprendiz':
-				$idAprendiz = base64_decode($_POST['idAprendiz']);
-				$entidad = base64_decode($_POST['entidad']);
+				$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);
+				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 				$table='sena_aprendiz';
 				$app=new Apis($table);
 				$query='idAprendiz="'.$idAprendiz.'"';

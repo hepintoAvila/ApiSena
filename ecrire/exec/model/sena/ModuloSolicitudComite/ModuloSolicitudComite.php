@@ -22,8 +22,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('exec/model/sena/claseapi');	
 	
-		$opcion = base64_decode($_POST['opcion']);
-			
+		 
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch($opcion) {
 				case "listaAprendices":
 					include_spip('exec/model/sena/ModuloSolicitudComite/listaAprendices');
@@ -45,9 +45,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				case "deleteSolicitud":
 				include_spip('exec/model/sena/ModuloSolicitudComite/deleteSolicitud');
 				break;
-				case "updateSolicitud":
-				include_spip('exec/model/sena/ModuloSolicitudComite/updateSolicitud');
-				break;				
 		}
  
 ?>

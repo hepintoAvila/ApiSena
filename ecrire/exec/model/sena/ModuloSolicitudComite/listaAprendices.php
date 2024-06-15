@@ -20,13 +20,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
-		switch ($_POST['obj']) {
+
+		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+
+		switch ($obj) {
 			case 'aprendices':
 			
 				$campos = $GLOBALS['tables_principales']['sena_aprendiz']['field'];
 				//$select = implode(',',array_keys($campos));
 
-				$entidad = base64_decode($_POST['entidad']);
+				 
 				$Aprendices=array();
 				$app=new Apis('sena_aprendiz');
 				$row=$app->consultadatos('entidad="'.$entidad.'"','*');				

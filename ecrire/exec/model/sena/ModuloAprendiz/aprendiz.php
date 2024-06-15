@@ -21,11 +21,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
 		
-		$opcion = base64_decode($_POST['opcion']);
-		//print_r(base64_decode($_POST['opcion']));
+		 
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 		switch ($opcion) {
 			case 'listaAprendiz':
-				$entidad = base64_decode($_POST['entidad']);
+				 
 				$DatosAuteurs=array();
 				$select='*';
 				$set = array();	
@@ -44,21 +45,22 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$variablesAVerificar=array();
 					$desc=array();
 					$id_ou_options=0;
-				 	$nombres = base64_decode($_POST['nombres']);
-				 	$apellidos = base64_decode($_POST['apellidos']);
-				 	$tipoIdentificacion = base64_decode($_POST['tipoIdentificacion']);
-				 	$identificacion = base64_decode($_POST['identificacion']);
-				 	$telefono = base64_decode($_POST['telefono']);
-				 	$correo = base64_decode($_POST['correo']);
-				 	$direccion = base64_decode($_POST['direccion']);
-			        $programaFormacion = base64_decode($_POST["programaFormacion"]);
-					$proyectoFormativo     = base64_decode($_POST["proyectoFormativo"]);	
-					$jornada = base64_decode($_POST["jornada"]);	
-                    $etapa = base64_decode($_POST["etapa"]);	
-                    $ficha = base64_decode($_POST["ficha"]);	
-                    $municipio = base64_decode($_POST["municipio"]);	
-                    $entidad = base64_decode($_POST['entidad']);
-                        $idUsuario = base64_decode($_POST["idUsuario"]);
+					$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
+					$apellidos = isset($_GET['apellidos']) ? base64_decode($_GET['apellidos']) : base64_decode($_POST['apellidos']);
+					$tipoIdentificacion = isset($_GET['tipoIdentificacion']) ? base64_decode($_GET['tipoIdentificacion']) : base64_decode($_POST['tipoIdentificacion']);
+					$identificacion = isset($_GET['identificacion']) ? base64_decode($_GET['identificacion']) : base64_decode($_POST['identificacion']);
+					$telefono = isset($_GET['telefono']) ? base64_decode($_GET['telefono']) : base64_decode($_POST['telefono']);
+					$correo = isset($_GET['correo']) ? base64_decode($_GET['correo']) : base64_decode($_POST['correo']);
+					$direccion = isset($_GET['direccion']) ? base64_decode($_GET['direccion']) : base64_decode($_POST['direccion']);
+					$programaFormacion = isset($_GET['programaFormacion']) ? base64_decode($_GET['programaFormacion']) : base64_decode($_POST['programaFormacion']);
+					$proyectoFormativo = isset($_GET['proyectoFormativo']) ? base64_decode($_GET['proyectoFormativo']) : base64_decode($_POST['proyectoFormativo']);
+					$jornada = isset($_GET['jornada']) ? base64_decode($_GET['jornada']) : base64_decode($_POST['jornada']);
+					$etapa = isset($_GET['etapa']) ? base64_decode($_GET['etapa']) : base64_decode($_POST['etapa']);
+					$ficha = isset($_GET['ficha']) ? base64_decode($_GET['ficha']) : base64_decode($_POST['ficha']);
+					$municipio = isset($_GET['municipio']) ? base64_decode($_GET['municipio']) : base64_decode($_POST['municipio']);
+					$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+		
+ 
  						// Crea un array con las variables que deseas verificar
 						$variablesAVerificar = [
 							'nombres' => $nombres,
@@ -132,22 +134,22 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                 $variablesAVerificar=array();
                 $desc=array();
                 $id_ou_options=0;
-                 $nombres = base64_decode($_POST['nombres']);
-                 $apellidos = base64_decode($_POST['apellidos']);
-                 $tipoIdentificacion = base64_decode($_POST['tipoIdentificacion']);
-                 $identificacion = base64_decode($_POST['identificacion']);
-                 $telefono = base64_decode($_POST['telefono']);
-                 $correo = base64_decode($_POST['correo']);
-                 $direccion = base64_decode($_POST['direccion']);
-                $programaFormacion = base64_decode($_POST["programaFormacion"]);
-                $proyectoFormativo     = base64_decode($_POST["proyectoFormativo"]);	
-                $jornada = base64_decode($_POST["jornada"]);	
-                $etapa = base64_decode($_POST["etapa"]);	
-                $ficha = base64_decode($_POST["ficha"]);	
-                $municipio = base64_decode($_POST["municipio"]);	
-                $entidad = base64_decode($_POST['entidad']);
-                $idUsuario = base64_decode($_POST["idUsuario"]);
-				$idAprendiz = base64_decode($_POST["idAprendiz"]);
+				$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
+				$apellidos = isset($_GET['apellidos']) ? base64_decode($_GET['apellidos']) : base64_decode($_POST['apellidos']);
+				$tipoIdentificacion = isset($_GET['tipoIdentificacion']) ? base64_decode($_GET['tipoIdentificacion']) : base64_decode($_POST['tipoIdentificacion']);
+				$identificacion = isset($_GET['identificacion']) ? base64_decode($_GET['identificacion']) : base64_decode($_POST['identificacion']);
+				$telefono = isset($_GET['telefono']) ? base64_decode($_GET['telefono']) : base64_decode($_POST['telefono']);
+				$correo = isset($_GET['correo']) ? base64_decode($_GET['correo']) : base64_decode($_POST['correo']);
+				$direccion = isset($_GET['direccion']) ? base64_decode($_GET['direccion']) : base64_decode($_POST['direccion']);
+				$programaFormacion = isset($_GET['programaFormacion']) ? base64_decode($_GET['programaFormacion']) : base64_decode($_POST['programaFormacion']);
+				$proyectoFormativo = isset($_GET['proyectoFormativo']) ? base64_decode($_GET['proyectoFormativo']) : base64_decode($_POST['proyectoFormativo']);
+				$jornada = isset($_GET['jornada']) ? base64_decode($_GET['jornada']) : base64_decode($_POST['jornada']);
+				$etapa = isset($_GET['etapa']) ? base64_decode($_GET['etapa']) : base64_decode($_POST['etapa']);
+				$ficha = isset($_GET['ficha']) ? base64_decode($_GET['ficha']) : base64_decode($_POST['ficha']);
+				$municipio = isset($_GET['municipio']) ? base64_decode($_GET['municipio']) : base64_decode($_POST['municipio']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);               
+				$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);               
+
                      // Crea un array con las variables que deseas verificar
                     $variablesAVerificar = [
                         'nombres' => $nombres,
@@ -220,9 +222,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
             	
 			
 			break;
-			case 'delete':
-					$idAprendiz = base64_decode($_POST["id"]);
-
+ 
+					$idAprendiz = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']); 
 					sql_delete("sena_aprendiz","idAprendiz=" . intval($idAprendiz));
 					
 					$res = sql_select("*", "sena_aprendiz", "idAprendiz=" . intval($idAprendiz));
@@ -235,9 +236,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			break;
 			
 			case 'listaSanciones':
-				$idAprendiz = base64_decode($_POST["idAprendiz"]);
-
-				$entidad = base64_decode($_POST['entidad']);
+				$idAprendiz = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']); 
 				$DatosAuteurs=array();
 				$select='*';
 				$set = array();	
@@ -255,16 +254,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 			$app=new Apis('sena_sancionesanteriores');
 			$variablesAVerificar=array();
-			$idSancion = base64_decode($_POST["idSancion"]);
-			$idAprendiz= base64_decode($_POST["idAprendiz"]);
-			$academica = base64_decode($_POST["academica"]);
-			$disciplinaria = base64_decode($_POST["disciplinaria"]);
-			$inasistencias = base64_decode($_POST["inasistencias"]);
-			$verbal = base64_decode($_POST["verbal"]);
-			$escrito = base64_decode($_POST["escrito"]);
-			$idUsuario = base64_decode($_POST["idUsuario"]);
 
-		
+			$idSancion = isset($_GET['idSancion']) ? base64_decode($_GET['idSancion']) : base64_decode($_POST['idSancion']); 
+			$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']); 
+			$academica = isset($_GET['academica']) ? base64_decode($_GET['academica']) : base64_decode($_POST['academica']); 
+			$disciplinaria = isset($_GET['disciplinaria']) ? base64_decode($_GET['disciplinaria']) : base64_decode($_POST['disciplinaria']); 
+			$inasistencias = isset($_GET['inasistencias']) ? base64_decode($_GET['inasistencias']) : base64_decode($_POST['inasistencias']); 
+			$verbal = isset($_GET['verbal']) ? base64_decode($_GET['verbal']) : base64_decode($_POST['verbal']); 
+			$escrito = isset($_GET['escrito']) ? base64_decode($_GET['escrito']) : base64_decode($_POST['escrito']); 
+			$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']); 
+
+	
 				$variablesAVerificar = [
 					'idSancion' => $idSancion,
 					'idAprendiz' => $idAprendiz,

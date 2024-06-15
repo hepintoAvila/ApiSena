@@ -24,13 +24,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		//$session_password = $GLOBALS['visiteur_session']['pass'];
 		include_spip('inc/auth');
 		//$row = auth_informer_login($login);
-		 
-	 //print_r($_POST);
-	 $opcion = base64_decode($_POST['opcion']);
+	 	$accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : base64_decode($_POST['accion']);
+	 	$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+	 	
 		switch ($opcion) {
 			case 'consultar':
-				$entidad = base64_decode($_POST['entidad']);
-				
 				$table='apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R';
 				$app=new Apis($table);
 				$select='A.id as idAutorizacion,
@@ -79,7 +77,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										
 			break;
 			case 'update':
-				$id = base64_decode($_POST['id']);
+				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+ 
 				$chartic=array();
 				$apps=new Apis('sena_childrens_roles_autorizaciones');		
  			

@@ -496,13 +496,13 @@ function corregir_conceptos($str) {
     }
     return null;
 }
-
-$opcion = base64_decode($_POST['opcion']);
-
+$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+ 
 switch ($opcion) {
     case 'generarConsolidado':
-        $entidad = base64_decode($_POST['entidad']);
-        $items = base64_decode($_POST['items']);
+        $items = isset($_GET['items']) ? base64_decode($_GET['items']) : base64_decode($_POST['items']);
+     
 		$consolidado= array();
         $DatosAuteurs=array();
         $select='*';
@@ -688,7 +688,7 @@ switch ($opcion) {
 
         break;
     case 'listActas':
-        $entidad = base64_decode($_POST['entidad']);
+         
         $DatosAuteurs=array();
         $select='*';
         $set = array();
@@ -713,7 +713,8 @@ switch ($opcion) {
     case 'updateInactivas':
 
         if($opcion=='updateInactivas'){
-            $idActa = base64_decode($_POST['idActa']);
+            $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+           
             $chartic['statut'] ='Activo';
             $chartic = pipeline('pre_insertion',
                 array(
@@ -736,7 +737,7 @@ switch ($opcion) {
             crearPdfAprendices($idActa);
         }
 
-        $entidad = base64_decode($_POST['entidad']);
+        
         $DatosAuteurs=array();
         $select='*';
         $set = array();
@@ -763,14 +764,15 @@ switch ($opcion) {
         $variablesAVerificar=array();
         $desc=array();
         $id_ou_options=0;
-        $nombre = base64_decode($_POST['nombre']);
-        $fecha = base64_decode($_POST['fecha']);
-        $horaInicial = base64_decode($_POST['horaInicial']);
-        $horaFinal = base64_decode($_POST['horaFinal']);
-        $secretario = base64_decode($_POST['secretario']);
-        $entidad = base64_decode($_POST['entidad']);
-        $idUsuario = base64_decode($_POST["idUsuario"]);
-        $presentacion = base64_decode($_POST["presentacion"]);
+       
+        $nombre = isset($_GET['nombre']) ? base64_decode($_GET['nombre']) : base64_decode($_POST['nombre']);
+        $fecha = isset($_GET['fecha']) ? base64_decode($_GET['fecha']) : base64_decode($_POST['fecha']);
+        $horaInicial = isset($_GET['horaInicial']) ? base64_decode($_GET['horaInicial']) : base64_decode($_POST['horaInicial']);
+        $horaFinal = isset($_GET['horaFinal']) ? base64_decode($_GET['horaFinal']) : base64_decode($_POST['horaFinal']);
+        $secretario = isset($_GET['secretario']) ? base64_decode($_GET['secretario']) : base64_decode($_POST['secretario']);
+        $idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+        $presentacion = isset($_GET['presentacion']) ? base64_decode($_GET['presentacion']) : base64_decode($_POST['presentacion']);
+
         // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
             'nombre' => $nombre,
@@ -830,15 +832,16 @@ switch ($opcion) {
         $variablesAVerificar=array();
         $desc=array();
         $id_ou_options=0;
-        $nombre = base64_decode($_POST['nombre']);
-        $fecha = base64_decode($_POST['fecha']);
-        $horaInicial = base64_decode($_POST['horaInicial']);
-        $horaFinal = base64_decode($_POST['horaFinal']);
-        $secretario = base64_decode($_POST['secretario']);
-        //$presentacion = utf8_encode(base64_decode($_POST['presentacion']));
-        $entidad = base64_decode($_POST['entidad']);
-        $idUsuario = base64_decode($_POST["idUsuario"]);
-        $idActa = base64_decode($_POST["idActa"]);
+  
+        $nombre = isset($_GET['nombre']) ? base64_decode($_GET['nombre']) : base64_decode($_POST['nombre']);
+        $fecha = isset($_GET['fecha']) ? base64_decode($_GET['fecha']) : base64_decode($_POST['fecha']);
+        $horaInicial = isset($_GET['horaInicial']) ? base64_decode($_GET['horaInicial']) : base64_decode($_POST['horaInicial']);
+        $horaFinal = isset($_GET['horaFinal']) ? base64_decode($_GET['horaFinal']) : base64_decode($_POST['horaFinal']);
+        $secretario = isset($_GET['secretario']) ? base64_decode($_GET['secretario']) : base64_decode($_POST['secretario']);
+        $idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+        $presentacion = isset($_GET['presentacion']) ? base64_decode($_GET['presentacion']) : base64_decode($_POST['presentacion']);
+        $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+
 
         // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
@@ -892,7 +895,8 @@ switch ($opcion) {
         }
         break;
     case 'delete':
-        $idActa = base64_decode($_POST["id"]);
+        
+        $idActa = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
         $chartic['statut'] ='Inactiva';
         $chartic = pipeline('pre_insertion',
             array(
@@ -922,9 +926,9 @@ switch ($opcion) {
         echo $var;
         break;
     case 'listaSanciones':
-        $idAprendiz = base64_decode($_POST["idAprendiz"]);
-
-        $entidad = base64_decode($_POST['entidad']);
+        
+        $idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);
+        
         $DatosAuteurs=array();
         $select='*';
         $set = array();
@@ -941,13 +945,12 @@ switch ($opcion) {
         $variablesAVerificar=array();
         $chartic=array();
         $id_ou_options=0;
-        $idActa = base64_decode($_POST['idActa']);
-        $items = base64_decode($_POST['items']);
-        $entidad = base64_decode($_POST['entidad']);
-        $idUsuario = base64_decode($_POST["idUsuario"]);
-        $idActa = base64_decode($_POST["idActa"]);
-        $opcionBusqueda = base64_decode($_POST["opcionBusqueda"]);
 
+        $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+        $items = isset($_GET['items']) ? base64_decode($_GET['items']) : base64_decode($_POST['items']);
+        $idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+        $opcionBusqueda = isset($_GET['opcionBusqueda']) ? base64_decode($_GET['opcionBusqueda']) : base64_decode($_POST['opcionBusqueda']);
+ 
         // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
             'idActa' => $idActa,
@@ -1015,21 +1018,23 @@ switch ($opcion) {
         $variablesAVerificar=array();
         $chartic=array();
         $id_ou_options=0;
-        $nombresApellidos = base64_decode($_POST['nombresApellidos']);
-        $documento = base64_decode($_POST['documento']);
-        $contratista = base64_decode($_POST['contratista']);
-        $otroContratista = base64_decode($_POST['otroContratista']);
-        $dependencia = base64_decode($_POST['dependencia']);
-        $email = base64_decode($_POST['email']);
-        $telefono = base64_decode($_POST['telefono']);
-        $planta = base64_decode($_POST['planta']);
-        $autorizacion = base64_decode($_POST['autorizacion']);
-        $firmaDigital = base64_decode($_POST['firmaDigital']);
-        $nombresDigital = base64_decode($_POST['nombresDigital']);
-        $idActa = base64_decode($_POST['idActa']);
-        $entidad = base64_decode($_POST['entidad']);
-        $idUsuario = base64_decode($_POST["idUsuario"]);
-        // Crea un array con las variables que deseas verificar
+
+        $nombresApellidos = isset($_GET['nombresApellidos']) ? base64_decode($_GET['nombresApellidos']) : base64_decode($_POST['nombresApellidos']);
+        $documento = isset($_GET['documento']) ? base64_decode($_GET['documento']) : base64_decode($_POST['documento']);
+        $contratista = isset($_GET['contratista']) ? base64_decode($_GET['contratista']) : base64_decode($_POST['contratista']);
+        $otroContratista = isset($_GET['otroContratista']) ? base64_decode($_GET['otroContratista']) : base64_decode($_POST['otroContratista']);
+        $dependencia = isset($_GET['dependencia']) ? base64_decode($_GET['dependencia']) : base64_decode($_POST['dependencia']);
+        $email = isset($_GET['email']) ? base64_decode($_GET['email']) : base64_decode($_POST['email']);
+        $telefono = isset($_GET['telefono']) ? base64_decode($_GET['telefono']) : base64_decode($_POST['telefono']);
+        $planta = isset($_GET['planta']) ? base64_decode($_GET['planta']) : base64_decode($_POST['planta']);
+        $autorizacion = isset($_GET['autorizacion']) ? base64_decode($_GET['autorizacion']) : base64_decode($_POST['autorizacion']);
+        $firmaDigital = isset($_GET['firmaDigital']) ? base64_decode($_GET['firmaDigital']) : base64_decode($_POST['firmaDigital']);
+        $nombresDigital = isset($_GET['nombresDigital']) ? base64_decode($_GET['nombresDigital']) : base64_decode($_POST['nombresDigital']);
+        $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+        $idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+         
+        
+       // Crea un array con las variables que deseas verificar
         $variablesAVerificar = [
             'nombresApellidos' => $nombresApellidos,
             'documento' => $documento,
@@ -1090,9 +1095,8 @@ switch ($opcion) {
         $var = var2js($arrayMensage);
         echo $var;
         break;
-    case 'ConsultarAsistentes':
-        $entidad = base64_decode($_POST['entidad']);
-        $idActa = base64_decode($_POST['idActa']);
+    ca 
+        $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
         $DatosAuteurs=array();
         $select='*';
         $set = array();
@@ -1117,7 +1121,8 @@ switch ($opcion) {
         }
         break;
     case 'deleteAsistente':
-        $id_asistencia  = base64_decode($_POST["id"]);
+ 
+        $id_asistencia = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
         sql_delete("sena_asistencias","id_asistencia =" . intval($id_asistencia));
 
         $res = sql_select("*", "sena_asistencias", "id_asistencia =" . intval($id_asistencia));
@@ -1137,7 +1142,7 @@ switch ($opcion) {
         $decodedPost = [];
         foreach ($postKeys as $key) {
             if (isset($_POST[$key])) {
-                $decodedPost[$key] = base64_decode($_POST[$key], true);
+                $decodedPost[$key] = isset($_GET[$key]) ? base64_decode($_GET[$key]) : base64_decode($_POST[$key]);
                 if ($decodedPost[$key] === false) {
                     $decodedPost[$key] = "Error: Invalid base64 encoding for key $key.";
                 }
@@ -1170,27 +1175,27 @@ switch ($opcion) {
                 switch (base64_decode($_POST['idConcepto'])) {
                     case '1':
                         $chartic = [
-                            'hechos' =>base64_decode($_POST[0]),
+                            'hechos' =>isset($_GET[0]) ? base64_decode($_GET[0]) : base64_decode($_POST[0]),
                         ];
                         break;
                     case '2':
                         $chartic = [
-                            'contemplacion' =>base64_decode($_POST[1]),
+                            'contemplacion' =>isset($_GET[1]) ? base64_decode($_GET[1]) : base64_decode($_POST[1]),
                         ];
                         break;
                     case '3':
                         $chartic = [
-                            'frenteHechos' =>base64_decode($_POST[2]),
+                            'frenteHechos' =>isset($_GET[2]) ? base64_decode($_GET[2]) : base64_decode($_POST[2]),
                         ];
                         break;
                     case '4':
                         $chartic = [
-                            'recomendacion' =>base64_decode($_POST[3]),
+                            'recomendacion' =>isset($_GET[3]) ? base64_decode($_GET[3]) : base64_decode($_POST[3]),
                         ];
                         break;
                     case '5':
                         $chartic = [
-                            'compromisos' =>base64_decode($_POST[4]),
+                            'compromisos' =>isset($_GET[4]) ? base64_decode($_GET[4]) : base64_decode($_POST[4]),
                         ];
                         break;
                 }
@@ -1224,11 +1229,11 @@ switch ($opcion) {
                 $chartic = [
                     'idActa' => $decodedPost['idActa'],
                     'idSolicitud' => $decodedPost['idSolicitud'],
-                    'hechos' => base64_decode($_POST[0]),
-                    'contemplacion' => base64_decode($_POST[1]),
-                    'frenteHechos' => base64_decode($_POST[2]),
-                    'recomendacion' => base64_decode($_POST[3]),
-                    'compromisos' => base64_decode($_POST[4]),
+                    'hechos' => isset($_GET[0]) ? base64_decode($_GET[0]) : base64_decode($_POST[0]),
+                    'contemplacion' => isset($_GET[1]) ? base64_decode($_GET[1]) : base64_decode($_POST[1]),
+                    'frenteHechos' => isset($_GET[2]) ? base64_decode($_GET[2]) : base64_decode($_POST[2]),
+                    'recomendacion' =>isset($_GET[3]) ? base64_decode($_GET[3]) : base64_decode($_POST[3]),
+                    'compromisos' => isset($_GET[4]) ? base64_decode($_GET[4]) : base64_decode($_POST[4]),
                     'entidad' =>  ($decodedPost['entidad']),
                 ];
                 $chartic = pipeline('pre_insertion',
@@ -1261,9 +1266,8 @@ switch ($opcion) {
         }
         break;
     case 'listarConceptos':
-        $idActa = base64_decode($_POST['idActa']);
-        $idSolicitud = base64_decode($_POST['idSolicitud']);
-        $entidad = base64_decode($_POST['entidad']);
+        $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
+        $idSolicitud = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
 
         $DatosAuteurs=array();
         $select='*';

@@ -1,6 +1,7 @@
 <?php
 // ModuloAprendizController.php
 require_once 'Segurity.php';
+require_once 'makeCurlRequest.php';
 class GestionMenuController {
     public static function handleRequest() {
         $data = [];

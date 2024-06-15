@@ -26,11 +26,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		$row = auth_informer_login($login);
 		 
 		 
-	 
-		$opcion = base64_decode($_POST['opcion']);
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+ 
 		switch($opcion) {
 			case 'consultar':
-				$entidad = base64_decode($_POST['entidad']);
+ 
 				$table='sena_modelo_historial_incidencias';
 				$app=new Apis($table);
 				$select='*';

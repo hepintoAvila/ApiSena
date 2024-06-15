@@ -21,11 +21,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
 		
-		$opcion = base64_decode($_POST['opcion']);
-		//print_r($_POST);
+		 
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+
 		switch ($opcion) {
 			case 'listaUsuarios':
-				$entidad = base64_decode($_POST['entidad']);
+		
 				$DatosAuteurs=array();
 				$select='*';
 				$set = array();	
@@ -50,9 +52,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'label'=>$val['tipo']
 					);
 					}
-
-
-					
 					$data = array("data"=>array_merge($DatosAuteurs,$DatosRoles));
 					$var = var2js($data);
 					echo $var;						
@@ -61,14 +60,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$app=new Apis('api_auteurs');
 				$erreurs = array();
 				$msg = array();
-				$session_password = base64_decode($_POST['palabraclave']);
+				$session_password = isset($_GET['palabraclave']) ? base64_decode($_GET['palabraclave']) : base64_decode($_POST['palabraclave']);
 				$new_pass = unicode2charset(utf_8_to_unicode($session_password), 'iso-8859-1');
-				$id_auteur = base64_decode($_POST['idUsuario']);
-				$entidad = base64_decode($_POST['entidad']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+ 
 				$variablesAVerificar = [
 					'password' => $session_password,
 					'new_pass' => $new_pass,
-					'id_auteur' => $id_auteur,
+					'id_auteur' => $idUsuario,
 					'entidad' => $entidad,
 					];
 
@@ -102,19 +101,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$variablesAVerificar=array();
 					$desc=array();
 					$id_ou_options=0;
-				
-				 	$email = base64_decode($_POST['email']);
-				 	$login = base64_decode($_POST['login']);
-				 	$rol = base64_decode($_POST['rol']);
-					
-				 	$nombres = base64_decode($_POST['nombres']);
-				 	$apellidos = base64_decode($_POST['apellidos']);
-				 	$identificacion = base64_decode($_POST['identificacion']);
-				 	$telefono = base64_decode($_POST['telefono']);
-				 	
-					$entidad = base64_decode($_POST['entidad']);
-
-					$idUsuario = base64_decode($_POST["idUsuario"]);					
+					$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+					$email = isset($_GET['email']) ? base64_decode($_GET['email']) : base64_decode($_POST['email']);
+					$login = isset($_GET['login']) ? base64_decode($_GET['login']) : base64_decode($_POST['login']);
+					$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
+					$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
+					$identificacion = isset($_GET['identificacion']) ? base64_decode($_GET['identificacion']) : base64_decode($_POST['identificacion']);
+					$telefono = isset($_GET['telefono']) ? base64_decode($_GET['telefono']) : base64_decode($_POST['telefono']);
  						// Crea un array con las variables que deseas verificar
 						$variablesAVerificar = [
 							'idUsuario' => $idUsuario,
@@ -142,11 +135,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									$inscrire_auteur = charger_fonction('inscrire_auteur', 'action');
 									$desc = $inscrire_auteur('0minirezo', $email, $login, $options);
 									$mensajeError = $app->verificarVariables($desc);
-									print_r($mensajeError);	
+									$var = var2js($mensajeError);
+									echo $var;
 
-
-
-									if (!is_null($desc)) {
+								if (!is_null($desc)) {
 										if($desc['pass']=='I'){
 											$msg[] = 'WARNING. El Usuario no se pudo guardar!';
 										
@@ -193,24 +185,28 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				echo $var;
 			break;
 			case 'update':
-					$entidad = base64_decode($_POST['entidad']);
+				$login = isset($_GET['login']) ? base64_decode($_GET['login']) : base64_decode($_POST['login']);
+				$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
+				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+				$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
 					$chartic=array();
 			
 						$apps=new Apis('api_auteurs','Entidad="'.$entidad.'"');
-    					$chartic['login']=$_POST['login'];
-    					$chartic['tipo']=$_POST['rol'];
-						$apps->actualizar($chartic,'id_auteur',$_POST['id']);
-						$msg[] = array('menssage'=>'OK. El Usuarios: '.$_POST['id'].'-'.$_POST['nombres'].' fue actualizado correctamente!','status' => '200');
+    					$chartic['login']=$login;
+    					$chartic['tipo']=$rol;
+						$apps->actualizar($chartic,'id_auteur',$id);
+						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id.'-'.$nombres.' fue actualizado correctamente!','status' => '200');
 						$var = var2js($msg);	
 						echo $var;				
 			
 			break;
 			case 'delete':
-					sql_delete("api_auteurs","id_auteur=" . intval($_POST['id']));
+				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+					sql_delete("api_auteurs","id_auteur=" . intval($id));
 					
-					$res = sql_select("statut, id_auteur, login, email", "api_auteurs", "id_auteur=" . intval($_POST['id']));
+					$res = sql_select("statut, id_auteur, login, email", "api_auteurs", "id_auteur=" . intval($id));
 					if ($res){
-					$msg[] = array('menssage'=>'OK. El registro '.$_POST['id'].' fue eliminado correctamente!','status' => '200');
+					$msg[] = array('menssage'=>'OK. El registro '.$id.' fue eliminado correctamente!','status' => '200');
 					}	
 					
 					$var = var2js($msg);	

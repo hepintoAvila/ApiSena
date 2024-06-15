@@ -21,8 +21,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('exec/model/sena/claseapi');
 		 
 		
-		$opcion = base64_decode($_POST['opcion']);	
-
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch($opcion) {
 			case 'consultar':
 				include_spip('exec/model/sena/ModuloSolicitudComite/consultarsolicitud');

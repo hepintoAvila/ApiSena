@@ -25,11 +25,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		$session_password = $GLOBALS['visiteur_session']['pass'];
 		include_spip('inc/auth');
 		$aut = auth_informer_login($login);
-
-		switch ($_POST['opcion']) {
+		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
+ 
+		switch ($opcion) {
 		case 'consultar':
+			$IdMenu = isset($_GET['IdMenu']) ? base64_decode($_GET['IdMenu']) : base64_decode($_POST['IdMenu']);
+ 
 			$menus=array();
-			$IdMenu = base64_decode($_POST['IdMenu']);
 				$res = sql_select("*", "sena_roles", "tipo=" . sql_quote($IdMenu));
 				while ($r = sql_fetch($res)) {
 					$idTipo=$r['idRol'];

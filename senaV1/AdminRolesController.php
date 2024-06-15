@@ -1,5 +1,6 @@
 <?php
 require_once 'Segurity.php';
+require_once 'makeCurlRequest.php';
 class AdminRolesController {
     public static function handleRequest() {
         $data = [];

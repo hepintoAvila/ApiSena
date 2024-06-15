@@ -1,5 +1,6 @@
 <?php
 require_once 'Segurity.php';
+require_once 'makeCurlRequest.php';
 class ModuloActasController {
     public static function handleRequest() {
         $data = [];
@@ -8,7 +9,7 @@ class ModuloActasController {
             $headers = getallheaders();
             $encryptedData = base64_decode($headers['X-SICES-API-AppKey']);
             $secretKey = base64_decode($headers['X-SICES-API-AppToken']);
-            $password = obtenerPass($encryptedData,$secretKey);;
+            $password = obtenerPass($encryptedData,$secretKey);
           if (count($str) > 3) {
                 $opcion = explode('=', $str[0]);
                 $data = ['var_login' => $_SERVER['PHP_AUTH_USER'], 'password' => $password ];
