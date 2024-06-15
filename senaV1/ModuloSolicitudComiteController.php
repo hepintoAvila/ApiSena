@@ -1,6 +1,7 @@
 <?php
 require_once 'Segurity.php';
-require_once 'makeCurlRequest.php';
+//require_once 'makeCurlRequest.php';
+require_once 'makeSendRequest.php';
 class ModuloSolicitudComiteController {
     public static function handleRequest() {
         $data = [];
@@ -18,7 +19,7 @@ class ModuloSolicitudComiteController {
                     if (count($menu) > 0) {
                         $r['opcion'] = base64_decode($opcion[0]);
                         $variables = array_merge($r, $_GET);
-                        echo makeCurlRequest($variables,$data);
+                        echo makeSendRequest($variables,$data);
                         return;
                     }
                 }

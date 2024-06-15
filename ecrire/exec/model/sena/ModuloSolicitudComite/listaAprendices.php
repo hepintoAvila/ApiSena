@@ -21,7 +21,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
 
-		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
+		$obj = isset($_GET['obj']) ? $_GET['obj'] : $_POST['obj'];
 		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 
 		switch ($obj) {

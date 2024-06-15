@@ -18,7 +18,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('base/connect_sql');
 		include_spip('exec/model/sena/claseapi');
 		
-		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
+		$obj = isset($_GET['obj']) ? $_GET['obj'] : $_POST['obj'];
 		switch($obj) {
 			case "deleteSolicitud":
 				$tbls='sena_solicitudcomite';

@@ -30,7 +30,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 function exec_apis_dist(){
 			$accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : base64_decode($_POST['accion']);
- 
+			
 		switch($accion) {	
 				case "auteur":
 					include_spip('exec/model/apis/consultarusuario/consultarusuario');		    

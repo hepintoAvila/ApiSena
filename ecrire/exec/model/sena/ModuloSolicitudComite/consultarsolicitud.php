@@ -46,9 +46,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			// Devolver ambos resultados
 			return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
 		}
-		$obj = isset($_GET['obj']) ? base64_decode($_GET['obj']) : base64_decode($_POST['obj']);
-		
-		switch($obj) {
+		$obj = isset($_GET['obj']) ? $_GET['obj'] :$_POST['obj'];
+		 
+			switch($obj) {
 				case "ConsultarSolicitud":
 				case "ConsultarSolicitudByID":
 				case "queryByIdComite":
@@ -61,7 +61,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$select = implode(',',array_keys($campos));
 				$tbls='sena_solicitudcomite';
 				$apps=new Apis($tbls);
- 
+				$sw = isset($_GET['sw']) ? $_GET['sw'] : $_POST['sw'];
+
 				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
 				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
 				$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
@@ -69,14 +70,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$variablesAVerificar = [
 							'idUsuario' => $idUsuario,
 							'entidad' => $entidad,
+							'rol' => $rol,
+							'sw' => $sw,
 						];
+				
 						$mensajeError = $apps->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 							$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');	
 							
 						} else {
 						
-							switch($_POST['sw']) {
+							switch($sw) {
 								///dashboard/ModuloNotificaciones/AgendarCitas
 								case '3':
 									$roidSolicitudl = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
@@ -150,7 +154,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										}
 								break;																									
 							}
-							 
+					if (is_array($row) && !empty($row)) { 
 					 		foreach($row as $a => $value){
 								$sql1 = sql_select("nombres,apellidos,correo",'sena_aprendiz','idAprendiz="'.$value['idAprendiz'].'"');
 								while ($row1 = sql_fetch($sql1)) {	
@@ -280,7 +284,19 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$datos = array_merge($Directivo,$Solicitud,$Agenda);
 							$arrayMensage = array("data"=>$datos);						
 						}
-						
+					} else {
+						$Agenda = array("Agenda"=>array());
+						$Directivo = array("Directivos"=>array());
+						$Solicitud = array("Solicitudes"=>array());
+						$datos = array_merge($Directivo,$Solicitud,$Agenda);
+						$arrayMensage = array("data"=>$datos);
+					
+						$Agenda = array("Agenda"=>array());
+						$Directivo = array("Directivos"=>array());
+						$Solicitud = array("Solicitudes"=>array());
+						$datos = array_merge($Directivo,$Solicitud,$Agenda);
+						$arrayMensage = array("data"=>$datos);	
+					}	
 				}
 					echo var2js($arrayMensage);	
 				break;
