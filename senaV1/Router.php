@@ -12,7 +12,15 @@ class Router {
 
     public function handleRequest() {
         $method = $_SERVER['REQUEST_METHOD'];
-        $path = isset($_GET['accion']) ? base64_decode($_GET['accion']) : '';
+        $headers = getallheaders();
+        $headersPosman = isset($headers['header']) ? $headers['header'] : null;
+       
+        if ($headersPosman) {
+            $path = isset($_GET['accion']) ? $_GET['accion'] : '';
+        } else {
+            $path = isset($_GET['accion']) ? base64_decode($_GET['accion']) : '';
+        }
+       
 
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && $route['path'] === $path) {

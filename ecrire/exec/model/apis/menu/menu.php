@@ -30,6 +30,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch($opcion) {
 		case 'consultar':
+			
 			$menus=array();
 			$menu=array();
 			$menuParent=array();

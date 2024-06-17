@@ -22,30 +22,43 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('exec/model/sena/email');	
 		//include_spip('fpdf.php');	
 		include_spip('inc/charsets');
+								// Definir la función processArray
+								function processArraySolicitudes($idSolicituds) {
+									// Validar que $idSolicituds es un array y no está vacío
+									if (is_array($idSolicituds) && !empty($idSolicituds)) {
+										// Eliminar elementos vacíos y duplicados
+										$idSolicituds = array_filter(array_unique($idSolicituds));
 
-		function processArray($array) {
-			// Inicializar un array para almacenar los valores únicos
-			$uniqueValues = [];
-		
-			// Recorrer el array de entrada
-			foreach ($array as $item) {
-				// Separar los valores por comas
-				$values = explode(',', $item);
-		
-				// Añadir cada valor al array de valores únicos si no es 0 y no está ya en el array
-				foreach ($values as $value) {
-					if ($value != 0 && !in_array($value, $uniqueValues)) {
-						$uniqueValues[] = $value;
-					}
-				}
-			}
-		
-			// Convertir los valores únicos en una cadena separada por comas
-			$uniqueValuesString = implode(',', $uniqueValues);
-		
-			// Devolver ambos resultados
-			return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
-		}
+										// Convertir el array en una cadena separada por comas
+										$string = implode(',', $idSolicituds);
+
+										return ['array' => $idSolicituds, 'string' => $string];
+									}
+									return ['array' => [], 'string' => ''];
+								}
+								function processArray($array) {
+									// Inicializar un array para almacenar los valores únicos
+									$uniqueValues = [];
+								
+									// Recorrer el array de entrada
+									foreach ($array as $item) {
+										// Separar los valores por comas
+										$values = explode(',', $item);
+								
+										// Añadir cada valor al array de valores únicos si no es 0 y no está ya en el array
+										foreach ($values as $value) {
+											if ($value != 0 && !in_array($value, $uniqueValues)) {
+												$uniqueValues[] = $value;
+											}
+										}
+									}
+								
+									// Convertir los valores únicos en una cadena separada por comas
+									$uniqueValuesString = implode(',', $uniqueValues);
+								
+									// Devolver ambos resultados
+									return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
+								}
 		$obj = isset($_GET['obj']) ? $_GET['obj'] :$_POST['obj'];
 		 
 			switch($obj) {
@@ -83,8 +96,23 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							switch($sw) {
 								///dashboard/ModuloNotificaciones/AgendarCitas
 								case '3':
-									$roidSolicitudl = isset($_GET['idSolicitud']) ? base64_decode($_GET['idSolicitud']) : base64_decode($_POST['idSolicitud']);
-									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idSolicitud="'.$idSolicitud.'" ORDER BY idSolicitud ASC',$select);
+									
+									$idSolicitud = null;
+
+									if (array_key_exists('idSolicitud', $_GET) && !empty($_GET['idSolicitud'])) {
+										$idSolicitud = base64_decode($_GET['idSolicitud']);
+									} elseif (array_key_exists('idSolicitud', $_POST) && !empty($_POST['idSolicitud'])) {
+										$idSolicitud = base64_decode($_POST['idSolicitud']);
+									}
+									
+									// Validar si idSolicitud fue decodificado correctamente
+									if (!empty($idSolicitud)) {
+										// Asume que $apps y $entidad ya están definidos y inicializados
+										$row = $apps->consultadatos('entidad="' . $entidad . '" AND idSolicitud="' . $idSolicitud . '" ORDER BY idSolicitud ASC', $select);
+									} else {
+										$row = [];
+									}
+									
 								break;	
 								//dashboard/ModuloNotificaciones/ConsultaNotificaciones
 								case '1':
@@ -97,8 +125,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								
 								break;
 								case '4':
-									$idAprendiz = isset($_GET['idAprendiz']) ? base64_decode($_GET['idAprendiz']) : base64_decode($_POST['idAprendiz']);
-									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idAprendiz="'.$idAprendiz.'" ORDER BY idSolicitud ASC',$select);
+									$idAprendiz = null;
+
+									if (array_key_exists('idAprendiz', $_GET) && !empty($_GET['idAprendiz'])) {
+										$idAprendiz = base64_decode($_GET['idAprendiz']);
+									} elseif (array_key_exists('idAprendiz', $_POST) && !empty($_POST['idAprendiz'])) {
+										$idAprendiz = base64_decode($_POST['idAprendiz']);
+									}
+									// Validar si idAprendiz fue decodificado correctamente
+									if (!empty($idAprendiz)) {
+										// Asume que $apps y $entidad ya están definidos y inicializados
+										$row=$apps->consultadatos('entidad="'.$entidad.'" AND idAprendiz="'.$idAprendiz.'" ORDER BY idSolicitud ASC',$select);
+									} else {
+										$row = [];
+									}
+						
 								break;
 								//CONSULTE LAS NOVEDADES DE  LAS SOLICITUDES
 								//ConsultarSolicitudSinEnviar
@@ -112,8 +153,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  
 								break;
 								case '6':
-								 
-									$row=$apps->consultadatos('entidad="'.$entidad.'" AND codigoFicha="'.base64_decode($_POST["codigoFicha"]).'" ORDER BY idSolicitud ASC',$select);
+									$codigoFicha = null;
+
+									if (array_key_exists('codigoFicha', $_GET) && !empty($_GET['codigoFicha'])) {
+										$codigoFicha = base64_decode($_GET['codigoFicha']);
+									} elseif (array_key_exists('codigoFicha', $_POST) && !empty($_POST['codigoFicha'])) {
+										$codigoFicha = base64_decode($_POST['codigoFicha']);
+									}
+									// Validar si codigoFicha fue decodificado correctamente
+									if (!empty($codigoFicha)) {
+										// Asume que $apps y $entidad ya están definidos y inicializados
+										$row=$apps->consultadatos('entidad="'.$entidad.'" AND codigoFicha="'.$codigoFicha.'" ORDER BY idSolicitud ASC',$select);
+									} else {
+										$row = [];
+									}								 
+									
 								break;
 								case '7':
 								
@@ -137,22 +191,42 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									 
 								break;
 								case '9':
-									$idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
-									
-									//dashboard/ModuloActas/Actas?p=
-									//MUESTREME TODA LAS SOLICITUDES ASIGNADAS A SU RESPECTIVO ID DEL ACTA
 									 
-										$sqlact = sql_select("casosComite",
-											'sena_actas','idActa="'.$idActa.'"');
+									// Inicializar $idActa
+									$idActa = null;
+
+									// Verificar y decodificar idActa
+									if (array_key_exists('idActa', $_GET) && !empty($_GET['idActa'])) {
+										$idActa = base64_decode($_GET['idActa']);
+									} elseif (array_key_exists('idActa', $_POST) && !empty($_POST['idActa'])) {
+										$idActa = base64_decode($_POST['idActa']);
+									}
+
+									// Inicializar $idSolicituds como un array vacío
+									$idSolicituds = [];
+
+									// Validar si idActa fue decodificado correctamente
+									if (!empty($idActa)) {
+										$sqlact = sql_select("casosComite", 'sena_actas', 'idActa="' . $idActa . '"');
 										while ($rowact = sql_fetch($sqlact)) {
-											$idSolicituds[]= $rowact['casosComite'];	
+											$idSolicituds[] = $rowact['casosComite'];
 										}
-										$result = processArray($idSolicituds);
-										if(is_array($result['array'])){
-											$row=$apps->consultadatos('idSolicitud IN ('.$result['string'].') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);	
-										}else{
-											$row=[];
-										}
+									}
+
+								// Procesar $idSolicituds
+								$result = processArraySolicitudes($idSolicituds);
+
+								// Realizar la consulta a la base de datos si el resultado es un array válido
+								if (is_array($result['array']) && !empty($result['array'])) {
+									$row = $apps->consultadatos(
+										'idSolicitud IN (' . $result['string'] . ') AND estado="AGENDADA" AND entidad="' . $entidad . '" ORDER BY idSolicitud ASC',
+										$select
+									);
+								} else {
+									$row = [];
+								}	
+														//dashboard/ModuloActas/Actas?p=
+									//MUESTREME TODA LAS SOLICITUDES ASIGNADAS A SU RESPECTIVO ID DEL ACTA
 								break;																									
 							}
 					if (is_array($row) && !empty($row)) { 
@@ -183,15 +257,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									'escrito'=>$escrito,
 									); 
 								$swi='';
-								/*
-								$sws='';
-								$SolicitudComite = '../ecrire/exec/model/sena/ModuloSolicitudComite/pdf/sc/'.$value['codigoFicha'].'.pdf';
-								if (@file_exists($SolicitudComite)){			
-									$sws='1'; 
-								}else{
-									$sws='0'; 
-								}
-								*/
 								$Incidentes='../ecrire/exec/model/sena/ModuloIncidentes/pdf/'.$value['codigoFicha'].'.pdf';
 								if (@file_exists($Incidentes)){			 
 									$swi='1'; 	 
@@ -210,7 +275,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'fechaSolicitud'=>$value['fechaSolicitud'],
 								'fechaIncidente'=>$value['fechaSolicitud'],
 								'hechos'=>$value['hechos'],
-								'nombrePrograma'=>$value['nombrePrograma'],
+								'nombrePrograma'=>''.$value['nombrePrograma'],
 								'fechaHoraAgendada'=>$value['fechaHoraAgendada'],
 								'estado'=>$value['estado'],
 								'attachments'=> array(

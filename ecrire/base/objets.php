@@ -404,13 +404,12 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 				'maj' => 'maj',
 				'principale' => 'oui',
 				'introduction_longueur' => '600',
-				'champs_editables' => array('hechos', 'horaMinutoInicial', 'horaMinutoFinal','estado'),
-				'champs_versionnes' => array('hechos', 'horaMinutoInicial', 'horaMinutoFinal','estado','idComites'),
+				'champs_editables' => array('horaMinutoInicial', 'horaMinutoFinal','estado'),
+				'champs_versionnes' => array('horaMinutoInicial', 'horaMinutoFinal','estado','idComites'),
 				'field' => array(
 					'idAgenda' => 'bigint(21) NOT NULL',
 					'idApoyo' =>  'bigint(21) NOT NULL',
 					'idSolicitud' =>  'bigint(21) NOT NULL',
-					'hechos' => "varchar(255) DEFAULT '0' NOT NULL",
 					'horaMinutoInicial' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
 					'horaMinutoFinal' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
 					'idComites' => "varchar(15) DEFAULT '0' NOT NULL",
@@ -425,7 +424,6 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'PRIMARY KEY' => 'idAgenda ',
 				),
 				'rechercher_champs' => array(
-					'hechos' => 1,
 					'horaMinutoInicial' => 1,
 					'horaMinutoFinal' => 1,
 					'idComites' => 1

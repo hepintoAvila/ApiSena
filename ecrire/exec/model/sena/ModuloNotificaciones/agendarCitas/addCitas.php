@@ -68,32 +68,26 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 				$tbls='sena_agenda';
 				$apps=new Apis($tbls);
 				
-				$idSolicitudComite = base64_decode($_POST["idSolicitudComite"]);
-				$fechaCita = base64_decode($_POST["fechaCita"]);
-				$horaCita = base64_decode($_POST["horaCita"]);
-				$tiempoEstipulado = base64_decode($_POST["tiempoEstipulado"]);
-				$className = base64_decode($_POST["className"]);
-				$title = base64_decode($_POST["title"]);
-				$start = base64_decode($_POST["start"]);
-				$end = base64_decode($_POST["end"]);
-				$idComites = base64_decode($_POST["idComites"]);
-				$hechos = base64_decode($_POST["hechos"]);
-				$reglas = base64_decode($_POST["reglas"]);
-				$entidad = base64_decode($_POST["entidad"]);
-				$idUsuario     = base64_decode($_POST["idUsuario"]);
-				$codigoFicha     = base64_decode($_POST["codigoFicha"]);
- 
+				$idSolicitudComite = isset($_GET['idSolicitudComite']) ? base64_decode($_GET['idSolicitudComite']) : base64_decode($_POST['idSolicitudComite']);
+				$fechaCita = isset($_GET['fechaCita']) ? base64_decode($_GET['fechaCita']) : base64_decode($_POST['fechaCita']);
+				$horaCita = isset($_GET['horaCita']) ? base64_decode($_GET['horaCita']) : base64_decode($_POST['horaCita']);
+				$tiempoEstipulado = isset($_GET['tiempoEstipulado']) ? base64_decode($_GET['tiempoEstipulado']) : base64_decode($_POST['tiempoEstipulado']);
+				$className = isset($_GET['className']) ? base64_decode($_GET['className']) : base64_decode($_POST['className']);
+				$title = isset($_GET['title']) ? base64_decode($_GET['title']) : base64_decode($_POST['title']);
+				$start = isset($_GET['start']) ? base64_decode($_GET['start']) : base64_decode($_POST['start']);
+				$end = isset($_GET['end']) ? base64_decode($_GET['end']) : base64_decode($_POST['end']);
+				$idComites = isset($_GET['idComites']) ? base64_decode($_GET['idComites']) : base64_decode($_POST['idComites']);
+				$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
+				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$codigoFicha = isset($_GET['codigoFicha']) ? base64_decode($_GET['codigoFicha']) : base64_decode($_POST['codigoFicha']);
 
-				//$fechaIncidente= date_ical($fechaIncidentes);
-						
 						$variablesAVerificar = [
 							'idSolicitudComite' => $idSolicitudComite,
 							'fechaCita' => $fechaCita,
 							'horaCita' => $horaCita,
 							'tiempoEstipulado' => $tiempoEstipulado,
 							'MiembrosComites' => $idComites,
-							'reglas' => $reglas,
-							'idUsuario' => $idUsuario,
+						    'idUsuario' => $idUsuario,
 							'codigoFicha' => $codigoFicha,
 							'entidad' => $entidad,
 							'title' => $title,
@@ -102,7 +96,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							'className' => $className,
 						];	
 					
-						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						$mensajeError = $apps->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
@@ -123,8 +117,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							 $chartic = array();
 							  $chartic['idApoyo']=$idUsuario;
 							  $chartic['idSolicitud']=$idSolicitudComite;
-							  $chartic['hechos']=$hechos;
-							  $chartic['horaMinutoInicial']=$start;
+						      $chartic['horaMinutoInicial']=$start;
 							  $chartic['horaMinutoFinal']=$end;
 							  $chartic['tiempoEstipulado']=$tiempoEstipulado;
 							  $chartic['idComites']=$idComites;
@@ -158,7 +151,6 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 								if (intval($idSolicitudComite)>0) {	
 								 $schem = array();
 									$schem['fechaHoraAgendada']=formatearFecha($start);
-									$schem['hechos']=$hechos;
 									$schem['estado']='AGENDADA';
 									$schem = pipeline('pre_insertion',
 											array(
@@ -169,61 +161,18 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 											)
 										);							
 										sql_updateq('sena_solicitudcomite',$schem,"idSolicitud=" . intval($idSolicitudComite) . "");
-										
-										
-											//ACTUALIZAR REGLAS	
-										$schem_act = array();
-										$act=new Apis('sena_actaComite'); 	
-										$row_act=$act->consultadatos('entidad="'.$entidad.'" AND idSolicitud="'.$idSolicitudComite.'"','COUNT(*) AS existe,idActaComite');
-										 foreach($row_act as $a => $value){
-											 $existe_act = $value['existe'];
-											 $idActaComite = $value['idActaComite'];
-										 }
-									if(intval($existe_act)==0){
-										
-										$schem_act['idSolicitud']=$idSolicitudComite;
-										$schem_act['idDirectivo']='1';
-										$schem_act['idApoyo']=$idUsuario;
-										$schem_act['miembrosComites']=$idComites;
-										$schem_act['codigoFicha']=$codigoFicha;
-										$schem_act['fechaAgendada']=formatearFecha($start);
-										$schem_act['reglas']=$reglas;
-										$schem_act['decision']='';
-										$schem_act['entidad']=$entidad;
-										$schem_act = pipeline('pre_insertion',
-											array(
-												'args' => array(
-												'table' => 'sena_actaComite',
-												),
-												'data' => $schem_act
-												)
-											);							
-										$idActaComite=@sql_insertq("sena_actaComite",$schem_act);
 										pipeline('post_insertion',
 										array(
 											'args' => array(
-											'table' =>'sena_actaComite',
+											'table' =>'sena_solicitudcomite',
 											'id_objet' => $idActaComite
 											),
 											'data' => $schem_act
 											)
-										);										
-									}else{
-										$schem_act['miembrosComites']=$idComites;
-										$schem_act['fechaAgendada']=formatearFecha($start);
+										);
 										
-										$schem_act = pipeline('pre_insertion',
-											array(
-												'args' => array(
-												'table' => 'sena_actaComite',
-											),
-											'data' => $schem_act
-											)
-										);							
-										sql_updateq('sena_actaComite',$schem_act,"idActaComite=" . intval($idActaComite) . "");										
-									}
-								
-										
+											//ACTUALIZAR REGLAS	
+																			
 								}else{
 								$arrayMensage[]=array(
 									'id'=>1,
@@ -244,13 +193,14 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 			case 'updateCitas':
 			 $tbls='sena_agenda';
 		     $apps=new Apis($tbls);
+
 			$campos = $GLOBALS['tables_principales']['sena_agenda']['field'];
 			$select = implode(',',array_keys($campos));	
+			$fechaCita = isset($_GET['fechaCita']) ? base64_decode($_GET['fechaCita']) : base64_decode($_POST['fechaCita']);
+			$tiempoEstipulado = isset($_GET['tiempoEstipulado']) ? base64_decode($_GET['tiempoEstipulado']) : base64_decode($_POST['tiempoEstipulado']);
+			$idAgenda = isset($_GET['idAgenda']) ? base64_decode($_GET['idAgenda']) : base64_decode($_POST['idAgenda']);
+			$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
 			
-			$fechaCita = base64_decode($_POST["fechaCita"]);
-			$tiempoEstipulado = base64_decode($_POST["tiempoEstipulado"]);
-			$idAgenda = base64_decode($_POST["idAgenda"]);
-			$idUsuario     = base64_decode($_POST["idUsuario"]);
 				
 						$variablesAVerificar = [
 							'idAgenda' => $idAgenda,
@@ -258,7 +208,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							'tiempoEstipulado' => $tiempoEstipulado,
 						];
 						
-						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						$mensajeError = $apps->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
@@ -315,57 +265,82 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 			break;
 			case 'deleteCitas':
 			$tbls='sena_agenda';
-		     $apps=new Apis($tbls);			
-			$idAgenda = base64_decode($_POST["idAgenda"]);
-			$idUsuario     = base64_decode($_POST["idUsuario"]);
+		     $apps=new Apis($tbls);	
+			 $idAgenda = isset($_GET['idAgenda']) ? base64_decode($_GET['idAgenda']) : base64_decode($_POST['idAgenda']);		
+			 $idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);		
 			$variablesAVerificar = ['idAgenda' => $idAgenda];
 			
-						$mensajeError = $app->verificarVariables($variablesAVerificar);
+						$mensajeError = $apps->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
 						}else{
 							if (intval($idAgenda)) {
-								
-							$row=$apps->consultadatos('idAgenda="'.intval($idAgenda).'"','idSolicitud');
-							foreach($row as $a => $value){
-								$idSolicitud = $value['idSolicitud'];
-							}								
-									$schem = array();
-									$schem['fechaHoraAgendada']='0000-00-00 00:00:00';
-									$schem['estado']='SIN AGENDA';
-									$schem = pipeline('pre_insertion',
-											array(
-												'args' => array(
+								// Obtener los datos de idAgenda
+								$row = $apps->consultadatos('idAgenda="' . intval($idAgenda) . '"', 'idSolicitud');
+							
+								// Inicializar $idSolicitud
+								$idSolicitud = null;
+							
+								// Verificar si $row es un array y contiene datos
+								if (is_array($row) && !empty($row)) {
+									foreach ($row as $a => $value) {
+										$idSolicitud = $value['idSolicitud'];
+									}
+							
+									// Verificar si $idSolicitud fue asignado
+									if ($idSolicitud !== null) {
+										// Preparar el esquema de actualización
+										$schem = array();
+										$schem['fechaHoraAgendada'] = '0000-00-00 00:00:00';
+										$schem['estado'] = 'SIN AGENDA';
+										$schem = pipeline('pre_insertion', array(
+											'args' => array(
 												'table' => 'sena_solicitudcomite',
 											),
 											'data' => $schem
-											)
-										);							
-										sql_updateq('sena_solicitudcomite',$schem,"idSolicitud=" . intval($idSolicitud) . "");
-										
-							$app_acta=new Apis('sena_actaComite');	
-							$rows=$app_acta->consultadatos('idSolicitud="'.intval($idSolicitud).'"','idActaComite');
-							foreach($rows as $a => $acta){
-								$idActaComite = $acta['idActaComite'];
+										));
+							
+										// Actualizar la base de datos
+										sql_updateq('sena_solicitudcomite', $schem, "idSolicitud=" . intval($idSolicitud) . "");
+							
+										// Eliminar la agenda
+										sql_delete("sena_agenda", "idAgenda=" . intval($idAgenda));
+							
+										// Invalidar las cachés marcadas de esta rúbrica
+										include_spip('inc/invalideur');
+										suivre_invalideur("id='idAgenda/$idAgenda'");
+							
+										// Añadir mensaje de éxito
+										$arrayMensage[] = array(
+											'id' => 1,
+											'message' => '::OK:: Registro eliminado correctamente!',
+											'status' => '202'
+										);
+									} else {
+										// Añadir mensaje de error si $idSolicitud no fue encontrado
+										$arrayMensage[] = array(
+											'id' => 0,
+											'message' => '::ERROR:: No se encontró el idSolicitud correspondiente!',
+											'status' => '404'
+										);
+									}
+								} else {
+									// Añadir mensaje de error si $row no es un array válido
+									$arrayMensage[] = array(
+										'id' => 0,
+										'message' => '::ERROR:: No se encontraron datos para el idAgenda proporcionado!',
+										'status' => '404'
+									);
+								}
+							} else {
+								// Añadir mensaje de error si $idAgenda no es válido
+								$arrayMensage[] = array(
+									'id' => 0,
+									'message' => '::ERROR:: idAgenda no es válido!',
+									'status' => '400'
+								);
 							}
-							sql_delete("sena_actaComite", "idActaComite=" . intval($idActaComite));
-							sql_delete("sena_agenda", "idAgenda=" . intval($idAgenda));
-									// invalider les caches marques de cette rubrique
-									include_spip('inc/invalideur');
-									suivre_invalideur("id='idAgenda/$idAgenda'");
-								$arrayMensage[]=array(
-								'id'=>1,
-								'message'=>'::OK:: Registro eliminado correctamente!',
-								'status'=>'202');										
-							}else{
-								$arrayMensage[]=array(
-								'id'=>1,
-								'message'=>'::WARNING:: Registro '.$idAgenda.' no fue eliminado!',
-								'status'=>'202');								
-							}
-
-							 					
-						}
+						}	
 			echo var2js($arrayMensage);				
 			
 			break;
@@ -374,8 +349,7 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 		     $apps=new Apis($tbls);
 			$campos = $GLOBALS['tables_principales']['sena_agenda']['field'];
 			$select = implode(',',array_keys($campos));	
-			$entidad     = base64_decode($_POST["entidad"]);
-							
+			$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);				
 			$tbla_solicitudComite='sena_solicitudcomite';
 			$_solicitudComite=new Apis($tbla_solicitudComite);
 			$campos_solicitudComite = $GLOBALS['tables_principales']['sena_solicitudcomite']['field'];

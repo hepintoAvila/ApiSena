@@ -177,7 +177,6 @@ function crearPdfAprendices($idActa) {
         $sql4 = sql_select('*', 'sena_actas', 'idActa = "'.$idActa.'" AND entidad="senaV1"');
         while ($row4 = sql_fetch($sql4)) {
             if (!empty($row4['nombre'])) {
-                $idActa = $row4['idActa'];
                 $NombreActa = $row4['nombre'];
                 $Fecha = $row4['fecha'];
                 $horaInicial = $row4['horaInicial'];
@@ -497,8 +496,14 @@ function corregir_conceptos($str) {
     return null;
 }
 $opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
-$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
- 
+$idActa = null;
+
+// Verificar y decodificar idActa
+if (array_key_exists('entidad', $_GET) && !empty($_GET['entidad'])) {
+    $entidad = base64_decode($_GET['entidad']);
+} elseif (array_key_exists('entidad', $_POST) && !empty($_POST['entidad'])) {
+    $entidad = base64_decode($_POST['entidad']);
+}
 switch ($opcion) {
     case 'generarConsolidado':
         $items = isset($_GET['items']) ? base64_decode($_GET['items']) : base64_decode($_POST['items']);
@@ -734,7 +739,9 @@ switch ($opcion) {
                     'data' => $chartic
                 )
             );
+            if (!empty($idActa)) {
             crearPdfAprendices($idActa);
+            }
         }
 
         
@@ -1010,8 +1017,9 @@ switch ($opcion) {
 
         
         //CREAMOS EL PDF DE LOS ESTUDIANTES ASIGNADOS AL ACTA
-        crearPdfAprendices($idActa);
-
+        if (!empty($idActa)) {
+        crearPdfAprendices($idActa); 
+        }
         break;
     case 'addAsistente':
         $app=new Apis('sena_asistencias');
@@ -1120,6 +1128,31 @@ switch ($opcion) {
             echo $var;
         }
         break;
+		case 'ConsultarAsistentes':	
+			$entidad = base64_decode($_POST['entidad']);
+			$DatosAuteurs=array();
+			$select='*';
+			$set = array();	
+			$sql = sql_select("COUNT(*) AS total",'sena_asistencias','entidad="'.$entidad.'"');
+				while ($row = sql_fetch($sql)) {	
+					$total = $row['total'];
+				}
+				if($total >= 1){
+					$app=new Apis('sena_asistencias');
+					$Asistentes=$app->consultadatos('entidad="'.$entidad.'"',$select);				
+					$data = array("data"=>$Asistentes);
+					$var = var2js($data);
+					echo $var;
+				}else{
+					$records[] = array('idActa'=>1,
+					'nombresApellidos'=>'No existen registros',
+					'documento'=>'',
+					'dependencia'=>'');
+					$data = array("data"=>$records);
+					$var = var2js($data);	
+					echo $var;							
+				}						
+		break;   
     case 'deleteAsistente':
  
         $id_asistencia = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
