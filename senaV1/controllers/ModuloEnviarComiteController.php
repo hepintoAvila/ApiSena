@@ -1,6 +1,7 @@
 <?php
 require_once 'Segurity.php';
-require_once 'makeCurlRequest.php';
+require_once 'makeSendRequest.php';
+require_once 'sendDocumento.php';
 class ModuloEnviarComiteController {
     public static function handleRequest() {
         $data = [];
@@ -38,12 +39,11 @@ class ModuloEnviarComiteController {
                 if (count($opcion) > 1) {
                     $menu = explode('=', $opcion[1]);
                     if (count($menu) > 0) {
-                        if (!is_null(json_decode(file_get_contents('php://input'), true))) {
-                            $r['fileContent']=json_decode(file_get_contents('php://input'), true);
-                        }
-                        $r['opcion'] = base64_decode($opcion[0]);
-                        $variables = array_merge($r, $varGet);
-                        echo makeCurlRequest($variables,$data);
+                        $url = '../ecrire/exec/model/sena/ModuloIncidentes/pdf/';
+                        $dateTime = new DateTime('now', new DateTimeZone('UTC'));
+                        $formattedDateTime = $dateTime->format('Ymd\THis\Z');
+                        $vars = sendDocumento($url, $varGet,$opcion, $formattedDateTime);
+                        echo makeSendRequest($vars, $data);
                         return;
                     }
                 }

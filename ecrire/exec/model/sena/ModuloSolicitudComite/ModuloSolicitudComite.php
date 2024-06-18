@@ -31,12 +31,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				break;
 				case "add_solicitud":
 				case "updateSolicitud":
-				case "add_documentos":
-				
+				case "add_documentos":				
 				include_spip('exec/model/sena/ModuloSolicitudComite/editorsolicitud');
 				break;
 				case "ConsultarSolicitud":
-
 				include_spip('exec/model/sena/ModuloSolicitudComite/consultarsolicitud');
 				break;
 				case "ConsultarPdf":

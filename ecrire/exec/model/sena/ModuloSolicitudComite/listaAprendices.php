@@ -26,7 +26,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 		switch ($obj) {
 			case 'aprendices':
-			
+				$row_max = sql_fetsel('MAX(idSolicitud) AS max', "sena_solicitudcomite");
 				$campos = $GLOBALS['tables_principales']['sena_aprendiz']['field'];
 				//$select = implode(',',array_keys($campos));
 
@@ -35,6 +35,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$app=new Apis('sena_aprendiz');
 				$row=$app->consultadatos('entidad="'.$entidad.'"','*');				
 				if(!empty($row)){
+					
+					 
 				foreach($row as $a => $value){
 					$sql2 = sql_select("academica,disciplinaria,inasistencias,verbal,escrito",
 					'sena_sancionesanteriores','idAprendiz="'.$value['idAprendiz'].'"');
@@ -75,6 +77,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'verbal'=>$verbal,
 							'escrito'=>$escrito,
 							'avatar'=>$value['avatar'],
+							'maxId'=>$row_max['max']+1,
 							)); 
 					}
 				}else{
