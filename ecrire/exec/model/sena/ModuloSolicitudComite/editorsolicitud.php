@@ -30,6 +30,15 @@ include_spip('inc/charsets');
 include_spip('inc/actions');
 include_spip('inc/editer');
 include_spip('inc/notifications');
+function formatearFecha($fecha) {
+    // Convierte la fecha a un timestamp
+    $timestamp = strtotime($fecha);
+  
+    // Formatea el timestamp en el formato deseado
+    $fechaFormateada = date("Y-m-d H:i:s", $timestamp);
+  
+    return $fechaFormateada;
+  }
 
 // Decodificación de variables
 $tipo = isset($_GET['tipo']) ? base64_decode($_GET['tipo']) : (isset($_POST['tipo']) ? base64_decode($_POST['tipo']) : null);
@@ -46,15 +55,15 @@ function obtenerVariable($nombre) {
     return isset($_GET[$nombre]) ? base64_decode($_GET[$nombre]) : (isset($_POST[$nombre]) ? base64_decode($_POST[$nombre]) : null);
 }
 
-function guardarPDF($codigoFicha, $decodedImage) {
-    $dir_doc = '../ecrire/exec/model/sena/ModuloIncidentes/';
-    $path = $dir_doc . 'pdf';
-    $destino = $dir_doc . 'pdf/';
-    if (!is_dir($path)) {
-        mkdir($path, 0777, true);
-    }
-    $ubicacionPermanente = $destino . $codigoFicha . '.pdf';
-    file_put_contents($ubicacionPermanente, $decodedImage);
+function guardarPDF($codigoFicha) {
+    $filePathArc = '../ecrire/exec/model/sena/ModuloIncidentes/pdf/0000.pdf';
+    $filePath = '../ecrire/exec/model/sena/ModuloIncidentes/pdf/';
+    if (@file_exists($filePathArc)){
+        $newLocation = ''.$filePath.''.$codigoFicha.'.pdf';
+        rename($filePathArc, $newLocation);
+        @unlink($filePathArc);
+    }   
+    
 }
 
 // Switch principal
@@ -66,10 +75,7 @@ switch ($tipo) {
         $nombrePrograma = obtenerVariable('nombrePrograma');
         $hechos = obtenerVariable('descripcion');
         $idUsuario = obtenerVariable('idUsuario');
-        $selectedFile = obtenerVariable('selectedFile');
         $fechaIncidente = obtenerVariable('fechaIncidente');
-        $fileAtribute = json_decode($selectedFile, true);
-
         $apps = new Apis('sena_solicitudcomite');
         $fechaIncidente = date_ical($fechaIncidente);
 
@@ -84,7 +90,6 @@ switch ($tipo) {
             'idUsuario' => $idUsuario,
             'entidad' => $entidad,
             'hechos' => $hechos,
-            'selectedFile' => $fileAtribute
         ];
 
         $mensajeError = $apps->verificarVariables($variablesAVerificar);
@@ -99,7 +104,7 @@ switch ($tipo) {
                 'idAprendiz' => $idAprendiz,
                 'tipoSolicitud' => $tipoComite,
                 'tipoAtencion' => $tipoAtencion,
-                'codigoFicha' => '000',
+                'codigoFicha' => '',
                 'fechaIncidente' => $fechaIncidente,
                 'hechos' => $hechos,
                 'nombrePrograma' => $nombrePrograma,
@@ -119,13 +124,9 @@ switch ($tipo) {
             if ($idSolicitud) {
                 sql_updateq('sena_solicitudcomite', ['codigoFicha' => $codigoFicha], "idSolicitud=" . intval($idSolicitud));
             }
-
-            // Guardar PDF
-            $decodedImage = obtenerVariable('fileContent');
-            if ($decodedImage !== null) {
-                guardarPDF($codigoFicha, base64_decode($decodedImage));
-            }
-
+            
+            
+            guardarPDF($codigoFicha);  
             // Enviar correo
             $descripcion = obtenerVariable('descripcion');
             $corps = $apps->headersEmail($idAprendiz, $idUsuario, $descripcion, $tipoComite);
@@ -177,12 +178,7 @@ switch ($tipo) {
             ];
 
             // Crear la solicitud en PDF
-            $path = '../ecrire/exec/model/sena/ModuloSolicitudComite/pdf/sc/' . $codigoFicha . '.pdf';
-            if (@file_exists($path)) {
-                spip_log("Supprimer ancien logo $codigoFicha", 'codigoFicha');
-                spip_unlink($path);
-            }
-
+            
             require('../ecrire/exec/model/sena/ModuloSolicitudComite/fpdf.php');
             $pdf = new PDF();
             $pdf->AliasNbPages();
@@ -228,35 +224,39 @@ switch ($tipo) {
         break;
 
     case "updateSolicitud":
+        $chartic=[];
 		$idSolicitud = obtenerVariable('idSolicitud');
-		$opcionUpdate = obtenerVariable('opcionUpdate');
-		$e = obtenerVariable('e');
+		$campo = obtenerVariable('campo');
+		$dataUpdate = obtenerVariable('dataUpdate');
         $apps = new Apis('sena_solicitudcomite');
         $variablesAVerificar = [
             'idSolicitud' => $idSolicitud,
-            'opcionUpdate' => $opcionUpdate,
-            'e' => $e,
+            'campo' => $campo,
+            'dataUpdate' => $dataUpdate,
             'entidad' => $entidad
         ];
+       
         $mensajeError = $apps->verificarVariables($variablesAVerificar);
-
-		print_r($variablesAVerificar);
         if ($mensajeError !== null) {
             $mensajeErrors = $mensajeError == '' ? 'Error del Token' : $mensajeError;
             $arrayMensage[] = ['id' => 1, 'message' => '::ERROR-001:: ' . $mensajeErrors, 'status' => '404'];
         } else {
-			switch ($opcionUpdate) {
-				case "tipoSolicitud":	
-					$chartic['e'] ="".$e."";
+             
+			switch ($campo) {
+				case "tipoComite":	
+					$chartic['tipoSolicitud'] ="".$dataUpdate."";
 					break;
 				case "tipoAtencion":	
-					$chartic['tipoAtencion'] ="".$e."";
+					$chartic['tipoAtencion'] ="".$dataUpdate."";
 					break;
 				case "fechaIncidente":	
-						$chartic['fechaIncidente'] ="".date_ical($e)."";
-					break;				
-				
-				}		
+						$chartic['fechaIncidente'] =formatearFecha($dataUpdate);
+					break;	
+                case "hechos":	
+						$chartic['hechos']=isset($_GET['dataUpdate']) ? base64_decode($_GET['dataUpdate']) : (isset($_POST['dataUpdate']) ? base64_decode($_POST['dataUpdate']) : null);
+					break;	                    			
+				}
+                
 		$chartic = pipeline('pre_insertion',
 			array(
 				'args' => array(
@@ -265,7 +265,7 @@ switch ($tipo) {
 			'data' => $chartic
 			)
 		);							
-		//sql_updateq('sena_solicitudcomite',$chartic,"idSolicitud=" . intval($idSolicitud) . "");
+		sql_updateq('sena_solicitudcomite',$chartic,"idSolicitud=".intval($idSolicitud)."");
 		pipeline('post_insertion',
 		array(
 			'args' => array(
@@ -275,39 +275,35 @@ switch ($tipo) {
 			'data' => $chartic
 			)
 		);
+        $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Registro actualizado correctamente!', 'status' => '202'];
 		}
         echo var2js($arrayMensage);
         break;
 
     case "add_documentos":
+        $apps = new Apis('sena_solicitudcomite');
         $codigoFicha = obtenerVariable('codigoFicha');
         $options = obtenerVariable('options');
         $idSolicitud = obtenerVariable('idSolicitud');
-        $idUsuario = obtenerVariable('idUsuario');
-        $selectedFile = obtenerVariable('selectedFile');
-        $decodedImage = obtenerVariable('decodedImage');
-        $fileContent = obtenerVariable('fileContent');
-
-        $apps = new Apis('sena_solicitudcomite');
+        $moved = obtenerVariable('moved');
         $variablesAVerificar = [
             'codigoFicha' => $codigoFicha,
-            'decodedImage' => $decodedImage,
             'idSolicitud' => $idSolicitud,
-            'idUsuario' => $idUsuario,
             'entidad' => $entidad,
-            'selectedFile' => json_decode($selectedFile, true)
         ];
-
-
+         
         $mensajeError = $apps->verificarVariables($variablesAVerificar);
         if ($mensajeError !== null) {
             $arrayMensage[] = ['id' => 1, 'message' => '::ERROR-001:: ' . $mensajeError, 'status' => '404'];
         } else {
-            // Guardar el PDF
-            guardarPDF($codigoFicha, $fileContent);
-            $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Documento actualizado correctamente!', 'status' => '202'];
-        }
-        echo var2js($arrayMensage);
+            if($moved==1){
+                $arrayMensage[] = ['id' => 1, 'message' => '::ERROR:: Documento no se actualizó!', 'status' => '202'];
+            }else{
+                //guardarPDF();
+                $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Documento actualizado correctamente!', 'status' => '202'];
+            }
+      }
+       echo var2js($arrayMensage);
         break;
 
     default:
