@@ -30,6 +30,15 @@ include_spip('inc/charsets');
 include_spip('inc/actions');
 include_spip('inc/editer');
 include_spip('inc/notifications');
+function formatearFecha($fecha) {
+    // Convierte la fecha a un timestamp
+    $timestamp = strtotime($fecha);
+  
+    // Formatea el timestamp en el formato deseado
+    $fechaFormateada = date("Y-m-d H:i:s", $timestamp);
+  
+    return $fechaFormateada;
+  }
 
 // Decodificación de variables
 $tipo = isset($_GET['tipo']) ? base64_decode($_GET['tipo']) : (isset($_POST['tipo']) ? base64_decode($_POST['tipo']) : null);
@@ -215,35 +224,39 @@ switch ($tipo) {
         break;
 
     case "updateSolicitud":
+        $chartic=[];
 		$idSolicitud = obtenerVariable('idSolicitud');
-		$opcionUpdate = obtenerVariable('opcionUpdate');
-		$e = obtenerVariable('e');
+		$campo = obtenerVariable('campo');
+		$dataUpdate = obtenerVariable('dataUpdate');
         $apps = new Apis('sena_solicitudcomite');
         $variablesAVerificar = [
             'idSolicitud' => $idSolicitud,
-            'opcionUpdate' => $opcionUpdate,
-            'e' => $e,
+            'campo' => $campo,
+            'dataUpdate' => $dataUpdate,
             'entidad' => $entidad
         ];
+       
         $mensajeError = $apps->verificarVariables($variablesAVerificar);
-
-		
         if ($mensajeError !== null) {
             $mensajeErrors = $mensajeError == '' ? 'Error del Token' : $mensajeError;
             $arrayMensage[] = ['id' => 1, 'message' => '::ERROR-001:: ' . $mensajeErrors, 'status' => '404'];
         } else {
-			switch ($opcionUpdate) {
-				case "tipoSolicitud":	
-					$chartic['e'] ="".$e."";
+             
+			switch ($campo) {
+				case "tipoComite":	
+					$chartic['tipoSolicitud'] ="".$dataUpdate."";
 					break;
 				case "tipoAtencion":	
-					$chartic['tipoAtencion'] ="".$e."";
+					$chartic['tipoAtencion'] ="".$dataUpdate."";
 					break;
 				case "fechaIncidente":	
-						$chartic['fechaIncidente'] ="".date_ical($e)."";
-					break;				
-				
-				}		
+						$chartic['fechaIncidente'] =formatearFecha($dataUpdate);
+					break;	
+                case "hechos":	
+						$chartic['hechos']=isset($_GET['dataUpdate']) ? base64_decode($_GET['dataUpdate']) : (isset($_POST['dataUpdate']) ? base64_decode($_POST['dataUpdate']) : null);
+					break;	                    			
+				}
+                
 		$chartic = pipeline('pre_insertion',
 			array(
 				'args' => array(
@@ -252,7 +265,7 @@ switch ($tipo) {
 			'data' => $chartic
 			)
 		);							
-		//sql_updateq('sena_solicitudcomite',$chartic,"idSolicitud=" . intval($idSolicitud) . "");
+		sql_updateq('sena_solicitudcomite',$chartic,"idSolicitud=".intval($idSolicitud)."");
 		pipeline('post_insertion',
 		array(
 			'args' => array(
@@ -262,6 +275,7 @@ switch ($tipo) {
 			'data' => $chartic
 			)
 		);
+        $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Registro actualizado correctamente!', 'status' => '202'];
 		}
         echo var2js($arrayMensage);
         break;
