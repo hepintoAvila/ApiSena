@@ -41,14 +41,16 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				S.idSubmenu,
 				M.idMenu,
 				R.idRol';
-				$query='A.idRol= R.idRol 
+				$query=' R.idRol= A.idRol 
 				AND M.idMenu= A.idMenu 
-				AND M.entidad="'.$entidad.'" 
-				AND A.entidad="'.$entidad.'" 
-				AND S.entidad="'.$entidad.'"  
-				AND R.entidad="'.$entidad.'" 
+                AND S.idSubmenu = A.idSubmenu  
 				AND A.idSubmenu=S.idSubmenu 
-				AND  S.status="Active" ORDER BY S.idSubmenu ASC';
+				AND  S.status="Active" 
+                AND M.entidad="'.$entidad.'"
+                AND S.entidad="'.$entidad.'"
+                AND A.entidad="'.$entidad.'"
+                 AND R.entidad="'.$entidad.'"
+                ORDER BY S.idSubmenu ASC';
 				
 				$roles=$app->consultadatos($query,$select,$table);
 				foreach($roles as $a => $val){

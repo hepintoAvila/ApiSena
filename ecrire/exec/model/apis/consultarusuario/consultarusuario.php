@@ -20,7 +20,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/utils');
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
-
+		include_spip('exec/model/apis/claseapi');
 		include_spip('inc/auth');
  
 
@@ -53,8 +53,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				}else{
 					$statut=$row['statut'];
 				}
-				
-				//$encryptedData = generateSecretKey($row['id_auteur'],$row['alea_actuel'], $row['alea_futur']);
 			    $secretKey = generateSecretKey();
 				$encryptedData = encryptData($session_password, $secretKey);
 				$Auth['Auth']= array(
@@ -73,21 +71,33 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							$res = sql_select("*", "apis_roles", "entidad ='".$row['entidad']."' AND tipo=" . sql_quote($row['tipo']));
 							while ($r = sql_fetch($res)) {
 								$idTipo=$r['idRol'];
+								$entidad=$r['entidad'];
+							}	
+							$app=new Apis('apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
+							$select='A.id as idAutorizacion,
+							M.label AS menu,S.label AS submenu,
+							R.tipo AS rol,
+							A.c as c,
+							A.a as a,
+							A.u as u,
+							A.d as d';
+							$query='
+							R.idRol="'.$idTipo.'"
+                			AND R.idRol= A.idRol
+							AND M.idMenu= A.idMenu 
+							AND S.idSubmenu = A.idSubmenu  
+							AND A.idSubmenu=S.idSubmenu 
+							AND  S.status="Active" 
+							AND M.entidad="'.$entidad.'"
+							AND S.entidad="'.$entidad.'"
+							AND A.entidad="'.$entidad.'"
+							 AND R.entidad="'.$entidad.'"
+							ORDER BY S.idSubmenu ASC';
+							
+							$roles=$app->consultadatos($query,$select,'apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
+							foreach($roles as $a => $row){
+								$menus['Permisos'][]= array('query'=>$row['c'],'add'=>$row['a'],'update'=>$row['u'],'delete'=>$row['d'],'menu'=>$row['menu'],'submenu'=>$row['submenu']);	
 							}
-								$perm = sql_select("A.c AS API_QUERY,A.a AS API_ADD,A.u AS API_UPDATE,A.d AS API_DELETE, R.Tipo as Rol,S.label AS opcion",
-									"apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R",
-										"R.idRol='".$idTipo."'  
-										AND A.idRol= R.idRol 
-										AND M.idMenu= A.idMenu 
-										AND A.entidad='".$row['entidad']."' 
-										AND S.entidad='".$row['entidad']."' 
-										AND R.entidad='".$row['entidad']."'
-										AND A.idSubmenu=S.idSubmenu 
-										AND  S.status='Active' ORDER BY S.idSubmenu ASC");
-									while ($row = sql_fetch($perm)) {
-										$menus['Permisos'][] = array('query'=>$row['API_QUERY'],'add'=>$row['API_ADD'],'update'=>$row['API_UPDATE'],'delete'=>$row['API_DELETE'],'opcion'=>$row['opcion']);					
-									}				
-								 			
 							if (!is_null($menus)) {
 								$data = array('data'=>array_merge($Auth,$menus));
 								$var = var2js($data);

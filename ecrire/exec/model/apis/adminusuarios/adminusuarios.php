@@ -62,15 +62,15 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$msg = array();
 				$session_password = isset($_GET['palabraclave']) ? base64_decode($_GET['palabraclave']) : base64_decode($_POST['palabraclave']);
 				$new_pass = unicode2charset(utf_8_to_unicode($session_password), 'iso-8859-1');
-				$idUsuario = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
+				$id_auteur = isset($_GET['idUsuario']) ? base64_decode($_GET['idUsuario']) : base64_decode($_POST['idUsuario']);
  
 				$variablesAVerificar = [
 					'password' => $session_password,
 					'new_pass' => $new_pass,
-					'id_auteur' => $idUsuario,
+					'id_auteur' => $id_auteur,
 					'entidad' => $entidad,
 					];
-
+				 
 				$mensajeError = $app->verificarVariables($variablesAVerificar);
 				if ($mensajeError !== null){
 				 $arrayMensage=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
@@ -106,6 +106,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$login = isset($_GET['login']) ? base64_decode($_GET['login']) : base64_decode($_POST['login']);
 					$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
 					$nombres = isset($_GET['nombres']) ? base64_decode($_GET['nombres']) : base64_decode($_POST['nombres']);
+					$apellidos = isset($_GET['apellidos']) ? base64_decode($_GET['apellidos']) : base64_decode($_POST['apellidos']);
 					$identificacion = isset($_GET['identificacion']) ? base64_decode($_GET['identificacion']) : base64_decode($_POST['identificacion']);
 					$telefono = isset($_GET['telefono']) ? base64_decode($_GET['telefono']) : base64_decode($_POST['telefono']);
  						// Crea un array con las variables que deseas verificar
@@ -120,7 +121,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'rol' => $rol,
 							'entidad' => $entidad,
 						];
- 
+						//print_r($variablesAVerificar);
 						$mensajeError = $app->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
@@ -185,6 +186,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				echo $var;
 			break;
 			case 'update':
+				$apps=new Apis('api_auteurs');
 				$login = isset($_GET['login']) ? base64_decode($_GET['login']) : base64_decode($_POST['login']);
 				$rol = isset($_GET['rol']) ? base64_decode($_GET['rol']) : base64_decode($_POST['rol']);
 				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
@@ -196,6 +198,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
     					$chartic['tipo']=$rol;
 						$apps->actualizar($chartic,'id_auteur',$id);
 						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id.'-'.$nombres.' fue actualizado correctamente!','status' => '200');
+						
 						$var = var2js($msg);	
 						echo $var;				
 			
@@ -212,7 +215,41 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$var = var2js($msg);	
 					echo $var;					
 			break;
-			
+			case 'update_rol':
+				$apps=new Apis('apis_autorizaciones');
+				$c = isset($_GET['c']) ? base64_decode($_GET['c']) : base64_decode($_POST['c']);
+				$a = isset($_GET['a']) ? base64_decode($_GET['a']) : base64_decode($_POST['a']);
+				$u = isset($_GET['u']) ? base64_decode($_GET['u']) : base64_decode($_POST['u']);
+				$d = isset($_GET['d']) ? base64_decode($_GET['d']) : base64_decode($_POST['d']);
+				$id = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']);
+					$variablesAVerificar = [
+						'c' => $c,
+						'a' => $a,
+						'u' => $u,
+						'd' => $d,
+						'id' => $id,
+					];
+
+					//print_r($variablesAVerificar);
+					$mensajeError = $apps->verificarVariables($variablesAVerificar);
+					if ($mensajeError !== null) {
+					$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
+					}else{
+						$chartic=array();
+		
+						$chartic['c']=$c;
+    					$chartic['u']=$u;
+    					$chartic['d']=$d;
+    					$chartic['a']=$d;
+						$apps->actualizar($chartic,'id',$id);
+						$msg[] = array('menssage'=>'OK. Los permisos fueron actualizado correctamente!','status' => '200');
+						$var = var2js($msg);	
+						echo $var;						
+					}
+
+				
+
+			break;
 			
 		}										
 ?>
