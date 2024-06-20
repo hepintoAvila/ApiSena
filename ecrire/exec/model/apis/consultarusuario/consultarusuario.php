@@ -75,7 +75,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							}	
 							$app=new Apis('apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
 							$select='A.id as idAutorizacion,
-							M.label AS menu,S.label AS submenu,
+							M.key AS menu,S.url AS submenu,
 							R.tipo AS rol,
 							A.c as c,
 							A.a as a,
@@ -96,7 +96,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							
 							$roles=$app->consultadatos($query,$select,'apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
 							foreach($roles as $a => $row){
-								$menus['Permisos'][]= array('query'=>$row['c'],'add'=>$row['a'],'update'=>$row['u'],'delete'=>$row['d'],'menu'=>$row['menu'],'submenu'=>$row['submenu']);	
+								$pos = strrpos($row['submenu'], '/');
+								$submenu = substr($row['submenu'], $pos + 1);
+								$menus['Permisos'][]= array('query'=>$row['c'],'add'=>$row['a'],'update'=>$row['u'],'delete'=>$row['d'],'menu'=>$row['menu'],'submenu'=>$submenu);	
 							}
 							if (!is_null($menus)) {
 								$data = array('data'=>array_merge($Auth,$menus));
