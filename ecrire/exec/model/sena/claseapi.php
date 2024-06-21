@@ -26,7 +26,7 @@ include_spip('base/connect_sql');
 		//$this->periodoacademico_id=$periodoacademico_id;		
         } 
 		abstract function buscar_keys();
-		abstract function guardar($chartic);
+		abstract function guardar($menu,$submenu,$accion);
 		abstract function consultadatos($query,$select);
 		abstract function actualizar($chartic,$id_nom,$id);
 		abstract function codigo($id_max);
@@ -181,7 +181,12 @@ include_spip('base/connect_sql');
 		 * Parametros de Salida: num SELECT SUM(inventario) AS inventario FROM `instrum_instrumentos` WHERE idReferencia='2' ORDER BY `idCategorias` ASC
 		 */				
 		public function headersEmail($idAprendiz,$idInstructor,$descripcion,$tipoComite){
-				$corps=array();
+					$corps = array();
+					$correoAprendiz = '';
+					$nombresApellidosAprendiz = '';
+					$correoInstructor = '';
+					$nombresApellidosInstructor = '';
+				 
 						$sql1 = sql_select("correo,nombres,apellidos",'sena_aprendiz','idAprendiz="'.$idAprendiz.'"');
 				while ($row1 = sql_fetch($sql1)) {	
 					$correoAprendiz= $row1['correo'];		
@@ -226,6 +231,12 @@ include_spip('base/connect_sql');
 		 */				
 		public function headersByEmail($correoAprendiz,$idSolicitud,$emailEntrada){
 				$corps=array();
+				$corps = array();
+				$correoAprendiz = '';
+				$nombresApellidosAprendiz = '';
+				$correoInstructor = '';
+				$nombresApellidosInstructor = '';
+				
 				$sql1 = sql_select("nombres,apellidos",'sena_aprendiz','correo="'.$correoAprendiz.'"');
 				while ($row1 = sql_fetch($sql1)) {	
 					$correoAprendiz= $row1['correo'];		
@@ -245,6 +256,7 @@ include_spip('base/connect_sql');
 				  }					  
 				  
 			$sql2 = sql_select("correo,nombres,apellidos",'sena_instructor','idInstructor="'.$idInstructor.'"');
+				
 				while ($row2 = sql_fetch($sql2)) {	
 					$correoInstructor= $row2['correo'];		
 					$nombresApellidosInstructor= $row2['nombres'].' '.$row2['apellidos'];		
@@ -387,28 +399,52 @@ include_spip('base/connect_sql');
 		 * Parametros de entrada :$chartic=array(),$table
 		 * Parametros de Salida: 
 		 */ 
-		function guardar($chartic=array()){
+		public function guardar($menu,$submenu,$accion){
+				
+			//AUDITORIA			
 			
-			$chartic = pipeline('pre_insertion',
-				array(
-					'args' => array(
-					'table' => ''.$this->table.'',
-				),
-				'data' => $chartic
-				)
-			);							
-				$id=sql_insertq("".$this->table."", $chartic);
-			pipeline('post_insertion',
+
+			$session_login =_request('var_login');
+			$session_password = _request('password');
+			if (!empty($session_login) && !empty($session_password)) {
+				include_spip('inc/auth');
+				$aut = auth_identifier_login($session_login, $session_password);
+			}else{
+				$idUsuario =base64_decode(_request('idUsuario'));
+				$sql = sql_select('*','api_auteurs','id_auteur="'.$idUsuario.'"');
+				while ($row = sql_fetch($sql)) {	
+					  $aut=$row; 
+				}
+			}
+			//print_r($aut);
+			$audi=array();
+			$audi['id_auteur']=$aut['id_auteur'];
+			$audi['usuario']=$aut['nom'];
+			$audi['rol']=$aut['tipo'];
+			$audi['menu']=$menu;
+			$audi['submenu']=$submenu;
+			$audi['accion']=$accion;
+			$audi = pipeline('pre_insertion',
 			array(
 				'args' => array(
-				'table' =>''.$this->table.'',
-				'id_objet' => $id
-				),
-				'data' => $chartic
-				)
-			);
-			return $id;
-		}
+				'table' => 'sena_auditoria',
+			),
+			'data' => $audi
+			)
+		);							
+		$idAuditoria=@sql_insertq('sena_auditoria',$audi);
+		pipeline('post_insertion',
+		array(
+			'args' => array(
+			'table' =>'sena_auditoria',
+			'id_objet' => $idAuditoria
+			),
+			'data' => $audi
+			)
+		);
+		
+}
+
 				/**
 		 * Retorno los parametros para actualizar en una tabla
 		 * Autor: HOSMMER EDUARDO PINTO ROJAS

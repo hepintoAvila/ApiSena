@@ -128,6 +128,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  
 				$var = var2js($arrayMensage);
 				echo $var;
+                        //AUDITORIA
+                        $appAudi=new Apis('sena_auditoria');
+                        $appAudi->guardar('ModuloAprendiz','aprendiz','add');		
+                       //FIN AUDITORIA					
 			break;
 			case 'update':
                 $app=new Apis('sena_aprendiz');
@@ -220,9 +224,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				
 
             	
-			
+                        //AUDITORIA
+                        $appAudi=new Apis('sena_auditoria');
+                        $appAudi->guardar('ModuloAprendiz','aprendiz','update');		
+                       //FIN AUDITORIA					
 			break;
- 
+			case 'delete':
 					$idAprendiz = isset($_GET['id']) ? base64_decode($_GET['id']) : base64_decode($_POST['id']); 
 					sql_delete("sena_aprendiz","idAprendiz=" . intval($idAprendiz));
 					
@@ -232,7 +239,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					}	
 					
 					$var = var2js($msg);	
-					echo $var;					
+					echo $var;	
+                        //AUDITORIA
+                        $appAudi=new Apis('sena_auditoria');
+                        $appAudi->guardar('ModuloAprendiz','aprendiz','delete');		
+                       //FIN AUDITORIA											
 			break;
 			
 			case 'listaSanciones':
@@ -357,8 +368,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								
 												
 				$var = var2js($arrayMensage);
-		
 				echo $var;	
+	                        //AUDITORIA
+							$appAudi=new Apis('sena_auditoria');
+							$appAudi->guardar('ModuloAprendiz','aprendiz','editarSanciones');		
+						   //FIN AUDITORIA				
 	break;
 }				
 ?>

@@ -37,18 +37,37 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$idTipo=$r['idRol'];
 					$entidad=$r['entidad'];
 				}	
-			$perm = sql_select("A.c AS APIS_QUERY,A.a AS APIS_ADD,A.u AS APIS_UPDATE,A.d AS APIS_DELETE, R.tipo as Rol,M.key AS opcion",
-				"apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R",
-				"R.idRol='".$idTipo."' 
-				AND A.idRol= R.idRol 
+				$res = sql_select("*", "apis_roles", "entidad ='".$aut['entidad']."' AND tipo=" . sql_quote($aut['tipo']));
+				while ($r = sql_fetch($res)) {
+					$idTipo=$r['idRol'];
+					$entidad=$r['entidad'];
+				}	
+				$app=new Apis('apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
+				$select='A.id as idAutorizacion,
+				M.key AS menu,S.url AS submenu,
+				R.tipo AS rol,
+				A.c as c,
+				A.a as a,
+				A.u as u,
+				A.d as d';
+				$query='
+				R.idRol="'.$idTipo.'"
+				AND R.idRol= A.idRol
 				AND M.idMenu= A.idMenu 
-				AND A.entidad='".$entidad."'
-				AND S.entidad='".$entidad."'
-				AND R.entidad='".$entidad."'
+				AND S.idSubmenu = A.idSubmenu  
 				AND A.idSubmenu=S.idSubmenu 
-				AND  S.status='Active' ORDER BY S.idSubmenu ASC");
-				while ($row = sql_fetch($perm)) {
-					$menus['Permisos'][] = array('query'=>$row['APIS_QUERY'],'add'=>$row['APIS_ADD'],'update'=>$row['APIS_UPDATE'],'delete'=>$row['APIS_DELETE'],'opcion'=>$row['opcion']);					
+				AND  S.status="Active" 
+				AND M.entidad="'.$entidad.'"
+				AND S.entidad="'.$entidad.'"
+				AND A.entidad="'.$entidad.'"
+				 AND R.entidad="'.$entidad.'"
+				ORDER BY S.idSubmenu ASC';
+				
+				$roles=$app->consultadatos($query,$select,'apis_menu AS M,apis_submenus AS S, apis_autorizaciones AS A,apis_roles as R');
+				foreach($roles as $a => $row){
+					$pos = strrpos($row['submenu'], '/');
+					$submenu = substr($row['submenu'], $pos + 1);
+					$menus['Permisos'][]= array('query'=>$row['c'],'add'=>$row['a'],'update'=>$row['u'],'delete'=>$row['d'],'menu'=>$row['menu'],'submenu'=>$submenu);	
 				}				
 				 
 				if($aut['id_auteur']==1){

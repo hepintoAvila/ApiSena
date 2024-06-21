@@ -188,7 +188,12 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							 }
 							
 						}
-				echo var2js($arrayMensage);		
+				echo var2js($arrayMensage);	
+	        
+			//AUDITORIA
+			$appAudi=new Apis('sena_auditoria');
+			$appAudi->guardar('ModuloNotificaciones','addCitas','addCitas');		
+			//FIN AUDITORIA						
 			break;
 			case 'updateCitas':
 			 $tbls='sena_agenda';
@@ -262,6 +267,10 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 						}
 					
 			echo var2js($arrayMensage);	 
+			//AUDITORIA
+			$appAudi=new Apis('sena_auditoria');
+			$appAudi->guardar('ModuloNotificaciones','addCitas','updateCitas');		
+			//FIN AUDITORIA					
 			break;
 			case 'deleteCitas':
 			$tbls='sena_agenda';
@@ -342,7 +351,10 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 							}
 						}	
 			echo var2js($arrayMensage);				
-			
+			//AUDITORIA
+			$appAudi=new Apis('sena_auditoria');
+			$appAudi->guardar('ModuloNotificaciones','addCitas','deleteCitas');		
+			//FIN AUDITORIA					
 			break;
 			case 'queryCitas':
 			 $tbls='sena_agenda';
@@ -421,6 +433,10 @@ function calcularFechaFinal($fechaInicio, $tiempoEstipuladoMinutos) {
 						}
 	
 			echo var2js($arrayMensage);	
+			//AUDITORIA
+			$appAudi=new Apis('sena_auditoria');
+			$appAudi->guardar('ModuloNotificaciones','addCitas','enviarEmailAprendiz');		
+			//FIN AUDITORIA					
 			break;
 		}												
 ?>

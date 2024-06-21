@@ -39,36 +39,34 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				return bin2hex($key);
 			}
  
-	
-			 
 		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		switch ($opcion) {
 			case 'consultarusuario':
-				//validamos usuarios y contrase�a var_login
+				//validamos usuarios y contrasea var_login
 				$session_login =_request('var_login');
 				$session_password = _request('password');
-				$row = auth_identifier_login($session_login, $session_password);
-				if($row['statut']=='0minirezo'){
+				$aut = auth_identifier_login($session_login, $session_password);
+				if($aut['statut']=='0minirezo'){
 					$statut='Administrador';
 				}else{
-					$statut=$row['statut'];
+					$statut=$aut['statut'];
 				}
 			    $secretKey = generateSecretKey();
 				$encryptedData = encryptData($session_password, $secretKey);
 				$Auth['Auth']= array(
 				'status' => '202',
-				'Nom' => $row['nom'].'',
-				'Idsuario' => $row['id_auteur'],
-				'Usuario' => $row['login'],
-				'Email' => $row['email'],
-				'Rol' => $row['tipo'],
+				'Nom' => $aut['nom'].'',
+				'Idsuario' => $aut['id_auteur'],
+				'Usuario' => $aut['login'],
+				'Email' => $aut['email'],
+				'Rol' => $aut['tipo'],
 				'Apikey' =>$encryptedData,
 				'ApiToken' =>$secretKey,
-				'alea_actuel' =>$row['alea_actuel'],
-				'entidad' =>$row['entidad'],
+				'alea_actuel' =>$aut['alea_actuel'],
+				'entidad' =>$aut['entidad'],
 				'status'=>'202'
 				);
-							$res = sql_select("*", "apis_roles", "entidad ='".$row['entidad']."' AND tipo=" . sql_quote($row['tipo']));
+							$res = sql_select("*", "apis_roles", "entidad ='".$aut['entidad']."' AND tipo=" . sql_quote($aut['tipo']));
 							while ($r = sql_fetch($res)) {
 								$idTipo=$r['idRol'];
 								$entidad=$r['entidad'];
@@ -101,14 +99,17 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								$menus['Permisos'][]= array('query'=>$row['c'],'add'=>$row['a'],'update'=>$row['u'],'delete'=>$row['d'],'menu'=>$row['menu'],'submenu'=>$submenu);	
 							}
 							if (!is_null($menus)) {
-								$data = array('data'=>array_merge($Auth,$menus));
-								$var = var2js($data);
-								echo $var;
+								
+								//AUDITORIA
+								$appAudi=new Apis('sena_auditoria');
+								$appAudi->guardar('AdminUsuarios','Usuarios','Inicio Sesion');		
+								//FIN AUDITORIA	
+								$records = array('data'=>array_merge($Auth,$menus));
 							}else{
-								$records['data'] = array('status'=>'404');
-								$var = var2js($records);	
-								echo $var;	                            
-							}						 					
+								$records['data'] = array('status'=>'404');                           
+							}
+							$var = var2js($records);
+							echo $var;								 					
 			break;
 		}
 											

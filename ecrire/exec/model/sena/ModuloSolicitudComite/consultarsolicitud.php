@@ -22,43 +22,24 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('exec/model/sena/email');	
 		//include_spip('fpdf.php');	
 		include_spip('inc/charsets');
-								// Definir la función processArray
-								function processArraySolicitudes($idSolicituds) {
-									// Validar que $idSolicituds es un array y no está vacío
-									if (is_array($idSolicituds) && !empty($idSolicituds)) {
-										// Eliminar elementos vacíos y duplicados
-										$idSolicituds = array_filter(array_unique($idSolicituds));
+		function processArraySolicitudes($idSolicituds) {
+			// Validar que $idSolicituds es un array y no está vacío
+			if (is_array($idSolicituds) && !empty($idSolicituds)) {
+				// Eliminar elementos vacíos y elementos que no son válidos (null, false, etc.)
+				$idSolicituds = array_filter($idSolicituds, function($value) {
+					return !empty($value) && $value !== '';
+				});
 
-										// Convertir el array en una cadena separada por comas
-										$string = implode(',', $idSolicituds);
+				// Eliminar elementos duplicados
+				$idSolicituds = array_unique($idSolicituds);
 
-										return ['array' => $idSolicituds, 'string' => $string];
-									}
-									return ['array' => [], 'string' => ''];
-								}
-								function processArray($array) {
-									// Inicializar un array para almacenar los valores únicos
-									$uniqueValues = [];
-								
-									// Recorrer el array de entrada
-									foreach ($array as $item) {
-										// Separar los valores por comas
-										$values = explode(',', $item);
-								
-										// Añadir cada valor al array de valores únicos si no es 0 y no está ya en el array
-										foreach ($values as $value) {
-											if ($value != 0 && !in_array($value, $uniqueValues)) {
-												$uniqueValues[] = $value;
-											}
-										}
-									}
-								
-									// Convertir los valores únicos en una cadena separada por comas
-									$uniqueValuesString = implode(',', $uniqueValues);
-								
-									// Devolver ambos resultados
-									return ['array' => $uniqueValues, 'string' => $uniqueValuesString];
-								}
+				// Convertir el array en una cadena separada por comas
+				$string = implode(',', $idSolicituds);
+
+				return ['array' => array_values($idSolicituds), 'string' => $string];
+			}
+			return ['array' => [], 'string' => ''];
+		}
 		$obj = isset($_GET['obj']) ? $_GET['obj'] :$_POST['obj'];
 		 
 			switch($obj) {
@@ -182,7 +163,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 										while ($r= sql_fetch($sq)) {
 											$casosComite[]= $r['casosComite'];	
 										}
-										$result = processArray($casosComite);
+										$result = processArraySolicitudes($casosComite);
 										if(is_array($result['array'])){
 											$row=$apps->consultadatos('idSolicitud NOT IN ('.$result['string'].') AND estado="AGENDADA" AND entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
 										}else{

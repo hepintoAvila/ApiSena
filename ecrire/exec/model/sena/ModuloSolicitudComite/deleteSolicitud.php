@@ -58,6 +58,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'status'=>'202');	
 						}
 						echo var2js($arrayMensage);
+			//AUDITORIA
+			$appAudi=new Apis('sena_auditoria');
+			$appAudi->guardar('ModuloSolicitudComite','deleteSolicitud','deleteSolicitud');		
+			//FIN AUDITORIA								
 			break;
 			case "deleteFile":
 				$tbls='sena_solicitudcomite';
@@ -94,6 +98,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								'status'=>'202');								
 						}
 			echo var2js($arrayMensage);
+		//AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloSolicitudComite','deleteSolicitud','deleteFile');		
+		//FIN AUDITORIA				
 			break;
 	}
 ?>

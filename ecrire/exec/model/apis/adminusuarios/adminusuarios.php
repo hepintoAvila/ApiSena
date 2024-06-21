@@ -20,7 +20,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		include_spip('inc/json');
 		include_spip('inc/autoriser');
 		include_spip('exec/model/sena/claseapi');
-		
+		include_spip('inc/auth');		
 		 
 		$opcion = isset($_GET['opcion']) ? base64_decode($_GET['opcion']) : base64_decode($_POST['opcion']);
 		$entidad = isset($_GET['entidad']) ? base64_decode($_GET['entidad']) : base64_decode($_POST['entidad']);
@@ -74,7 +74,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$mensajeError = $app->verificarVariables($variablesAVerificar);
 				if ($mensajeError !== null){
 				 $arrayMensage=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
-				}else{				
+				}else{	
+					//AUDITORIA
+					$appAudi=new Apis('sena_auditoria');
+					$appAudi->guardar('AdminUsuarios','Usuarios','changePassword');		
+					//FIN AUDITORIA	
 
 					$cpass = array();
 					include_spip('inc/acces');
@@ -121,7 +125,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 							'rol' => $rol,
 							'entidad' => $entidad,
 						];
-						//print_r($variablesAVerificar);
+		 
 						$mensajeError = $app->verificarVariables($variablesAVerificar);
 						if ($mensajeError !== null) {
 						$arrayMensage[]=array('id'=>1,'message'=>'::ERROR-001:: '.$mensajeError.'','status'=>'404');
@@ -135,10 +139,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 									$options=array('tipo'=>$rol,'entidad'=>$entidad);
 									$inscrire_auteur = charger_fonction('inscrire_auteur', 'action');
 									$desc = $inscrire_auteur('0minirezo', $email, $login, $options);
-									$mensajeError = $app->verificarVariables($desc);
-									$var = var2js($mensajeError);
-									echo $var;
-
 								if (!is_null($desc)) {
 										if($desc['pass']=='I'){
 											$msg[] = 'WARNING. El Usuario no se pudo guardar!';
@@ -170,20 +170,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 													'data' => $chartic
 													)
 												);
-											 
+											//AUDITORIA
+											$appAudi=new Apis('sena_auditoria');
+											$appAudi->guardar('AdminUsuarios','Usuarios','add');		
+											//FIN AUDITORIA	
 											$msg[] = 'Usuario guardado con exito! Su password es:'.$desc['pass'].', y el usuario: '.$desc['login'].'';
 											};
 									  }else{
 										     $msg[] ='¡WARNING!. El Usuario no se pudo guardar!';
 									}	
 								}
-								
-								 
-								$arrayMensage[] = array('message'=>'¡OK!. El Usuario GUARDADO! '.implode(',',$msg).'','status' => '202');
+								$arrayMensage[] = array('message'=>'¡OK!.'.implode(',',$msg).'','status' => '202');
 						}	
- 
-				$var = var2js($arrayMensage);
-				echo $var;
+				
+				$resp = var2js($arrayMensage);
+				echo $resp;
 			break;
 			case 'update':
 				$apps=new Apis('api_auteurs');
@@ -198,7 +199,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
     					$chartic['tipo']=$rol;
 						$apps->actualizar($chartic,'id_auteur',$id);
 						$msg[] = array('menssage'=>'OK. El Usuarios: '.$id.'-'.$nombres.' fue actualizado correctamente!','status' => '200');
-						
+						//AUDITORIA
+						$appAudi=new Apis('sena_auditoria');
+						$appAudi->guardar('AdminUsuarios','Usuarios','update');		
+						//FIN AUDITORIA					
 						$var = var2js($msg);	
 						echo $var;				
 			
@@ -211,7 +215,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					if ($res){
 					$msg[] = array('menssage'=>'OK. El registro '.$id.' fue eliminado correctamente!','status' => '200');
 					}	
-					
+					//AUDITORIA
+					$appAudi=new Apis('sena_auditoria');
+					$appAudi->guardar('AdminUsuarios','Usuarios','delete');		
+					//FIN AUDITORIA				
 					$var = var2js($msg);	
 					echo $var;					
 			break;
@@ -242,6 +249,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
     					$chartic['d']=$d;
     					$chartic['a']=$d;
 						$apps->actualizar($chartic,'id',$id);
+						//AUDITORIA
+						$appAudi=new Apis('sena_auditoria');
+						$appAudi->guardar('AdminUsuarios','Usuarios','update_rol');		
+						//FIN AUDITORIA
 						$msg[] = array('menssage'=>'OK. Los permisos fueron actualizado correctamente!','status' => '200');
 						$var = var2js($msg);	
 						echo $var;						

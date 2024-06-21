@@ -24,12 +24,13 @@ include_spip('inc/filtres');
 include_spip('inc/texte_mini');
 include_spip('inc/utils');
 include_spip('inc/json');
-include_spip('exec/model/sena/claseapi');
 include_spip('exec/model/sena/email');
 include_spip('inc/charsets');
 include_spip('inc/actions');
 include_spip('inc/editer');
 include_spip('inc/notifications');
+include_spip('exec/model/sena/claseapi');
+
 function formatearFecha($fecha) {
     // Convierte la fecha a un timestamp
     $timestamp = strtotime($fecha);
@@ -65,7 +66,7 @@ function guardarPDF($codigoFicha) {
     }   
     
 }
-
+ 
 // Switch principal
 switch ($tipo) {
     case "EnviarSolicitud":
@@ -221,6 +222,10 @@ switch ($tipo) {
             $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Registro guardado correctamente!', 'status' => '202'];
         }
         echo var2js($arrayMensage);
+     		//AUDITORIA
+             $appAudi=new Apis('sena_auditoria');
+             $appAudi->guardar('ModuloSolicitudComite','editorsolicitud','EnviarSolicitud');		
+             //FIN AUDITORIA	       
         break;
 
     case "updateSolicitud":
@@ -278,6 +283,10 @@ switch ($tipo) {
         $arrayMensage[] = ['id' => 1, 'message' => '::OK:: Registro actualizado correctamente!', 'status' => '202'];
 		}
         echo var2js($arrayMensage);
+   		//AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloSolicitudComite','editorsolicitud','updateSolicitud');		
+		//FIN AUDITORIA		     
         break;
 
     case "add_documentos":
@@ -304,6 +313,10 @@ switch ($tipo) {
             }
       }
        echo var2js($arrayMensage);
+    		//AUDITORIA
+            $appAudi=new Apis('sena_auditoria');
+            $appAudi->guardar('ModuloSolicitudComite','editorsolicitud','add_documentos');		
+            //FIN AUDITORIA		      
         break;
 
     default:

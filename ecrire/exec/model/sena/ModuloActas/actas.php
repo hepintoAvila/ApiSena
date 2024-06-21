@@ -690,7 +690,11 @@ switch ($opcion) {
 			$var = var2js($data);
 			echo $var;
 		}
-
+		
+        //AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloActas','Actas','generarConsolidado');		
+		//FIN AUDITORIA	
         break;
     case 'listActas':
          
@@ -739,6 +743,11 @@ switch ($opcion) {
                     'data' => $chartic
                 )
             );
+        
+        //AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloActas','Actas','updateInactivas');		
+		//FIN AUDITORIA	
             if (!empty($idActa)) {
             crearPdfAprendices($idActa);
             }
@@ -831,6 +840,10 @@ switch ($opcion) {
             $arrayMensage[] = array('message'=>'¡OK!. El Acta fue GUARDADO! '.implode(',',$msg).'','status' => '202');
             //crearPdfActa($idActa);
         }
+        //AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloActas','Actas','add');		
+		//FIN AUDITORIA	
         $var = var2js($arrayMensage);
         echo $var;
         break;
@@ -892,6 +905,10 @@ switch ($opcion) {
                     'data' => $chartic
                 )
             );
+        //AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloActas','Actas','update');		
+		//FIN AUDITORIA	
             $arrayMensage[]=array(
                 'id'=>1,
                 'message'=>'::OK:: Acta Acualizado!',
@@ -923,6 +940,11 @@ switch ($opcion) {
                 'data' => $chartic
             )
         );
+        
+        //AUDITORIA
+		$appAudi=new Apis('sena_auditoria');
+		$appAudi->guardar('ModuloActas','Actas','delete');		
+		//FIN AUDITORIA	
         //sql_delete("sena_actas","idActa=" . intval($idActa));
 
         $res = sql_select("*", "sena_actas", "statut='Inactiva'");
@@ -1006,6 +1028,10 @@ switch ($opcion) {
                         'data' => $chartic
                     )
                 );
+                //AUDITORIA
+                $appAudi=new Apis('sena_auditoria');
+                $appAudi->guardar('ModuloActas','Actas',$opcionBusqueda);		
+                //FIN AUDITORIA	
                 $arrayMensage[]=array(
                     'id'=>1,
                     'message'=>'::OK:: solicitud quitada de la lista!',
@@ -1097,7 +1123,10 @@ switch ($opcion) {
                 'message'=>'::OK:: Asistente registrado!',
                 'status'=>'202');
         }
-
+                //AUDITORIA
+                $appAudi=new Apis('sena_auditoria');
+                $appAudi->guardar('ModuloActas','Actas','addAsistente');		
+                //FIN AUDITORIA	
         generarPDFAsistencia($idActa);
         //FIN GENERA LA FICHA
         $var = var2js($arrayMensage);
@@ -1162,6 +1191,10 @@ switch ($opcion) {
         if ($res){
             $msg[] = array('menssage'=>'OK. El Registro '.$id_asistencia.' fue eliminado correctamente!','status' => '200');
         }
+                        //AUDITORIA
+                        $appAudi=new Apis('sena_auditoria');
+                        $appAudi->guardar('ModuloActas','Actas','deleteAsistente');		
+                        //FIN AUDITORIA	
         $var = var2js($msg);
         echo $var;
         break;
@@ -1251,6 +1284,32 @@ switch ($opcion) {
                         'data' => $chartic
                     )
                 );
+                if(base64_decode($_POST['idConcepto'])=='5'){
+                    $idSolicitud = $decodedPost['idSolicitud'];
+                    $chartics = [
+                        'estado' =>'EN COMITE',
+                    ];
+                    $chartics = pipeline('pre_insertion',
+                    array(
+                        'args' => array(
+                            'table' => 'sena_solicitudcomite',
+                        ),
+                        'data' => $chartics
+                    )
+                );
+                sql_updateq('sena_solicitudcomite',$chartics,"idSolicitud=" . intval($idSolicitud) . "");
+                pipeline('post_insertion',
+                    array(
+                        'args' => array(
+                            'table' =>'sena_solicitudcomite',
+                            'id_objet' => $idSolicitud
+                        ),
+                        'data' => $chartics
+                    )
+                );
+        }          
+
+
                 crearPdfActa($decodedPost['idActa']);
                 $arrayMensage[]=array(
                     'id'=>1,
@@ -1297,6 +1356,10 @@ switch ($opcion) {
                 echo $var;
             }
         }
+                        //AUDITORIA
+                        $appAudi=new Apis('sena_auditoria');
+                        $appAudi->guardar('ModuloActas','Actas','addConceptos');		
+                       //FIN AUDITORIA	
         break;
     case 'listarConceptos':
         $idActa = isset($_GET['idActa']) ? base64_decode($_GET['idActa']) : base64_decode($_POST['idActa']);
