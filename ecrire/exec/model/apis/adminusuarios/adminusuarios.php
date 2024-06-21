@@ -144,32 +144,35 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 											$msg[] = 'WARNING. El Usuario no se pudo guardar!';
 										
 										}else{
-												$table ='sena_directivo';		
-												$chartic['id_auteur'] ="".$desc['id_auteur']."";
-												$chartic['identificacion'] ="".$identificacion."";
-												$chartic['nombres'] =$nombres;
-												$chartic['apellidos'] =$apellidos;
-												$chartic['correo'] =$email;
-												$chartic['celular'] =$telefono;
-												$chartic['rol'] =$rol;
-												$chartic = pipeline('pre_insertion',
+												if(($rol=='Apoyo') || ($rol=='Coordinador')){
+													$table ='sena_directivo';		
+													$chartic['id_auteur'] ="".$desc['id_auteur']."";
+													$chartic['identificacion'] ="".$identificacion."";
+													$chartic['nombres'] =$nombres;
+													$chartic['apellidos'] =$apellidos;
+													$chartic['correo'] =$email;
+													$chartic['celular'] =$telefono;
+													$chartic['rol'] =$rol;
+													$chartic = pipeline('pre_insertion',
+														array(
+															'args' => array(
+															'table' => ''.$table.'',
+														),
+														'data' => $chartic
+														)
+													);							
+													$id_auteur=@sql_insertq(''.$table.'',$chartic);
+													pipeline('post_insertion',
 													array(
 														'args' => array(
-														'table' => ''.$table.'',
-													),
-													'data' => $chartic
-													)
-												);							
-												$id_auteur=@sql_insertq(''.$table.'',$chartic);
-												pipeline('post_insertion',
-												array(
-													'args' => array(
-													'table' =>''.$table.'',
-													'id_objet' => $id_auteur
-													),
-													'data' => $chartic
-													)
-												);
+														'table' =>''.$table.'',
+														'id_objet' => $id_auteur
+														),
+														'data' => $chartic
+														)
+													);
+												}
+				
 											//AUDITORIA
 											$appAudi=new Apis('sena_auditoria');
 											$appAudi->guardar('AdminUsuarios','Usuarios','add');		
