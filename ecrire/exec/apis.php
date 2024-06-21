@@ -68,6 +68,11 @@ function exec_apis_dist(){
 				case "ModuloAuditoria":
 					include_spip('exec/model/sena/ModuloAuditoria/Auditoria');	
 				break;
+				case "ModuloReportes":
+					include_spip('exec/model/sena/ModuloReportes/moduloReportes');	
+				break;
+
+				
 		}
 }
 ?>

@@ -68,6 +68,7 @@ $router->addRoute('GET', 'ModuloActas', ['ModuloActasController', 'handleRequest
 $router->addRoute('POST', 'ModuloSolicitudComite', ['ModuloEnviarComiteController', 'handleRequest']);
 $router->addRoute('POST', 'Documentos', ['DocumentosController', 'handleRequest']);
 $router->addRoute('GET', 'ModuloAuditoria', ['ModuloAuditoriaController', 'handleRequest']);
+$router->addRoute('GET', 'ModuloReportes', ['ModuloReporteController', 'handleRequest']);
 
 // Add debugging here
 $accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : '';
