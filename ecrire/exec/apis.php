@@ -30,7 +30,6 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 function exec_apis_dist(){
 			$accion = isset($_GET['accion']) ? base64_decode($_GET['accion']) : base64_decode($_POST['accion']);
-			//print_r($accion);
 		switch($accion) {	
 				case "auteur":
 					include_spip('exec/model/apis/consultarusuario/consultarusuario');		    
@@ -65,6 +64,9 @@ function exec_apis_dist(){
 				break;
 				case "ModuloActas":
 					include_spip('exec/model/sena/ModuloActas/actas');	
+				break;
+				case "ModuloAuditoria":
+					include_spip('exec/model/sena/ModuloAuditoria/Auditoria');	
 				break;
 		}
 }
