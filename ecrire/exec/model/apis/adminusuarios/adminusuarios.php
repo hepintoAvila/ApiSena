@@ -172,7 +172,60 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 														)
 													);
 												}
-				
+												if($rol=='Instructor'){
+													$tableins ='sena_instructor';		
+													$instructor['id_auteur'] ="".$desc['id_auteur']."";
+													$instructor['identificacion'] ="".$identificacion."";
+													$instructor['nombres'] =$nombres;
+													$instructor['apellidos'] =$apellidos;
+													$instructor['telefono'] =$telefono;
+													$instructor['correo'] =$email;
+													$instructor['rol'] =$rol;
+													$instructor = pipeline('pre_insertion',
+														array(
+															'args' => array(
+															'table' => ''.$tableins.'',
+														),
+														'data' => $instructor
+														)
+													);							
+													$idInstructor=@sql_insertq(''.$tableins.'',$instructor);
+													pipeline('post_insertion',
+													array(
+														'args' => array(
+														'table' =>''.$tableins.'',
+														'id_objet' => $id_auteur
+														),
+														'data' => $idInstructor
+														)
+													);
+												}
+												if($rol=='Aprendiz'){
+													$tableapre ='sena_aprendiz';		
+													$apre['nombres'] =$nombres;
+													$apre['apellidos'] =$apellidos;
+													$apre['identificacion'] ="".$identificacion."";
+													$apre['telefono'] =$telefono;
+													$apre['correo'] =$email;
+													$apre = pipeline('pre_insertion',
+														array(
+															'args' => array(
+															'table' => ''.$tableapre.'',
+														),
+														'data' => $tableapre
+														)
+													);							
+													$idAprendiz=@sql_insertq(''.$tableapre.'',$apre);
+													pipeline('post_insertion',
+													array(
+														'args' => array(
+														'table' =>''.$tableins.'',
+														'id_objet' => $idAprendiz
+														),
+														'data' => $apre
+														)
+													);
+												}			
 											//AUDITORIA
 											$appAudi=new Apis('sena_auditoria');
 											$appAudi->guardar('AdminUsuarios','Usuarios','add');		

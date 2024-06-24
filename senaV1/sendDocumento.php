@@ -9,9 +9,7 @@
  **/
 
 function sendDocumento($url,$varGet,$opcion,$fechaHora) {
-    function decodeBase64($data) {
-        return base64_decode($data);
-    }
+  
                         $input = json_decode(file_get_contents('php://input'), true);
                         $newLocation = '';
                         if (!is_null($input)) {
@@ -23,13 +21,13 @@ function sendDocumento($url,$varGet,$opcion,$fechaHora) {
                     if (isset($variables['fileContent']['selectedFile'])) {
                         $selectedFile = $variables['fileContent']['selectedFile'];
                         // Decodificar la información del archivo
-                        $fileName =decodeBase64($_GET['name']);
+                        $fileName =base64_decode($_GET['name']);
                         $fileBase64 = $selectedFile['base64'];
-                        $idAprendiz = decodeBase64($_GET['idAprendiz']);
-                        $codigoFicha = decodeBase64($_GET['codigoFicha']);
-                        $idUsuario = decodeBase64($_GET['idUsuario']);
-                        $maxId = decodeBase64($_GET['maxId']);
-                        $fileContent = decodeBase64($fileBase64);
+                        $idAprendiz = base64_decode($_GET['idAprendiz']);
+                        $codigoFicha = base64_decode($_GET['codigoFicha']);
+                        $idUsuario = base64_decode($_GET['idUsuario']);
+                        $maxId = base64_decode($_GET['maxId']);
+                        $fileContent = base64_decode($fileBase64);
                         // Guardar el archivo en el servidor
                        $filePath = ''.$url.''.$fileName.'';
                         file_put_contents($filePath, $fileContent);

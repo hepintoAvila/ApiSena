@@ -8,9 +8,6 @@ require_once 'sendDocumento.php';
 class DocumentosController {
 
     public static function handleRequest() {
-        function decodeBase64($data) {
-            return base64_decode($data);
-        }
 
         $data = [];
         $varGet = [];

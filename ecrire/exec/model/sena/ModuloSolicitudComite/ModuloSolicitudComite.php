@@ -44,6 +44,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				case "deleteSolicitud":
 				include_spip('exec/model/sena/ModuloSolicitudComite/deleteSolicitud');
 				break;
+				case "querySolicitudByUser":
+					include_spip('exec/model/sena/ModuloSolicitudComite/querySolicitudByUser');
+				break;
 		}
  
 ?>
