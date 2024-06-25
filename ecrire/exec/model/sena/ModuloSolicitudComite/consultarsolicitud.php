@@ -102,7 +102,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 								///dashboard/ModuloSolicitudComite/EnviarSolicitud
 								case '2':
 								case '0':
-									$row=$apps->consultadatos('entidad="'.$entidad.'" AND idInstructor="'.$idUsuario.'" ORDER BY idSolicitud ASC',$select);
+									$row=$apps->consultadatos('entidad="'.$entidad.'" ORDER BY idSolicitud ASC',$select);
 								
 								break;
 								case '4':
